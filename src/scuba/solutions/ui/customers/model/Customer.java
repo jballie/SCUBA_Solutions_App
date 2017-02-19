@@ -12,7 +12,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.StringProperty;
 
 /**
- * Represents a Customer profile for the Scuba Solutions app.
+ * Represents a Customer profile for the Scuba Solutions.
  * @author Jon
  */
 public class Customer
