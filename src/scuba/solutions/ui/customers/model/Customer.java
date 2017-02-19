@@ -12,7 +12,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.StringProperty;
 
 /**
- * Represents a Customer profile for the Scuba Solutions.
+ * Represents a Customer profile for the Scuba Solutions app.
  * @author Jon
  */
 public class Customer
@@ -23,9 +23,10 @@ public class Customer
     private final StringProperty street = null;
     private final IntegerProperty postalCode = null;
     private final StringProperty city = null;
-    private final ObjectProperty<LocalDate> birthday = null;
+    private final ObjectProperty<LocalDate> dateOfBirth = null;
     private final StringProperty emailAddress = null;
-    private final BooleanProperty liabilityStatus = null;
+    private final StringProperty certAgency = null;
+    private final IntegerProperty certDiveNo = null;
     
     public Customer()
     {
@@ -35,11 +36,15 @@ public class Customer
         return customerID.get();
     }
     
+    /*
+    Question: Not sure if Customer ID is automatically generated from Database
+    or if we will have to give an individual one ourselves. There is a way to do
+    this that is pretty simple if needed
     public void setCustomerID(int customerID)
     {
         this.customerID.set(customerID);
     }
-
+    */
     public String getFirstName() {
         return firstName.get();
     }
@@ -57,30 +62,61 @@ public class Customer
         this.lastName.set(lastName);
     }
 
-    
     public String getStreet() {
         return street.get();
+    }
+    
+     public void setStreet(String street) {
+        this.street.set(street);
     }
 
     public int getPostalCode() {
         return postalCode.get();
     }
+    
+    public void setPostalCode(int postalCode) {
+        this.postalCode.set(postalCode);
+    }
 
     public String getCity() {
         return city.get();
     }
+    
+    public void setCity(String city){
+        this.city.set(city);
+    }
 
-    public LocalDate getBirthday() {
-        return birthday.get();
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth.get();
+    }
+    
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+        this.dateOfBirth.set(dateOfBirth);
     }
 
     public String getEmailAddress() {
         return emailAddress.get();
     }
+    
+    public void setEmailAddress(String emailAddress){
+        this.emailAddress.set(emailAddress);
+    }
 
-    public Boolean getLiabilityStatus() {
-        return liabilityStatus.get();
+    public String getCertAgency() {
+        return certAgency.get();
     }
     
+    public void setCertAgency(String certAgency) {
+        this.certAgency.set(certAgency);
+    }
+    
+    public int getCertDiveNo() {
+        return certDiveNo.get();
+    }
+    
+    public void setCertDiveNo(int certDiveNo)
+    {
+        this.certDiveNo.set(certDiveNo);
+    }
   
 }
