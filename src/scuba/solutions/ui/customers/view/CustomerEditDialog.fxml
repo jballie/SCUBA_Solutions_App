@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXDatePicker?>
 <?import com.jfoenix.controls.JFXTextField?>
 <?import java.net.URL?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -12,7 +14,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="559.0" prefWidth="497.0" styleClass="mainFxmlClass" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.111" fx:controller="scuba.solutions.ui.customers.view.CustomerEditDialogController">
+<AnchorPane id="AnchorPane" prefHeight="655.0" prefWidth="497.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/8.0.102" xmlns:fx="http://javafx.com/fxml/1" fx:controller="scuba.solutions.ui.customers.view.CustomerEditDialogController">
     <stylesheets>
         <URL value="@customereditdialog.css" />
     </stylesheets>
@@ -28,6 +30,7 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -80,7 +83,7 @@
                   <Font name="System Bold" size="14.0" />
                </font>
             </Label>
-            <Label prefHeight="14.0" prefWidth="42.0" text="ETC" textFill="SLATEGRAY" GridPane.rowIndex="9">
+            <Label prefHeight="20.0" prefWidth="135.0" text="Certification Agency" textFill="SLATEGRAY" GridPane.rowIndex="9">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
@@ -90,12 +93,23 @@
             <TextField fx:id="lastNameField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <TextField fx:id="firstNameField" GridPane.columnIndex="1" />
             <TextField fx:id="cityField" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-            <TextField fx:id="stateField" GridPane.columnIndex="1" GridPane.rowIndex="4" />
             <TextField fx:id="postalCodeField" GridPane.columnIndex="1" GridPane.rowIndex="5" />
             <TextField fx:id="phoneNumField" GridPane.columnIndex="1" GridPane.rowIndex="6" />
             <TextField fx:id="emailAddressField" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-            <TextField fx:id="dobField" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-            <TextField GridPane.columnIndex="1" GridPane.rowIndex="9" />
+            <TextField fx:id="certAgencyField" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+            <JFXDatePicker fx:id="dobField" prefHeight="31.0" prefWidth="254.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="50.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+               <children>
+                  <ComboBox prefHeight="25.0" prefWidth="105.0" />
+                  <TextField fx:id="stateField" prefHeight="25.0" prefWidth="158.0" />
+               </children>
+            </HBox>
+            <Label prefHeight="17.0" prefWidth="148.0" text="Certification Dive No." textFill="SLATEGRAY" GridPane.rowIndex="10">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Label>
+            <TextField fx:id="certDiveNoField" GridPane.columnIndex="1" GridPane.rowIndex="10" />
          </children>
       </GridPane>
       <HBox alignment="CENTER" layoutY="372.0" prefHeight="91.0" prefWidth="497.0" spacing="70.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0">

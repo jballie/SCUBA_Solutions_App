@@ -5,6 +5,8 @@
  */
 package scuba.solutions.ui.customers.view;
 
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXDatePicker;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
@@ -20,11 +22,18 @@ import scuba.solutions.ui.customers.model.Customer;
  */
 public class CustomerEditDialogController implements Initializable {
     
-  
+    private final static String[] STATES = {"AK","AL","AR","AZ","CA","CO","CT","DC","DE","FL","GA","GU",
+                                     "HI","IA","ID", "IL","IN","KS","KY","LA","MA","MD","ME","MH",
+                                     "MI","MN","MO","MS","MT","NC","ND","NE","NH","NJ","NM","NV","NY", 
+                                     "OH","OK","OR","PA","PR","PW","RI","SC","SD","TN","TX","UT","VA",
+                                     "VI","VT","WA","WI","WV","WY"};
     
     private Stage dialogStage;
+    
     private Customer customer;
+    
     private boolean okClicked = false;
+    
     @FXML
     private TextField streetField;
     @FXML
@@ -42,13 +51,23 @@ public class CustomerEditDialogController implements Initializable {
     @FXML
     private TextField emailAddressField;
     @FXML
-    private TextField dobField;
+    private JFXDatePicker dobField;
+    @FXML
+    private TextField certAgencyField;
+    @FXML
+    private TextField certDiveNoField;
+    @FXML
+    private JFXButton saveButton;
+    @FXML
+    private JFXButton cancelButton;
+    
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
+        
     }    
     
     
@@ -63,7 +82,7 @@ public class CustomerEditDialogController implements Initializable {
     }
     
       /**
-     * Sets the person to be edited in the dialog.
+     * Sets the customer to be edited in the dialog.
      * 
      * @param person
      */
@@ -84,7 +103,7 @@ public class CustomerEditDialogController implements Initializable {
     }
 
     /**
-     * Called when the user clicks ok.
+     * Called when the user clicks save.
      */
     @FXML
     private void handleSave() {

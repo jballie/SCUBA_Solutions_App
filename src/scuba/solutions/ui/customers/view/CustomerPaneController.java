@@ -20,13 +20,16 @@ import javafx.scene.control.TextField;
 import scuba.solutions.ui.customers.model.Customer;
 
 /**
- * FXML Controller class
+ * Controller class for the Customer Pane Interface.
  *
  * @author Jon
  */
 public class CustomerPaneController implements Initializable {
-
-   private ObservableList<Customer> customerData = FXCollections.observableArrayList();
+    
+    private static final String[] SEARCH_CATEGORIES = { "Customer ID", "First Name", "Last Name", "Date Of Birth"};  
+    
+    private ObservableList<Customer> customerData = FXCollections.observableArrayList();
+   
     @FXML
     private Button homeButton;
     @FXML
@@ -137,6 +140,19 @@ public class CustomerPaneController implements Initializable {
         
     }
     
+    /*
+    * TODO: still figuring this out - but would filter the customerDate list (the table view) based on the category chosen and text inputed from user.
+    */
+    @FXML
+    public void search()
+    {
+        //  processes category selection and and inputed text in the search field (perhaps a seperate method?)
+        // filters the table view data based on the user's search values once search button is clicked.
+    }
     
-    
+
 }
+    
+    
+    
+
