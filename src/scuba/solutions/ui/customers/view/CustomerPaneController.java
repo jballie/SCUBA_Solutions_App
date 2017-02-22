@@ -95,12 +95,14 @@ public class CustomerPaneController implements Initializable {
     }
 
     // when add button clicked on - goes to edit dialog customer
+    @FXML
     public void addCustomer(Customer customer)
     {
         
     }
     
     // when update button clicked on - goes to edit dialog customer
+    @FXML
     public void updateCustomer(Customer customer)
     {
         

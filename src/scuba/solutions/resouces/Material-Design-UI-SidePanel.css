@@ -1,0 +1,17 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Feb 22, 2017, 3:46:33 PM
+    Author     : Jon
+*/
+
+.jfx-button .text
+{
+    -fx-font-family: 'Roboto Medium';
+    -fx-font-size: 18;
+    -fx-font-weight: bold;
+    -fx-text-fill:  #4059a9;
+}

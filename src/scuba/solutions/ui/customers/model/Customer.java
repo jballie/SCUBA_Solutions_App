@@ -23,8 +23,10 @@ public class Customer
     private final StringProperty street = null;
     private final IntegerProperty postalCode = null;
     private final StringProperty city = null;
-    private final ObjectProperty<LocalDate> dateOfBirth = null;
+    private final StringProperty state = null;
+    private final StringProperty phoneNumber = null;
     private final StringProperty emailAddress = null;
+    private final ObjectProperty<LocalDate> dateOfBirth = null;
     private final StringProperty certAgency = null;
     private final IntegerProperty certDiveNo = null;
     
@@ -84,6 +86,22 @@ public class Customer
     
     public void setCity(String city){
         this.city.set(city);
+    }
+    
+    public String getState() {
+        return city.get();
+    }
+    
+    public void setState(String state){
+        this.city.set(state);
+    }
+    
+    public String getPhoneNumber() {
+        return phoneNumber.get();
+    }
+    
+    public void setPhoneNumber(String phoneNumber){
+        this.city.set(phoneNumber);
     }
 
     public LocalDate getDateOfBirth() {
