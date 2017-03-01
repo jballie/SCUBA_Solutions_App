@@ -17,23 +17,33 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 /**
- *
- * @author Jon
+ * Loader for the Customer Pane in the Scuba Solutions App.
+ * @author Jonathan Balliet, Samuel Brock
  */
+
+
 public class CustomerPane extends Application {
-    
+	
+	public static Stage primaryStage;
+
     @Override
-    public void start(Stage stage) throws IOException {
+    public void start(Stage primaryStage) throws IOException {
      Parent root = FXMLLoader.load(getClass().getResource("CustomerPane.fxml"));
      Scene scene = new Scene(root);
-     stage.setScene(scene);
-     stage.show();   
+     primaryStage.setScene(scene);
+     primaryStage.show();   
         
     }
 
     /**
-     * @param args the command line arguments
+     * Returns the primary stage.
+     * @return
      */
+    public static Stage getPrimaryStage() {
+        return primaryStage;
+    }
+
+
     public static void main(String[] args) {
         launch(args);
     }

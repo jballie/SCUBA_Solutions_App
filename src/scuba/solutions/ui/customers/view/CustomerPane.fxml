@@ -3,7 +3,6 @@
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXTextField?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TableColumn?>
@@ -91,7 +90,7 @@
                                     <Label fx:id="dobLabel" text="Label" textFill="#283593" GridPane.columnIndex="1" GridPane.rowIndex="9" />
                                     <Label fx:id="certAgencyLabel" text="Label" textFill="#283593" GridPane.columnIndex="1" GridPane.rowIndex="10" />
                                     <Label text="Customer ID" textFill="#283593" />
-                                    <Label text="Label" textFill="#283593" GridPane.columnIndex="1" />
+                                    <Label fx:id="customerIdLabel" text="Label" textFill="#283593" GridPane.columnIndex="1" />
                                     <Label prefHeight="20.0" prefWidth="173.0" text="Certification Dive No." textFill="#283593" GridPane.rowIndex="11" />
                                     <Label fx:id="certDiveNoLabel" text="Label" textFill="#283593" GridPane.columnIndex="1" GridPane.rowIndex="11" />
                                  </children>
@@ -107,7 +106,7 @@
                   <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" stroke="BLACK" strokeType="INSIDE" width="44.0" BorderPane.alignment="CENTER" />
                </right>
                <bottom>
-                  <HBox alignment="CENTER_RIGHT" prefHeight="67.0" prefWidth="771.0" spacing="55.0" BorderPane.alignment="CENTER">
+                  <HBox alignment="CENTER_RIGHT" prefHeight="99.0" prefWidth="1031.0" spacing="55.0" BorderPane.alignment="CENTER">
                      <opaqueInsets>
                         <Insets />
                      </opaqueInsets>
@@ -115,15 +114,15 @@
                         <Insets />
                      </BorderPane.margin>
                      <padding>
-                        <Insets right="75.0" />
+                        <Insets right="65.0" />
                      </padding>
                      <children>
-                        <JFXButton fx:id="addCustomerButton" buttonType="RAISED" prefHeight="44.0" prefWidth="130.0" style="-fx-background-color: #4059a9;" text="Add Customer" textFill="WHITE">
+                        <JFXButton fx:id="addCustomerButton" buttonType="RAISED" onAction="#addCustomer" prefHeight="44.0" prefWidth="130.0" style="-fx-background-color: #4059a9;" text="Add Customer" textFill="WHITE">
                            <font>
                               <Font name="Roboto Medium" size="14.0" />
                            </font>
                         </JFXButton>
-                        <JFXButton fx:id="updateCustomerButton" buttonType="RAISED" layoutX="800.0" layoutY="22.0" prefHeight="44.0" prefWidth="130.0" style="-fx-background-color: #4059a9;" text="Update Customer" textFill="WHITE">
+                        <JFXButton fx:id="updateCustomerButton" buttonType="RAISED" layoutX="800.0" layoutY="22.0" onAction="#updateCustomer" prefHeight="44.0" prefWidth="130.0" style="-fx-background-color: #4059a9;" text="Update Customer" textFill="WHITE">
                            <font>
                               <Font name="Roboto Medium" size="14.0" />
                            </font>
@@ -134,9 +133,8 @@
                <top>
                   <HBox alignment="CENTER_RIGHT" prefHeight="71.0" prefWidth="1031.0" spacing="10.0" BorderPane.alignment="CENTER">
                      <children>
-                        <JFXTextField fx:id="searchTextField" unFocusColor="#4059a9" />
-                        <ComboBox fx:id="searchByButton" nodeOrientation="LEFT_TO_RIGHT" prefHeight="31.0" prefWidth="98.0" promptText="Search By" style="-fx-background-color: #4059a9;" />
-                        <JFXButton fx:id="searchButton" buttonType="RAISED" onAction="#search" prefHeight="26.0" prefWidth="84.0" style="-fx-background-color: #4059a9;" text="Search" textFill="WHITE">
+                        <JFXTextField fx:id="searchTextField" alignment="CENTER" maxWidth="311.0" minWidth="311.0" prefHeight="38.0" prefWidth="311.0" promptText="Search" unFocusColor="#4059a9" />
+                        <JFXButton fx:id="clearSearchButton" buttonType="RAISED" onAction="#clearSearch" prefHeight="29.0" prefWidth="117.0" style="-fx-background-color: #4059a9;" text="Clear Search" textFill="WHITE">
                            <font>
                               <Font name="Roboto" size="15.0" />
                            </font>
