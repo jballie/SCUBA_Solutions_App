@@ -15,8 +15,8 @@ import java.time.format.DateTimeParseException;
  */
 public class DateUtil 
 {
-    /** The date pattern that is used for conversion. Change as you wish. */
-    private static final String DATE_PATTERN = "dd.MM.yyyy";
+    /** The date pattern that is used for conversion. */
+    private static final String DATE_PATTERN = "MM/dd/yyyy";
 
     /** The date formatter. */
     private static final DateTimeFormatter DATE_FORMATTER = 

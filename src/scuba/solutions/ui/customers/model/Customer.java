@@ -25,14 +25,14 @@ public class Customer
     private final StringProperty firstName;
     private final StringProperty lastName;
     private final StringProperty street;
-    private final IntegerProperty postalCode;
+    private final StringProperty postalCode;
     private final StringProperty city;
     private final StringProperty state;
     private final ObjectProperty<LocalDate> dateOfBirth;
     private final StringProperty phoneNumber;
     private final StringProperty emailAddress;
     private final StringProperty certAgency;
-    private final IntegerProperty certDiveNo;
+    private final StringProperty certDiveNo;
     
     public Customer()
     {
@@ -45,15 +45,15 @@ public class Customer
     	this.customerID = new SimpleIntegerProperty(customerID);
     	this.firstName = new SimpleStringProperty("");
     	this.lastName = new SimpleStringProperty ("");
-    	this.street = new SimpleStringProperty("some street");
-        this.postalCode = new SimpleIntegerProperty(123456);
-        this.city = new SimpleStringProperty("some city");
-        this.state = new SimpleStringProperty("NC");
-        this.dateOfBirth = new SimpleObjectProperty<LocalDate>(LocalDate.of(1999, 2, 21));
-        this.phoneNumber = new SimpleStringProperty("677");
-        this.emailAddress = new SimpleStringProperty("blah@gmail.com");
-        this.certAgency = new SimpleStringProperty("scuba");
-        this.certDiveNo = new SimpleIntegerProperty(67);
+    	this.street = new SimpleStringProperty("");
+        this.postalCode = new SimpleStringProperty("");
+        this.city = new SimpleStringProperty("");
+        this.state = new SimpleStringProperty("");
+        this.dateOfBirth = new SimpleObjectProperty<LocalDate>();
+        this.phoneNumber = new SimpleStringProperty("");
+        this.emailAddress = new SimpleStringProperty("");
+        this.certAgency = new SimpleStringProperty("");
+        this.certDiveNo = new SimpleStringProperty("");
     }
     
     public Customer(int customerID, String firstName, String lastName)
@@ -61,72 +61,24 @@ public class Customer
     	this.customerID = new SimpleIntegerProperty(customerID);
     	this.firstName = new SimpleStringProperty(firstName);
     	this.lastName = new SimpleStringProperty (lastName);
-    	this.street = new SimpleStringProperty("some street");
-        this.postalCode = new SimpleIntegerProperty(123456);
-        this.city = new SimpleStringProperty("some city");
-        this.state = new SimpleStringProperty("NC");
-        this.dateOfBirth = new SimpleObjectProperty<LocalDate>(LocalDate.of(1999, 2, 21));
-        this.phoneNumber = new SimpleStringProperty("677");
-        this.emailAddress = new SimpleStringProperty("blah@gmail.com");
-        this.certAgency = new SimpleStringProperty("scuba");
-        this.certDiveNo = new SimpleIntegerProperty(67);
+    	this.street = new SimpleStringProperty("");
+        this.postalCode = new SimpleStringProperty("");
+        this.city = new SimpleStringProperty("");
+        this.state = new SimpleStringProperty("");
+        this.dateOfBirth = new SimpleObjectProperty<LocalDate>();
+        this.phoneNumber = new SimpleStringProperty("");
+        this.emailAddress = new SimpleStringProperty("");
+        this.certAgency = new SimpleStringProperty("");
+        this.certDiveNo = new SimpleStringProperty("");
         
     	
     }
 
-    /* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode()
-	{
-		final int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((customerID == null) ? 0 : customerID.hashCode());
-		return result;
-	}
-
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj)
-	{
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Customer other = (Customer) obj;
-		if (customerID == null)
-		{
-			if (other.customerID != null)
-				return false;
-		}
-		else if (!customerID.equals(other.customerID))
-			return false;
-		return true;
-	}
-
-
-	public int getCustomerID() {
+    public int getCustomerID() {
         return customerID.get();
     }
     
-    /*
-    Question: Not sure if Customer ID is automatically generated from Database
-    or if we will have to give an individual one ourselves. There is a way to do
-    this that is pretty simple if needed
-    */
     
-    public void setCustomerID(int customerID)
-   
-    {
-        this.customerID.set(customerID);
-    }
     public StringProperty customerIdProperty() {
       String cusIdTemp = Integer.toString(getCustomerID());
       StringProperty cusIdProp = new  SimpleStringProperty(cusIdTemp);
@@ -166,11 +118,11 @@ public class Customer
         this.street.set(street);
     }
 
-    public int getPostalCode() {
+    public String getPostalCode() {
         return postalCode.get();
     }
     
-    public void setPostalCode(int postalCode) {
+    public void setPostalCode(String postalCode) {
         this.postalCode.set(postalCode);
     }
 
@@ -228,13 +180,47 @@ public class Customer
         this.certAgency.set(certAgency);
     }
     
-    public int getCertDiveNo() {
+    public String getCertDiveNo() {
         return certDiveNo.get();
     }
     
-    public void setCertDiveNo(int certDiveNo)
+    public void setCertDiveNo(String certDiveNo)
     {
         this.certDiveNo.set(certDiveNo);
     }
-  
+    
+       
+    @Override
+    public int hashCode()
+    {
+        final int prime = 31;
+	int result = 1;
+	result = prime * result
+            + ((customerID == null) ? 0 : customerID.hashCode());
+	return result;
+    }
+
+
+	
+    @Override
+    public boolean equals(Object obj)
+    {
+	if (this == obj)
+		return true;
+	if (obj == null)
+		return false;
+	if (getClass() != obj.getClass())
+		return false;
+	Customer other = (Customer) obj;
+	if (customerID == null)
+	{
+            if (other.customerID != null)
+		return false;
+	}
+            else if (!customerID.equals(other.customerID))
+		return false;
+	
+        return true;
+    }
+
 }

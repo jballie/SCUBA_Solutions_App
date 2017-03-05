@@ -26,7 +26,7 @@ import javax.swing.JOptionPane;
 
 public final class DbConnection {
 
-		private static final String DB_PROPERTIES_FILE = "database.properties";
+		private static final String DB_PROPERTIES_FILE = "C:\\Users\\Jon\\Documents\\NetBeansProjects\\GitHub\\SCUBA_Solutions_App\\src\\database.properties";
 
 		private static DbConnection me = null;
 
@@ -38,13 +38,13 @@ public final class DbConnection {
 			//Properties p = new Properties();
 			//p.load(new FileInputStream(dbPropertiesFile));
 
-			String username = "";
-			String password = "";
-			String url = "jdbc:derby:ScubaSolutions;create=true";
-			String driver = "org.apache.derby.jdbc.EmbeddedDriver";
+			String username = "scott";
+			String password = "tiger";
+			String url = "jdbc:oracle:thin:@localhost:1521:xe";
+			String driver = "oracle.jdbc.driver.OracleDriver";
 			//url = p.getProperty("jdbc.url");
 			//driver = p.getProperty("jdbc.driver");
-			// Class.forName(driver);
+			//Class.forName(driver);
 
 			dbConn = DriverManager.getConnection(url, username, password);
 		}

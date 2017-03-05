@@ -96,7 +96,7 @@
             <TextField fx:id="certAgencyField" GridPane.columnIndex="1" GridPane.rowIndex="9" />
             <HBox alignment="CENTER_LEFT" prefHeight="54.0" prefWidth="276.0" spacing="50.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
                <children>
-                  <ComboBox fx:id="stateComboBox" prefHeight="33.0" prefWidth="205.0" />
+                  <ComboBox fx:id="stateComboBox" prefHeight="33.0" prefWidth="104.0" />
                </children>
             </HBox>
             <Label prefHeight="20.0" prefWidth="178.0" text="Certification Dive No." textFill="#4059a9" GridPane.rowIndex="10">
@@ -105,7 +105,7 @@
                </font>
             </Label>
             <TextField fx:id="certDiveNoField" GridPane.columnIndex="1" GridPane.rowIndex="10" />
-            <JFXDatePicker fx:id="dobField" defaultColor="#4059a9" prefHeight="38.0" prefWidth="207.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+            <JFXDatePicker fx:id="dobField" defaultColor="#4059a9" prefHeight="38.0" prefWidth="183.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
          </children>
       </GridPane>
       <HBox alignment="CENTER" layoutY="654.0" prefHeight="117.0" prefWidth="602.0" spacing="150.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0">

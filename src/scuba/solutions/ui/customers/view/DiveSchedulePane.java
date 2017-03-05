@@ -5,8 +5,10 @@
  */
 package scuba.solutions.ui.customers.view;
 
+
 import java.io.IOException;
 import javafx.application.Application;
+import static javafx.application.Application.launch;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -17,18 +19,16 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 /**
- * Loader for the Customer Pane in the Scuba Solutions App.
- * @author Jonathan Balliet, Samuel Brock
+ *
+ * @author Jon
  */
-
-
-public class CustomerPane extends Application {
-	
+public class DiveSchedulePane extends Application {
+    
     public static Stage primaryStage;
 
     @Override
     public void start(Stage primaryStage) throws IOException {
-     Parent root = FXMLLoader.load(getClass().getResource("CustomerPane.fxml"));
+     Parent root = FXMLLoader.load(getClass().getResource("DiveSchedule.fxml"));
      Scene scene = new Scene(root);
     
      primaryStage.setScene(scene);
@@ -49,5 +49,4 @@ public class CustomerPane extends Application {
     public static void main(String[] args) {
         launch(args);
     }
-    
 }

@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package scuba.solutions.ui.customers.view;
 
 import com.jfoenix.controls.JFXButton;
@@ -82,7 +78,8 @@ public class CustomerEditDialogController implements Initializable {
      * Initializes the controller class.
      */
     @Override
-    public void initialize(URL url, ResourceBundle rb) {
+    public void initialize(URL url, ResourceBundle rb) 
+    {
     	
     	statesData = FXCollections.observableArrayList();
     	statesData.addAll(STATES);
@@ -90,15 +87,16 @@ public class CustomerEditDialogController implements Initializable {
         
         
         stateComboBox.setOnKeyReleased(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-                String s = jumpTo(event.getText(), stateComboBox.getValue(), stateComboBox.getItems());
-                if (s != null) {
-                    stateComboBox.setValue(s);
-                }
+        @Override
+        public void handle(KeyEvent event) 
+        {
+            String s = jumpTo(event.getText(), stateComboBox.getValue(), stateComboBox.getItems());
+            if (s != null) 
+            {
+                stateComboBox.setValue(s);
             }
-        });
-        
+        }
+        });  
     }    
     
     
@@ -112,10 +110,8 @@ public class CustomerEditDialogController implements Initializable {
         this.dialogStage = dialogStage;
     }
     
-      /**
+    /**
      * Sets the customer to be edited in the dialog.
-     * 
-     * @param person
      */
     public void setCustomer(Customer customer) 
     {
@@ -124,19 +120,17 @@ public class CustomerEditDialogController implements Initializable {
         firstNameField.setText(customer.getFirstName());
         lastNameField.setText(customer.getLastName());
         streetField.setText(customer.getStreet());
-        postalCodeField.setText(Integer.toString(customer.getPostalCode()));
+        postalCodeField.setText(customer.getPostalCode());
         cityField.setText(customer.getCity());
         stateComboBox.setValue(customer.getState());         
         phoneNumField.setText(customer.getPhoneNumber());
         emailAddressField.setText(customer.getEmailAddress());
         dobField.setValue(customer.getDateOfBirth());
         certAgencyField.setText(customer.getCertAgency());
-        certDiveNoField.setText(Integer.toString(customer.getCertDiveNo()));       
+        certDiveNoField.setText(customer.getCertDiveNo());       
     }
     /**
      * Returns true if the user clicked OK, false otherwise.
-     * 
-     * @return
      */
     public boolean isOkClicked() {
         return okClicked;
@@ -149,16 +143,17 @@ public class CustomerEditDialogController implements Initializable {
     private void handleSave() {
         if (isInputValid()) 
         {
-        	customer.setFirstName(firstNameField.getText());
+            customer.setFirstName(firstNameField.getText());
             customer.setLastName(lastNameField.getText());
             customer.setStreet(streetField.getText());
-            customer.setPostalCode(Integer.parseInt(postalCodeField.getText()));
+            customer.setPostalCode(postalCodeField.getText());
             customer.setCity(cityField.getText());
             customer.setState(stateComboBox.getValue());
             customer.setDateOfBirth(dobField.getValue());
+            customer.setPhoneNumber(phoneNumField.getText());
             customer.setEmailAddress(emailAddressField.getText());
             customer.setCertAgency(certAgencyField.getText());
-            customer.setCertDiveNo(Integer.parseInt(certDiveNoField.getText()));
+            customer.setCertDiveNo(certDiveNoField.getText());
             
             // Confirms the save changes before putting them into effect.
             boolean confirm = confirmation();
@@ -237,14 +232,7 @@ public class CustomerEditDialogController implements Initializable {
             	errorMessage += "Customer is not an Adult!\n";
             
             } 
-        
-        
-        try {
-            Integer.parseInt(certDiveNoField.getText());
-        } catch (NumberFormatException e) {
-            errorMessage += "No valid certification dive number (must be an integer)!\n"; 
-        }        
-
+       
         if (errorMessage.length() == 0) {
             return true;
         } else {
@@ -294,8 +282,6 @@ public class CustomerEditDialogController implements Initializable {
     }
     
     
-    
-
     // Goes to the matching letter value in the states comboBox - based on the key user presses.
     private static String jumpTo(String keyPressed, String currentlySelected, List<String> items) 
     {
