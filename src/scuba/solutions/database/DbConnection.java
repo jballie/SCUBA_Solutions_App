@@ -77,37 +77,5 @@ public final class DbConnection {
 				}
 			}
 		}
-
-    
-    /**
-    void setupCustomerTable() {
-        String TABLE_NAME = "CUSTOMER";
-        try {
-            stmt = dbConn.createStatement();
-
-            DatabaseMetaData dbm = dbConn.getMetaData();
-            ResultSet tables = dbm.getTables(null, null, TABLE_NAME.toUpperCase(), null);
-
-            if (tables.next()) {
-                System.out.println("Table " + TABLE_NAME + "already exists. Ready for go!");
-            } else {
-                stmt.execute("CREATE TABLE " + TABLE_NAME + "("
-                        + "	id varchar(200) primary key,\n"
-                        + "	title varchar(200),\n"
-                        + "	author varchar(200),\n"
-                        + "	publisher varchar(100),\n"
-                        + "	isAvail boolean default true"
-                        + " )");
-            }
-        } catch (SQLException e) {
-            System.err.println(e.getMessage() + " --- setupDatabase");
-        } finally {
-        }
-    }
-    */
-    
-    
-    
-
     
 }
