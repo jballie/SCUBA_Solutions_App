@@ -33,7 +33,7 @@ public class CustomerPane extends Application {
     
      primaryStage.setScene(scene);
      primaryStage.show();  
-     primaryStage.setTitle("Customers");
+     //primaryStage.setTitle("Customers");
         
     }
 

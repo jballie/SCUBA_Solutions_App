@@ -617,3 +617,16 @@ text-area{
 }
 
 
+.jfx-tab-pane:top .tab-header-area .tab-header-background{
+    -fx-background-color:  #4059a9;
+}
+
+
+.jfx-radio-button {
+    -fx-selected-color: #4059a9;
+    -fx-unselected-color:  #4059a9;
+}
+
+.jfx-radio-button{
+    -fx-font-size: 18;
+}

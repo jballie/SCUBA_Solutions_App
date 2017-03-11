@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXComboBox?>
+<?import com.jfoenix.controls.JFXDatePicker?>
+<?import com.jfoenix.controls.JFXTabPane?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane id="AnchorPane" prefHeight="448.0" prefWidth="551.0" styleClass="mainFxmlClass" stylesheets="@../../../resouces/Material-Design-UI-Components.css" xmlns="http://javafx.com/javafx/8.0.102" xmlns:fx="http://javafx.com/fxml/1" fx:controller="scuba.solutions.ui.customers.view.CustomerEditDialogController">
+   <children>
+      <JFXTabPane prefHeight="527.0" prefWidth="705.0">
+         <tabs>
+            <Tab text=" Single Dive Trip">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="551.0">
+                     <children>
+                        <BorderPane prefHeight="413.0" prefWidth="551.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <bottom>
+                              <HBox alignment="CENTER" prefHeight="141.0" prefWidth="705.0" spacing="100.0" BorderPane.alignment="CENTER">
+                                 <children>
+                                    <JFXButton fx:id="saveButton" buttonType="RAISED" onAction="#handleSave" prefHeight="60.0" prefWidth="170.0" style="-fx-background-color: #4059a9;" text="Save" textFill="WHITE">
+                                       <font>
+                                          <Font size="18.0" />
+                                       </font>
+                                    </JFXButton>
+                                    <JFXButton fx:id="cancelButton" buttonType="RAISED" layoutX="83.0" layoutY="21.0" onAction="#handleCancel" prefHeight="60.0" prefWidth="170.0" style="-fx-background-color: #4059a9;" text="Cancel" textFill="WHITE">
+                                       <font>
+                                          <Font size="18.0" />
+                                       </font>
+                                    </JFXButton>
+                                 </children>
+                              </HBox>
+                           </bottom>
+                           <left>
+                              <VBox prefHeight="324.0" prefWidth="101.0" BorderPane.alignment="CENTER" />
+                           </left>
+                           <top>
+                              <HBox prefHeight="36.0" prefWidth="705.0" BorderPane.alignment="CENTER" />
+                           </top>
+                           <center>
+                              <VBox prefHeight="459.0" prefWidth="363.0" BorderPane.alignment="CENTER">
+                                 <children>
+                                    <GridPane prefHeight="298.0" prefWidth="517.0">
+                                      <columnConstraints>
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="266.0" minWidth="10.0" prefWidth="251.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="381.0" minWidth="10.0" prefWidth="253.0" />
+                                      </columnConstraints>
+                                      <rowConstraints>
+                                          <RowConstraints maxHeight="156.0" minHeight="0.0" prefHeight="0.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="185.0" minHeight="10.0" prefHeight="75.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="197.0" minHeight="10.0" prefHeight="91.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="197.0" minHeight="0.0" prefHeight="81.0" vgrow="SOMETIMES" />
+                                      </rowConstraints>
+                                       <children>
+                                          <Label style="-fx-font-size: 18;" text="Trip Date" textFill="#4059a9" GridPane.rowIndex="1">
+                                             <font>
+                                                <Font name="System Bold" size="14.0" />
+                                             </font>
+                                             <padding>
+                                                <Insets left="50.0" />
+                                             </padding>
+                                          </Label>
+                                          <Label style="-fx-font-size: 18;" text="Departure Time" textAlignment="CENTER" textFill="#4059a9" GridPane.rowIndex="2">
+                                             <font>
+                                                <Font name="System Bold" size="14.0" />
+                                             </font>
+                                             <padding>
+                                                <Insets left="50.0" />
+                                             </padding>
+                                          </Label>
+                                          <JFXDatePicker defaultColor="#4059a9" prefHeight="38.0" prefWidth="198.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                          <JFXDatePicker defaultColor="#4059a9" prefHeight="38.0" prefWidth="198.0" showTime="true" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                          <Label prefHeight="39.0" prefWidth="161.0" style="-fx-font-size: 18;" text="Available  Seats" textAlignment="CENTER" textFill="#4059a9" GridPane.rowIndex="3">
+                                             <font>
+                                                <Font name="System Bold" size="14.0" />
+                                             </font>
+                                             <GridPane.margin>
+                                                <Insets left="50.0" />
+                                             </GridPane.margin>
+                                          </Label>
+                                          <JFXTextField maxWidth="209.0" minWidth="0.0" prefHeight="38.0" prefWidth="194.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                       </children>
+                                    </GridPane>
+                                 </children></VBox>
+                           </center>
+                           <right>
+                              <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER" />
+                           </right>
+                        </BorderPane>
+                     </children>
+                  </AnchorPane>
+              </content>
+            </Tab>
+            <Tab text="Recurring Dive Trips">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="551.0">
+                     <children>
+                        <VBox prefHeight="492.0" prefWidth="705.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <children>
+                              <HBox alignment="BOTTOM_CENTER" prefHeight="30.0" prefWidth="705.0" spacing="200.0" />
+                              <HBox alignment="BOTTOM_CENTER" layoutX="10.0" layoutY="162.0" prefHeight="37.0" prefWidth="705.0" spacing="220.0">
+                                 <children>
+                                    <Label prefHeight="24.0" prefWidth="124.0" style="-fx-font-size: 18;" text="       Start Date" textFill="#4059a9" />
+                                    <Label prefHeight="20.0" prefWidth="123.0" style="-fx-font-size: 18;" text="End Date" textFill="#4059a9" />
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER" layoutX="10.0" layoutY="199.0" prefHeight="97.0" prefWidth="705.0" spacing="100.0">
+                                 <children>
+                                    <JFXDatePicker defaultColor="#4059a9" prefHeight="38.0" prefWidth="218.0" />
+                                    <JFXDatePicker defaultColor="#4059a9" prefHeight="38.0" prefWidth="218.0" />
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER" prefHeight="35.0" prefWidth="705.0" spacing="100.0" />
+                              <HBox alignment="BOTTOM_CENTER" prefHeight="37.0" prefWidth="705.0" spacing="200.0">
+                                 <children>
+                                    <Label prefHeight="24.0" prefWidth="108.0" style="-fx-font-size: 18;" text="Day of Week" textFill="#4059a9" />
+                                    <Label style="-fx-font-size: 18;" text="Departure Time" textFill="#4059a9" />
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER" prefHeight="112.0" prefWidth="705.0" spacing="120.0">
+                                 <children>
+                                    <JFXComboBox prefHeight="30.0" prefWidth="209.0" />
+                                    <JFXDatePicker defaultColor="#4059a9" prefHeight="38.0" prefWidth="218.0" showTime="true" />
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER" prefHeight="148.0" prefWidth="705.0" spacing="100.0">
+                                 <children>
+                                    <JFXButton fx:id="saveButton1" buttonType="RAISED" onAction="#handleSave" prefHeight="60.0" prefWidth="170.0" style="-fx-background-color: #4059a9;" text="Save" textFill="WHITE">
+                                       <font>
+                                          <Font name="Roboto" size="18.0" />
+                                       </font>
+                                    </JFXButton>
+                                    <JFXButton fx:id="cancelButton1" buttonType="RAISED" onAction="#handleCancel" prefHeight="60.0" prefWidth="170.0" style="-fx-background-color: #4059a9;" text="Cancel" textFill="WHITE">
+                                       <font>
+                                          <Font size="18.0" />
+                                       </font>
+                                    </JFXButton>
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                     </children></AnchorPane>
+              </content>
+            </Tab>
+         </tabs>
+      </JFXTabPane>
+   </children>
+</AnchorPane>
