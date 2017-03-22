@@ -18,8 +18,6 @@ import java.util.Random;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -51,9 +49,6 @@ import scuba.solutions.util.DateUtil;
  * Controller class for the Customer Pane Interface.
  *
  * @author Jonathan Balliet, Samuel Brock
- * Bugs/Todo:
- * Adding and updating is giving an error but can't figure out why - does not shut off program
- * or effect the added/updated info in table or DB.
  */
 public class CustomerPaneController implements Initializable {
       
@@ -77,16 +72,16 @@ public class CustomerPaneController implements Initializable {
     private JFXButton updateCustomerButton;
     @FXML
     private TableView<Customer> customersTable;
-    @FXML
-    private TableColumn<Customer, String> customerIdColumn;
+    //@FXML
+   // private TableColumn<Customer, String> customerIdColumn;
     @FXML
     private TableColumn<Customer, String> firstNameColumn;
     @FXML
     private TableColumn<Customer, String> lastNameColumn;
     @FXML
     private TableColumn<Customer, LocalDate> dobColumn;
-    @FXML
-    private Label customerIdLabel;
+   // @FXML
+    //private Label customerIdLabel;
     @FXML
     private Label firstNameLabel;
     @FXML
@@ -126,26 +121,26 @@ public class CustomerPaneController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) 
     {
     	primaryStage = CustomerPane.getPrimaryStage();
-        initalizeCustomer();
         customersButton.setDisable(true);
-        searchTextField.setAlignment(Pos.CENTER);
-     
-        try
-	{
-            loadCustomers();
-	}
-	catch (FileNotFoundException e)
-	{
-            e.printStackTrace();
-	}
-	catch (IOException e)
-	{
-            e.printStackTrace();
-        }
-	catch (SQLException e)
-	{
-            e.printStackTrace();
-	}
+        
+        initalizeCustomer();
+        
+	    try
+		{
+	    	loadCustomers();
+		}
+		catch (FileNotFoundException e)
+		{
+			e.printStackTrace();
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+	    }
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
          
         // Clear customer details.
         showCustomerDetails(null);
@@ -163,9 +158,9 @@ public class CustomerPaneController implements Initializable {
     */
     public boolean showCustomerEditDialog(Customer customer) 
     {
-	try
+    	try
     	{
-	    // Load the fxml file and create a new stage for the popup dialog.
+    		// Load the fxml file and create a new stage for the popup dialog.
     	    FXMLLoader loader = new FXMLLoader();
     	    loader.setLocation(CustomerPaneController.class.getResource("CustomerEditDialog.fxml"));
     	    Parent root = loader.load();
@@ -184,11 +179,11 @@ public class CustomerPaneController implements Initializable {
 
     	    // Show the dialog and wait until the user closes it
     	    dialogStage.showAndWait();
-
+    	    
     	    return controller.isOkClicked();
     	    
     	}
-	catch (IOException e) 
+		catch (IOException e) 
     	{
             e.printStackTrace();
     	    return false;
@@ -203,7 +198,7 @@ public class CustomerPaneController implements Initializable {
     {
         Customer tempPerson = new Customer();
         boolean okClicked = showCustomerEditDialog(tempPerson);
-        dialogStage.setTitle("Add New Customer");
+      
         if (okClicked) 
         {	
             String fName = tempPerson.getFirstName();
@@ -240,7 +235,7 @@ public class CustomerPaneController implements Initializable {
                 alert.showAndWait();
             } else {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setHeaderText(null);
+                alert.setHeaderText("Error!");
                 alert.setContentText("Error Occured");
                 alert.showAndWait();
             }
@@ -278,27 +273,29 @@ public class CustomerPaneController implements Initializable {
             	PreparedStatement preSt = 
             			connection.prepareStatement("UPDATE CUSTOMER SET first_name=?, last_name=?, street=?,"+
             			 "city=?, state_of_residence=?, zip=?, phone=?, email=?, dob=?, cert_agency=?, cert_no=?"+
-            			 "WHERE CUSTOMER_ID=?");
+            			 "WHERE CUST_ID=?");
           
             	preSt.setString(1, fName);
-    		preSt.setString(2, lName);
-    		preSt.setString(3, street);
-    		preSt.setString(4, city);
-    		preSt.setString(5, state);
-    		preSt.setString(6, zip);
-    		preSt.setString(7, phone);
-    		preSt.setString(8, email);
-    		preSt.setDate(9, Date.valueOf(dob));
-    		preSt.setString(10, certAgen);
-    		preSt.setString(11, certDiveNo);
-    		preSt.setInt(12, custId);
+	    		preSt.setString(2, lName);
+	    		preSt.setString(3, street);
+	    		preSt.setString(4, city);
+	    		preSt.setString(5, state);
+	    		preSt.setString(6, zip);
+	    		preSt.setString(7, phone);
+	    		preSt.setString(8, email);
+	    		preSt.setDate(9, Date.valueOf(dob));
+	    		preSt.setString(10, certAgen);
+	    		preSt.setString(11, certDiveNo);
+	    		preSt.setInt(12, custId);
             	 
-                if (preSt.executeUpdate() == 1) {
+                if (preSt.executeUpdate() == 1)
+                {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setHeaderText("Saved!");
                     alert.setContentText("Customer has successfully been updated in the database.");
                     alert.showAndWait();
-                } else {
+                } else 
+                {
                     Alert alert = new Alert(Alert.AlertType.ERROR);
                     alert.setHeaderText(null);
                     alert.setContentText("Error Occured with update of customer.");
@@ -325,7 +322,7 @@ public class CustomerPaneController implements Initializable {
     // Initializes the columns for the TableView
     public void initalizeCustomer()
     {
-    	customerIdColumn.setCellValueFactory(cellData -> cellData.getValue().customerIdProperty());
+    	//customerIdColumn.setCellValueFactory(cellData -> cellData.getValue().customerIdProperty());
         firstNameColumn.setCellValueFactory(cellData -> cellData.getValue().firstNameProperty());
         lastNameColumn.setCellValueFactory(cellData -> cellData.getValue().lastNameProperty());
         dobColumn.setCellValueFactory(cellData -> cellData.getValue().dateofBirthProperty());
@@ -345,54 +342,57 @@ public class CustomerPaneController implements Initializable {
     	
     	connection = DbConnection.accessDbConnection().getConnection();
 		
-	String query = "SELECT * FROM customer";
-		
-	Statement statement = null;
-	ResultSet result = null;
-    
-	try
-	{
+		String query = "SELECT * FROM customer";
+			
+		Statement statement = null;
+		ResultSet result = null;
+	    
+		try
+		{
             statement = connection.createStatement();
             result = statement.executeQuery(query);
             while(result.next())
             {
                 int customerID = result.getInt(1);
-		Customer customer = new Customer(customerID);
-		customer.setFirstName(result.getString(2));
-		customer.setLastName(result.getString(3));
-		customer.setStreet(result.getString(4));
-		customer.setCity(result.getString(5));
-		customer.setState(result.getString(6));
-		customer.setPostalCode(result.getString(7));
-		customer.setPhoneNumber(result.getString(8));
-		customer.setEmailAddress(result.getString(9));
-		customer.setDateOfBirth((result.getDate(10)).toLocalDate());
-		customer.setCertAgency(result.getString(11));
-		customer.setCertDiveNo(result.getString(12));
-				
-		customerData.add(customer);
+				Customer customer = new Customer(customerID);
+				customer.setFirstName(result.getString(2));
+				customer.setLastName(result.getString(3));
+				customer.setStreet(result.getString(4));
+				customer.setCity(result.getString(5));
+				customer.setState(result.getString(6));
+				customer.setPostalCode(result.getString(7));
+				customer.setPhoneNumber(result.getString(8));
+				customer.setEmailAddress(result.getString(9));
+				customer.setDateOfBirth((result.getDate(10)).toLocalDate());
+				customer.setCertAgency(result.getString(11));
+				customer.setCertDiveNo(result.getString(12));
+						
+				customerData.add(customer);
             }
-	}
-	catch (SQLException e)
-	{
-            e.printStackTrace();
-	}
-	finally
-	{
-            try
-            {
-		if (statement != null)
-		{
-                    statement.close();
-		}		
-                    result.close();
 		}
 		catch (SQLException e)
 		{
-                    Logger.getLogger(CustomerPaneController.class.getName()).log(Level.SEVERE, null, e);
+	            e.printStackTrace();
 		}
-	}
-        customersTable.getItems().setAll(customerData);
+		finally
+		{
+			try
+	        {
+				if (statement != null)
+				{
+					statement.close();
+				}	
+				if (result != null)
+				{
+					result.close();
+				}
+			}
+			catch (SQLException e)
+			{
+				Logger.getLogger(CustomerPaneController.class.getName()).log(Level.SEVERE, null, e);
+			}
+		}
+	        customersTable.setItems(customerData);
     }
     
     /**
@@ -403,7 +403,7 @@ public class CustomerPaneController implements Initializable {
     {
         if (customer != null) 
         {
-            customerIdLabel.setText(Integer.toString(customer.getCustomerID()));
+            //customerIdLabel.setText(Integer.toString(customer.getCustomerID()));
             firstNameLabel.setText(customer.getFirstName());
             lastNameLabel.setText(customer.getLastName());
             streetLabel.setText(customer.getStreet());
@@ -418,7 +418,7 @@ public class CustomerPaneController implements Initializable {
         } 
         else 
         {
-            customerIdLabel.setText("");
+           // customerIdLabel.setText("");
             firstNameLabel.setText("");
             lastNameLabel.setText("");
             streetLabel.setText("");
@@ -459,8 +459,8 @@ public class CustomerPaneController implements Initializable {
             return true; // Search matches last name.
         } else if (fullName.contains(lowerCaseFilter)) {
             return true;  // Search matches full name.
-        } else if (Integer.toString(customer.getCustomerID()).contains(lowerCaseFilter)){
-            return true; // Search matches customer id.
+      //  } else if (Integer.toString(customer.getCustomerID()).contains(lowerCaseFilter)){
+       //     return true; // Search matches customer id.
         } else if (DateUtil.format(customer.getDateOfBirth()).contains(lowerCaseFilter)){
             return true;   // Search matches date of birth.
         }
@@ -488,15 +488,15 @@ public class CustomerPaneController implements Initializable {
     
     // Transitions to the Dive Schedule Scene
     @FXML
-    private void transitionToDiveSchedule() throws IOException
+    public void transitionToDiveSchedule() throws IOException
     {
-            Stage stage = (Stage) rootPane.getScene().getWindow();
-            FXMLLoader loader = new FXMLLoader();
-    	    loader.setLocation(getClass().getResource("DiveSchedule.fxml"));
-    	    Parent root = loader.load();
-            //Stage stage = new Stage();
-            stage.setScene(new Scene(root));
-            stage.show( );
+        Stage stage = (Stage) rootPane.getScene().getWindow();
+        FXMLLoader loader = new FXMLLoader();
+	    loader.setLocation(getClass().getResource("/scuba/solutions/ui/dive_schedule/view/DiveSchedule.fxml"));
+	    Parent root = loader.load();
+        //Stage stage = new Stage();
+        stage.setScene(new Scene(root));
+        stage.show( );
             
     }
 }

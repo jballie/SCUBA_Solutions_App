@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="763.0" prefWidth="602.0" styleClass="mainFxmlClass" stylesheets="@../../../resouces/Material-Design-UI-Components.css" xmlns="http://javafx.com/javafx/8.0.102" xmlns:fx="http://javafx.com/fxml/1" fx:controller="scuba.solutions.ui.customers.view.CustomerEditDialogController">
+<AnchorPane id="AnchorPane" prefHeight="763.0" prefWidth="602.0" styleClass="mainFxmlClass" stylesheets="@../../../resources/Material-Design-UI-Components.css" xmlns="http://javafx.com/javafx/8.0.102" xmlns:fx="http://javafx.com/fxml/1" fx:controller="scuba.solutions.ui.customers.view.CustomerEditDialogController">
    <children>
       <HBox prefHeight="38.0" prefWidth="602.0" style="-fx-background-color: #4059a9;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
       <GridPane layoutX="47.0" layoutY="60.0" prefHeight="575.0" prefWidth="504.0" AnchorPane.bottomAnchor="128.0" AnchorPane.leftAnchor="47.0" AnchorPane.rightAnchor="51.0" AnchorPane.topAnchor="60.0">
@@ -85,27 +85,27 @@
                   <Font name="System Bold" size="14.0" />
                </font>
             </Label>
+              <Label prefHeight="20.0" prefWidth="178.0" text="Certification Dive No." textFill="#4059a9" GridPane.rowIndex="10">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Label>
             <JFXTextField unFocusColor="#2471a3" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <TextField fx:id="streetField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <TextField fx:id="lastNameField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <TextField fx:id="firstNameField" GridPane.columnIndex="1" />
+            <TextField fx:id="lastNameField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <TextField fx:id="streetField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <TextField fx:id="cityField" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-            <TextField fx:id="postalCodeField" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-            <TextField fx:id="phoneNumField" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-            <TextField fx:id="emailAddressField" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-            <TextField fx:id="certAgencyField" GridPane.columnIndex="1" GridPane.rowIndex="9" />
             <HBox alignment="CENTER_LEFT" prefHeight="54.0" prefWidth="276.0" spacing="50.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
                <children>
                   <ComboBox fx:id="stateComboBox" prefHeight="33.0" prefWidth="104.0" />
                </children>
             </HBox>
-            <Label prefHeight="20.0" prefWidth="178.0" text="Certification Dive No." textFill="#4059a9" GridPane.rowIndex="10">
-               <font>
-                  <Font name="System Bold" size="14.0" />
-               </font>
-            </Label>
-            <TextField fx:id="certDiveNoField" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+            <TextField fx:id="postalCodeField" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+            <TextField fx:id="phoneNumField" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+            <TextField fx:id="emailAddressField" GridPane.columnIndex="1" GridPane.rowIndex="7" />
             <JFXDatePicker fx:id="dobField" defaultColor="#4059a9" prefHeight="38.0" prefWidth="183.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+            <TextField fx:id="certAgencyField" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+            <TextField fx:id="certDiveNoField" GridPane.columnIndex="1" GridPane.rowIndex="10" />
          </children>
       </GridPane>
       <HBox alignment="CENTER" layoutY="654.0" prefHeight="117.0" prefWidth="602.0" spacing="150.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0">

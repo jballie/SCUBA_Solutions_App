@@ -189,7 +189,19 @@ public class Customer
         this.certDiveNo.set(certDiveNo);
     }
     
-       
+    public String getFullName()
+    {
+        String fullName = getFirstName() + " " + getLastName();
+        return fullName;
+    }
+    
+     public StringProperty fullNameProperty() 
+     {
+         StringProperty fullNameProp = new SimpleStringProperty(getFullName());
+         
+         return fullNameProp;
+     }
+    
     @Override
     public int hashCode()
     {

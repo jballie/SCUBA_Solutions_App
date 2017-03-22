@@ -1,4 +1,3 @@
-
 package scuba.solutions.ui.dive_schedule.model;
 
 import java.time.LocalDate;
@@ -125,12 +124,12 @@ public class DiveTrip {
     }
     
      public StringProperty dayOfWeekProperty() {
-      return dayOfWeek;
-      
+      return dayOfWeek;      
+    }    
+     
+    public String toString()
+    {
+    	return  "Trip Date: " + tripDate.get().toString() + "\nDeaprt Time: " + departTime.get().toString();
     }
     
-    
-    
-    
 }
-    

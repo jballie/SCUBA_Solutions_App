@@ -23,6 +23,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import scuba.solutions.ui.customers.model.Customer;
+import scuba.solutions.util.AlertUtil;
 import scuba.solutions.util.DateUtil;
 
 /**
@@ -132,7 +133,8 @@ public class CustomerEditDialogController implements Initializable {
     /**
      * Returns true if the user clicked OK, false otherwise.
      */
-    public boolean isOkClicked() {
+    public boolean isOkClicked()
+    {
         return okClicked;
     }
 
@@ -140,7 +142,8 @@ public class CustomerEditDialogController implements Initializable {
      * Called when the user clicks save. Saves the changes after the confirmation is made.
      */
     @FXML
-    private void handleSave() {
+    private void handleSave() 
+    {
         if (isInputValid()) 
         {
             customer.setFirstName(firstNameField.getText());
@@ -156,7 +159,7 @@ public class CustomerEditDialogController implements Initializable {
             customer.setCertDiveNo(certDiveNoField.getText());
             
             // Confirms the save changes before putting them into effect.
-            boolean confirm = confirmation();
+            boolean confirm = AlertUtil.confirmChangesAlert();
             if(confirm)
             {
             	okClicked = true;
@@ -306,27 +309,6 @@ public class CustomerEditDialogController implements Initializable {
         }
         return null;
     }
-    
-    // Confirms the customer addition or changes before they are put into effect.
-    // If the user clicks OK - returns true and update is put into effect.
-    // Otherwise, returns false and not put into effect.
-    private boolean confirmation()
-    {
-    	
-    	Alert alert = new Alert(AlertType.CONFIRMATION);
-    	alert.setTitle("Confirmation Dialog");
-    	alert.setHeaderText("Please confirm the update");
-    	alert.setContentText("Press OK to confirm the update!");
 
-    	Optional<ButtonType> result = alert.showAndWait();
-    	if (result.get() == ButtonType.OK){
-    	    // ... user chose OK
-    		return true;
-    	} else {
-    	    // ... user chose CANCEL or closed the dialog
-    		return false;
-    	}
-    	
-    }
     
 }

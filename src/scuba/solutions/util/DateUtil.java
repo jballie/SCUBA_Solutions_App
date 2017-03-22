@@ -46,7 +46,8 @@ public class DateUtil
      * @return the date object or null if it could not be converted
      */
     public static LocalDate parse(String dateString) {
-        try {
+        try 
+        {
             return DATE_FORMATTER.parse(dateString, LocalDate::from);
         } catch (DateTimeParseException e) {
             return null;
@@ -59,7 +60,8 @@ public class DateUtil
      * @param dateString
      * @return true if the String is a valid date
      */
-    public static boolean validDate(String dateString) {
+    public static boolean validDate(String dateString) 
+    {
         // Try to parse the String.
         return DateUtil.parse(dateString) != null;
     }

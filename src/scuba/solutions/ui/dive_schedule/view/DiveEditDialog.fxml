@@ -6,6 +6,7 @@
 <?import java.net.URL?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -15,7 +16,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="550.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.102" xmlns:fx="http://javafx.com/fxml/1" fx:controller="scuba.solutions.ui.customers.view.DiveEditDialogController">
+<AnchorPane id="AnchorPane" prefHeight="550.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.102" xmlns:fx="http://javafx.com/fxml/1" fx:controller="scuba.solutions.ui.dive_schedule.view.DiveEditDialogController">
    <children>
       <BorderPane layoutX="10.0" layoutY="10.0" prefHeight="423.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <bottom>
@@ -79,8 +80,8 @@
                               <Insets left="50.0" />
                            </padding>
                         </Label>
-                        <JFXDatePicker defaultColor="#4059a9" prefHeight="38.0" prefWidth="198.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <JFXDatePicker defaultColor="#4059a9" prefHeight="38.0" prefWidth="198.0" showTime="true" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <JFXDatePicker fx:id="tripDatePicker" defaultColor="#4059a9" prefHeight="38.0" prefWidth="198.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <JFXDatePicker fx:id="departTimePicker" defaultColor="#4059a9" prefHeight="38.0" prefWidth="198.0" showTime="true" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                         <Label prefHeight="39.0" prefWidth="166.0" style="-fx-font-size: 18;" text="Cancel Dive Trip?" textAlignment="CENTER" textFill="#4059a9" GridPane.rowIndex="3">
                            <font>
                               <Font name="System Bold" size="14.0" />
@@ -91,12 +92,15 @@
                         </Label>
                         <HBox prefHeight="76.0" prefWidth="269.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
                            <children>
-                              <JFXRadioButton prefHeight="113.0" prefWidth="296.0" text="Yes" textFill="#4059a9">
+                              <JFXRadioButton fx:id="yesCancelRadio" prefHeight="113.0" prefWidth="296.0" text="Yes" textFill="#4059a9">
                                  <font>
                                     <Font name="Roboto" size="18.0" />
                                  </font>
+                                 <toggleGroup>
+                                    <ToggleGroup fx:id="cancelRadios" />
+                                 </toggleGroup>
                               </JFXRadioButton>
-                              <JFXRadioButton prefHeight="113.0" prefWidth="331.0" text="No" textFill="#4059a9">
+                              <JFXRadioButton fx:id="noCancelRadio" prefHeight="113.0" prefWidth="331.0" text="No" textFill="#4059a9" toggleGroup="$cancelRadios">
                                  <font>
                                     <Font name="Roboto" size="18.0" />
                                  </font>
@@ -115,6 +119,6 @@
    </children>
    <stylesheets>
       <URL value="@../../../Material-Design-UI-Components.css" />
-      <URL value="@../../../resouces/Material-Design-UI-Components.css" />
+      <URL value="@../../../resources/Material-Design-UI-Components.css" />
    </stylesheets>
 </AnchorPane>
