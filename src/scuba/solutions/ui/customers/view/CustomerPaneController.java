@@ -79,7 +79,7 @@ public class CustomerPaneController implements Initializable {
     @FXML
     private TableColumn<Customer, String> lastNameColumn;
     @FXML
-    private TableColumn<Customer, LocalDate> dobColumn;
+    private TableColumn<Customer, String> dobColumn;
    // @FXML
     //private Label customerIdLabel;
     @FXML
@@ -176,7 +176,7 @@ public class CustomerPaneController implements Initializable {
     	    CustomerEditDialogController controller = loader.getController();
     	    controller.setDialogStage(dialogStage);
     	    controller.setCustomer(customer);
-
+            
     	    // Show the dialog and wait until the user closes it
     	    dialogStage.showAndWait();
     	    
@@ -195,10 +195,12 @@ public class CustomerPaneController implements Initializable {
     // for adding the information for a new customer.
     @FXML
     public void addCustomer() throws SQLException, FileNotFoundException, IOException
-    {
+    {   
+        addCustomerButton.setDisable(true);
         Customer tempPerson = new Customer();
         boolean okClicked = showCustomerEditDialog(tempPerson);
-      
+        
+        
         if (okClicked) 
         {	
             String fName = tempPerson.getFirstName();
@@ -233,13 +235,16 @@ public class CustomerPaneController implements Initializable {
                 alert.setHeaderText("Saved!");
                 alert.setContentText("Customer has successfully been added to the database.");
                 alert.showAndWait();
+                
             } else {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setHeaderText("Error!");
                 alert.setContentText("Error Occured");
                 alert.showAndWait();
+                
             }
         }
+        addCustomerButton.setDisable(false);
         loadCustomers();
     }
     
@@ -248,12 +253,13 @@ public class CustomerPaneController implements Initializable {
     @FXML
     public void updateCustomer() throws FileNotFoundException, IOException, SQLException
     {
+        updateCustomerButton.setDisable(true);
     	Customer selectedPerson = (Customer) customersTable.getSelectionModel().getSelectedItem();
  
          if (selectedPerson != null)
          {
             boolean okClicked = showCustomerEditDialog(selectedPerson);
-             
+            
             if (okClicked) 
             {
             	 
@@ -302,6 +308,7 @@ public class CustomerPaneController implements Initializable {
                     alert.showAndWait();
                 }
             	 
+                 updateCustomerButton.setDisable(false);
                  showCustomerDetails(selectedPerson);
 
              }
@@ -316,7 +323,9 @@ public class CustomerPaneController implements Initializable {
              alert.setContentText("Please select a customer in the table to update.");
 
              alert.showAndWait();
+             updateCustomerButton.setDisable(false);
          }
+         loadCustomers();
     }
     
     // Initializes the columns for the TableView
@@ -393,6 +402,7 @@ public class CustomerPaneController implements Initializable {
 			}
 		}
 	        customersTable.setItems(customerData);
+                
     }
     
     /**

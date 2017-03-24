@@ -158,10 +158,10 @@ public class Customer
         this.dateOfBirth.set(dateOfBirth);
     }
     
-    public ObjectProperty<LocalDate> dateofBirthProperty() {
+    public StringProperty dateofBirthProperty() {
     	String dobTemp = DateUtil.format(getDateOfBirth());
     	StringProperty dobProp = new SimpleStringProperty(dobTemp);
-    	return dateOfBirth;
+    	return dobProp;
     }
 
     public String getEmailAddress() {

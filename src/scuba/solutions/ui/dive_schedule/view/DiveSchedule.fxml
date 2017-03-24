@@ -39,12 +39,12 @@
                         <Insets />
                      </BorderPane.margin>
                      <children>
-                        <JFXButton buttonType="RAISED" prefHeight="50.0" prefWidth="150.0" style="-fx-background-color: #4059a9;" text="New Reservation" textFill="WHITE">
+                        <JFXButton fx:id="newReservationButton" buttonType="RAISED" prefHeight="50.0" prefWidth="150.0" style="-fx-background-color: #4059a9;" text="New Reservation" textFill="WHITE">
                            <font>
                               <Font name="Roboto Medium" size="15.0" />
                            </font>
                         </JFXButton>
-                        <JFXButton buttonType="RAISED" layoutX="10.0" layoutY="33.0" onAction="#addTrip" prefHeight="50.0" prefWidth="150.0" style="-fx-background-color: #4059a9;" text="New Dive" textFill="WHITE">
+                        <JFXButton fx:id="newDiveButton" buttonType="RAISED" layoutX="10.0" layoutY="33.0" onAction="#addTrip" prefHeight="50.0" prefWidth="150.0" style="-fx-background-color: #4059a9;" text="New Dive" textFill="WHITE">
                            <HBox.margin>
                               <Insets />
                            </HBox.margin>
@@ -57,7 +57,7 @@
                               <Font name="Roboto Medium" size="15.0" />
                            </font>
                         </JFXButton>
-                        <JFXButton buttonType="RAISED" layoutX="424.0" layoutY="33.0" prefHeight="50.0" prefWidth="150.0" style="-fx-background-color: #4059a9;" text="View Weather" textFill="WHITE">
+                        <JFXButton fx:id="viewWeatherButton" buttonType="RAISED" layoutX="424.0" layoutY="33.0" prefHeight="50.0" prefWidth="150.0" style="-fx-background-color: #4059a9;" text="View Weather" textFill="WHITE">
                            <HBox.margin>
                               <Insets />
                            </HBox.margin>
@@ -74,7 +74,7 @@
                <top>
                   <HBox alignment="CENTER_RIGHT" prefHeight="82.0" prefWidth="1223.0" spacing="10.0" BorderPane.alignment="CENTER">
                      <children>
-                        <JFXTextField fx:id="searchTextField" alignment="CENTER" maxWidth="311.0" minWidth="280.0" prefHeight="38.0" prefWidth="280.0" promptText="Search Dive Trip" unFocusColor="#4059a9" />
+                        <JFXTextField fx:id="searchTextField" alignment="CENTER" maxWidth="311.0" minWidth="280.0" prefHeight="38.0" prefWidth="280.0" promptText="Search Dive Trips" unFocusColor="#4059a9" />
                         <JFXButton fx:id="clearSearchButton" buttonType="RAISED" onAction="#clearSearch" prefHeight="29.0" prefWidth="117.0" style="-fx-background-color: #4059a9;" text="Clear Search" textFill="WHITE">
                            <font>
                               <Font name="Roboto" size="15.0" />
@@ -120,7 +120,7 @@
                                     <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="620.0" prefWidth="323.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <children>
                                           <Label alignment="CENTER" prefHeight="45.0" prefWidth="239.0" text="Reservations" textFill="#4059a9" />
-                                          <TableView fx:id="customersTable" prefHeight="548.0" prefWidth="226.0">
+                                          <TableView fx:id="reservationsTable" prefHeight="548.0" prefWidth="226.0">
                                              <columns>
                                                 <TableColumn fx:id="fullNameColumn" prefWidth="95.0" text="Full Name" />
                                                 <TableColumn fx:id="statusColumn" prefWidth="100.0" text=" Status" />
@@ -163,7 +163,7 @@
                                                 <Insets left="30.0" />
                                              </padding>
                                           </GridPane>
-                                          <JFXButton buttonType="RAISED" prefHeight="44.0" prefWidth="147.0" style="-fx-background-color: #4059a9;" text="Update Reservation" textFill="WHITE">
+                                          <JFXButton fx:id="updateReservationButton" buttonType="RAISED" onAction="#updateReservation" prefHeight="44.0" prefWidth="147.0" style="-fx-background-color: #4059a9;" text="Update Reservation" textFill="WHITE">
                                              <VBox.margin>
                                                 <Insets left="60.0" top="50.0" />
                                              </VBox.margin>

@@ -51,9 +51,12 @@ public class DiveTrip {
         this.tripDate.set(tripDate);
     }
     
-    public ObjectProperty<LocalDate> tripDateProperty() {
-    	return tripDate;
+    public StringProperty tripDateProperty() {
+        String dateTemp = DateUtil.format(getTripDate());
+    	StringProperty dateProp = new SimpleStringProperty(dateTemp);
+    	return dateProp;
     }
+
       
     public int getAvailSeats() {
         return availSeats.get();

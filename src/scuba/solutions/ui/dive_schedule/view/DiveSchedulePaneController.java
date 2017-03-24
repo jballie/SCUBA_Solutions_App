@@ -43,7 +43,10 @@ import scuba.solutions.database.DbConnection;
 import scuba.solutions.ui.customers.model.Customer;
 import scuba.solutions.ui.customers.view.CustomerPaneController;
 import scuba.solutions.ui.dive_schedule.model.DiveTrip;
-import scuba.solutions.ui.dive_schedule.model.Waiver;
+import scuba.solutions.ui.reservations.model.Waiver;
+import scuba.solutions.ui.reservations.model.Payment;
+import scuba.solutions.ui.reservations.model.Reservation;
+import scuba.solutions.ui.reservations.view.ReservationEditDialogController;
 import scuba.solutions.util.AlertUtil;
 import scuba.solutions.util.SQLUtil;
 
@@ -58,8 +61,8 @@ import scuba.solutions.util.SQLUtil;
 public class DiveSchedulePaneController implements Initializable 
 {
     private static Connection connection;    
-    private ObservableList<Customer>  customerData = FXCollections.observableArrayList();
-    private ObservableList<DiveTrip>  tripData = FXCollections.observableArrayList();    
+    private final ObservableList<Reservation>  reservationData = FXCollections.observableArrayList();
+    private final ObservableList<DiveTrip>  tripData = FXCollections.observableArrayList();    
     private Stage primaryStage;
     private Stage dialogStage;
     private String currentTab;
@@ -78,11 +81,11 @@ public class DiveSchedulePaneController implements Initializable
     @FXML
     private JFXButton clearSearchButton;
     @FXML
-    private TableView<Customer> customersTable;
+    private TableView<Reservation> reservationsTable;
     @FXML
     private TableView<DiveTrip> tripTable;
     @FXML
-    private TableColumn<DiveTrip, LocalDate> tripDateColumn;
+    private TableColumn<DiveTrip, String> tripDateColumn;
     @FXML
     private TableColumn<DiveTrip, String> dayOfWeekColumn;
     @FXML
@@ -92,7 +95,7 @@ public class DiveSchedulePaneController implements Initializable
     @FXML
     private TableColumn<DiveTrip, String> weatherStatusColumn;
     @FXML
-    private TableColumn<Customer, String> fullNameColumn;
+    private TableColumn<Reservation, String> fullNameColumn;
     @FXML
     private Label firstNameLabel;
     @FXML
@@ -101,6 +104,22 @@ public class DiveSchedulePaneController implements Initializable
     private Label waiverLabel;
     @FXML
     private Label paymentLabel;
+    @FXML
+    private JFXButton newReservationButton;
+    @FXML
+    private JFXButton newDiveButton;
+    @FXML
+    private JFXButton updateDiveButton;
+    @FXML
+    private JFXButton viewWeatherButton;
+    @FXML
+    private TableColumn<Reservation, String> statusColumn;
+    @FXML
+    private JFXButton updateReservationButton;
+    
+   private Waiver waiver = new Waiver();
+    private Payment payment = new Payment();
+    private int tripId;
 
     /**
      * Initializes the controller class.
@@ -112,7 +131,7 @@ public class DiveSchedulePaneController implements Initializable
         diveScheduleButton.setDisable(true);
         
         initializeTrip();
-        initializeCustomer();
+        initializeReservation();
         
         try
         {
@@ -130,12 +149,15 @@ public class DiveSchedulePaneController implements Initializable
         {
             AlertUtil.showDbErrorAlert("Error with loading Dive Trips to the Table", e);
         }
+        
+        // Clear customer details.
+        
 
         tripTable.getSelectionModel().selectedItemProperty().addListener(
-        (observable, oldValue, newValue) -> loadTripCustomers(newValue));
+        (observable, oldValue, newValue) -> loadTripReservations(newValue));
         
-        customersTable.getSelectionModel().selectedItemProperty().addListener(
-        (observable, oldValue, newValue) -> showCustomerStatusDetails(newValue));
+        reservationsTable.getSelectionModel().selectedItemProperty().addListener(
+        (observable, oldValue, newValue) -> showReservationStatusDetails(newValue));
     }    
     
     public void loadDiveTrips() throws FileNotFoundException, IOException, SQLException
@@ -175,6 +197,7 @@ public class DiveSchedulePaneController implements Initializable
     	{
             AlertUtil.showDbErrorAlert("Error with selecting and adding Dive Trips", e);
     	}
+        /*
     	finally
     	{
             try
@@ -189,136 +212,176 @@ public class DiveSchedulePaneController implements Initializable
             {
             	AlertUtil.showDbErrorAlert("Error with DB Connection", e);
             }
+            
     	}
-        
+        */
         tripTable.setItems(tripData);
     }
     
     // Retrieves customers in dive trip    
-    private void loadTripCustomers(DiveTrip selectedTrip)
+    private void loadTripReservations(DiveTrip selectedTrip)
     { 
        
-       customerData.clear();
-       
-       int tripID = 0;
+         reservationData.clear();
  
+       
        if (selectedTrip != null) 
        {
-           tripID = selectedTrip.getTripId();
+           tripId = selectedTrip.getTripId();
        }
                
-       PreparedStatement preSt = null;           
-       ResultSet result = null;          
-       PreparedStatement statement = null;
-       ResultSet resultSet = null; 
+         PreparedStatement preSt = null;           
+         ResultSet result = null;          
+         PreparedStatement statement = null;
+         ResultSet resultSet = null; 
          
-       try
-       {
-            preSt = connection.prepareStatement("SELECT CUST_ID FROM RESERVATION WHERE TRIP_ID=?");
-
-            preSt.setInt(1, tripID);
-
-            result = preSt.executeQuery();
-
+         try
+         {
+           
+           preSt = connection.prepareStatement("SELECT * FROM RESERVATION WHERE TRIP_ID=?");
+          
+           preSt.setInt(1, tripId);
+           
+           result = preSt.executeQuery();
+           
             while(result.next())
             {
-                int custID = result.getInt(1);
+            	int restID = result.getInt(1);
+                int custID = result.getInt(2);
+                int diveID = result.getInt(3);
+                String status = result.getString(4);
+                
                 statement = connection.prepareStatement("SELECT FIRST_NAME, LAST_NAME FROM CUSTOMER WHERE CUST_ID=?");
-
+          
                 statement.setInt(1, custID);
-
+           
                 resultSet = statement.executeQuery();
                 resultSet.next();
-
+                
                 String firstName = resultSet.getString(1);
                 String lastName = resultSet.getString(2);
-
+                
                 Customer customer = new Customer(custID, firstName, lastName);
+                Reservation res = new Reservation(restID);
+                res.setCustomer(customer);
+                res.setDiveTrip(diveID);
+                res.setStatus(status);
 
-                customerData.add(customer);
+                reservationData.add(res);
             }
-        }
-        catch (SQLException e)
-        {
-            AlertUtil.showDbErrorAlert("Error with loading Reserved Customers into Table", e);
-        }
-            finally
-            {
-                try
-                {
-                    if (statement != null || preSt != null)
-                    {
-                        statement.close();
-                        preSt.close();
-                    }
-
+         }
+         catch (SQLException e)
+         {
+            e.printStackTrace();
+         }
+         finally
+         {
+             try
+             {
+            	if (statement != null)
+                            statement.close();
+       
+                if(preSt != null)
+                    preSt.close();
+                 
+                if(resultSet != null)
                     resultSet.close();
+                
+                if(result != null)
                     result.close();
+                    
+                } catch (SQLException e) {
+                    Logger.getLogger(DiveSchedulePaneController.class.getName()).log(Level.SEVERE, null, e);
                 }
-                catch (SQLException e)
-                {
-                    AlertUtil.showDbErrorAlert("Error with DB Connection", e);
-                }
-        }
-
-        customersTable.setItems(customerData);   
+         	}
+         
+        reservationsTable.setItems(reservationData);   
    }
 
-   private void showCustomerStatusDetails(Customer customer)
+   private void showReservationStatusDetails(Reservation reservation)
     {
-        int customerId = customer.getCustomerID();
-        Waiver waiver = new Waiver();
+   int reservationId = 0;
+        if(reservation != null) {
+        	 reservationId = reservation.getReservationId();
+        }
         PreparedStatement statement = null;
         ResultSet resultSet = null; 
-         
-        try 
-        {
-            statement = connection.prepareStatement("SELECT RESERVATION_ID FROM RESERVATION WHERE CUST_ID=?");          
-            statement.setInt(1, customerId);           
-            resultSet = statement.executeQuery();            
-            resultSet.next();
+       
+        try {
+            /* 
+            statement = connection.prepareStatement("SELECT RESERVATION_ID FROM RESERVATION WHERE CUST_ID=? AND TRIP_ID=?");          
+            statement.setInt(1, customerId);
+            statement.setInt(2, tripId);
             
-            int reservationId = resultSet.getInt(1);
-            
+            System.out.println(tripId);
+            resultSet = statement.executeQuery(); 
+            if(resultSet.next())
+            {
+                reservationId = resultSet.getInt(1);
+            }
+            */
+        	
             statement = connection.prepareStatement("SELECT * FROM WAIVER WHERE RESERVATION_ID=?");            
             statement.setInt(1, reservationId);            
             resultSet = statement.executeQuery();            
-            resultSet.next();
             
-            waiver.setReservationId(reservationId);            
-            waiver.setDateSigned(resultSet.getDate(2).toLocalDate());
-            waiver.setERFirst(resultSet.getString(3));
-            waiver.setERLast(resultSet.getString(4));
-            waiver.setERPhone(resultSet.getString(5));   
             
-        } 
-        catch (SQLException e)
+            waiver.setReservationId(reservationId);
+            
+            if(resultSet.next()) {
+                waiver.setWaiverStatus(resultSet.getString(2));
+                waiver.setDateSigned(resultSet.getDate(3).toLocalDate());
+                waiver.setERFirst(resultSet.getString(4));
+                waiver.setERLast(resultSet.getString(5));
+                waiver.setERPhone(resultSet.getString(6));
+            }
+            
+            statement = connection.prepareStatement("SELECT * FROM PAYMENT WHERE RESERVATION_ID=?");            
+            statement.setInt(1, reservationId);            
+            resultSet = statement.executeQuery();            
+            
+            if(resultSet.next()) {            
+                payment.setReservationId(reservationId);
+                payment.setPaymentStatus(resultSet.getString(2));
+                payment.setCCConfirmNo(resultSet.getInt(3));
+                payment.setDateProcessed(resultSet.getDate(4).toLocalDate());
+                payment.setAmount(resultSet.getInt(5));
+            }
+            
+        } catch (SQLException e)
         {
-            AlertUtil.showDbErrorAlert("Error with loading details for a Reserved Customer", e);
+            e.printStackTrace();
+        }
+        catch(NullPointerException e)
+        {
+        	e.printStackTrace();
         }
         finally
         {
-            try
+        	try
             {
-            	if (statement != null)
-            	{
-                    statement.close();
-            	}
-                
+        		if (statement != null)
+        		{
+        			statement.close();
+        		}		
                 resultSet.close();
-            }
-            catch (SQLException e)
-            {
+        	}
+    		catch (SQLException e)
+    		{
                 Logger.getLogger(DiveSchedulePaneController.class.getName()).log(Level.SEVERE, null, e);
+    		}
+            catch(NullPointerException e)
+            {
+            	e.printStackTrace();
             }
         }
         
-        if (customer != null) 
+        if (reservation != null) 	
         {
-            firstNameLabel.setText(customer.getFirstName());
-            lastNameLabel.setText(customer.getLastName());
-            waiverLabel.setText(waiver.isComplete());
-            //paymentLabel.setText();
+            firstNameLabel.setText(reservation.getCustomer().getFirstName());
+            lastNameLabel.setText(reservation.getCustomer().getLastName());
+            waiverLabel.setText(waiver.getWaiverStatus());
+            paymentLabel.setText(payment.getPaymentStatus());
         } 
         else 
         {
@@ -338,9 +401,10 @@ public class DiveSchedulePaneController implements Initializable
         weatherStatusColumn.setCellValueFactory(cellData -> cellData.getValue().weatherStatusProperty());
     }
    
-   public void initializeCustomer()
+   public void initializeReservation()
    {
-       fullNameColumn.setCellValueFactory(cellData -> cellData.getValue().fullNameProperty());
+       fullNameColumn.setCellValueFactory(cellData -> cellData.getValue().getCustomer().fullNameProperty());
+       statusColumn.setCellValueFactory(cellData -> cellData.getValue().statusProperty());
    }
    
    public boolean showDiveEditDialog(DiveTrip trip) 
@@ -380,6 +444,7 @@ public class DiveSchedulePaneController implements Initializable
    @FXML
    public void updateTrip() throws FileNotFoundException, IOException, SQLException
    {
+        updateDiveButton.setDisable(true);
         DiveTrip selectedTrip = (DiveTrip) tripTable.getSelectionModel().getSelectedItem();
 
         if (selectedTrip != null)
@@ -420,7 +485,11 @@ public class DiveSchedulePaneController implements Initializable
                 {
                     AlertUtil.showDbErrorAlert("Error Occured with the Update of the Dive Trip", e);
                 }
-
+                finally
+                {
+                    updateDiveButton.setDisable(false);
+                }
+               
                 loadDiveTrips();
             
             }
@@ -429,7 +498,9 @@ public class DiveSchedulePaneController implements Initializable
         {
             // If nothing is selected a warning message will pop-up
             AlertUtil.noSelectionSAlert("No Dive Trip Selected", "Please Select A Dive Trip in the Table to Update.");
+           
         }
+        updateDiveButton.setDisable(false);
    }
    
    
@@ -469,19 +540,20 @@ public class DiveSchedulePaneController implements Initializable
    @FXML
    public void addTrip() throws FileNotFoundException, IOException, SQLException
    {
+       newDiveButton.setDisable(true);
        DiveTrip trip = new DiveTrip();
        boolean okClicked = showDiveAddDialog(trip);
        currentTab = DiveAddDialogController.getTab();
-       
-       if (okClicked && currentTab.equalsIgnoreCase("singleDiveTab"))
+       try 
        {
+            if (okClicked && currentTab.equalsIgnoreCase("singleDiveTab"))
+            {
             LocalDate tripDate = trip.getTripDate();
             LocalTime departTime = trip.getDepartTime();
             String time = SQLUtil.localTimeToInterval(departTime);
             PreparedStatement preSt;
 
-            try 
-            {
+            
                 preSt = connection.prepareStatement("INSERT INTO DIVE_TRIP "
                 + "(trip_date, departure_time)"
                 + " values(?, ?)");
@@ -493,15 +565,29 @@ public class DiveSchedulePaneController implements Initializable
                 {
                     AlertUtil.showDbSavedAlert("Dive Trip has successfully been added to the database.");
                 }
-            } 
-            catch (SQLException e) 
-            {
+            }
+        }
+        catch (SQLException e) 
+        {
                 AlertUtil.showDbErrorAlert("Error Occured with the Addition of the Dive Trip.", e);
+                
+            }
+            catch (Exception e)
+            {
+                
+            }
+            finally
+            {
+                newDiveButton.setDisable(false);
             }
        		
+            
             loadDiveTrips();
                   
-       }
+       try
+       {
+          
+       
        
        if (okClicked && currentTab.equalsIgnoreCase("recurringDiveTab"))
        {
@@ -511,8 +597,7 @@ public class DiveSchedulePaneController implements Initializable
                             + "(trip_date, departure_time)"
                             + " values(?, ?)");
   			
-            try 
-            {
+           
        			
                 for(DiveTrip diveTrip: trips)
                 {
@@ -533,15 +618,202 @@ public class DiveSchedulePaneController implements Initializable
                     AlertUtil.showDbSavedAlert("Recurring Dive Trips have successfully been added to the database.");
                 //}
        		}
+       }        
                 catch (SQLException e) 
        		{
                     AlertUtil.showDbErrorAlert("Error Occured with the Additon of the Recurring Dive Trips.", e);
        		}
-  			
+                catch (Exception e)
+                {
+                    
+                }
+                finally
+                {
+                    newDiveButton.setDisable(false);
+                }
+            
             loadDiveTrips();
+       
+      newDiveButton.setDisable(false);
+   }
+   
+  public boolean showReservationEditDialog() {
+       try
+    	{
+    	   FXMLLoader loader = new FXMLLoader();
+    	   loader.setLocation(DiveSchedulePaneController.class.getResource("/scuba/solutions/ui/reservations/view/ReservationEditDialog.fxml"));
+    	   Parent root = loader.load();
+
+    	   dialogStage = new Stage();
+    	   dialogStage.initModality(Modality.WINDOW_MODAL);
+    	   dialogStage.initOwner(primaryStage);
+    	   Scene scene = new Scene(root);
+    	   dialogStage.setScene(scene);
+
+    	   ReservationEditDialogController controller = loader.getController();
+    	   controller.setDialogStage(dialogStage);
+    	   controller.setWaiver(waiver);
+           controller.setPayment(payment);
+
+    	   dialogStage.showAndWait();
+
+    	   return controller.isOkClicked();
+    	   
+        }
+       catch (IOException e) 
+       {
+           e.printStackTrace();
+    	   return false;
        }
    }
+   
+   /**
+    * Updates customer reservation in WAIVER and PAYMENT tables based on
+    * user entry.  Calls book() method
+    * 
+    * @throws FileNotFoundException
+    * @throws IOException
+    * @throws SQLException 
+    */
+    @FXML
+    public void updateReservation() throws FileNotFoundException, IOException, SQLException {
+        
+    	Reservation selectedReservation = (Reservation) reservationsTable.getSelectionModel().getSelectedItem();
+         if (selectedReservation != null)
+         {
+            boolean okClicked = showReservationEditDialog();
+            
+            if (okClicked) 
+            {            	 
+            	int reservationId = waiver.getReservationId();
+                LocalDate dateSigned = waiver.getDateSigned();
+            	String erLast = waiver.getERLast();
+            	String erFirst = waiver.getERFirst();
+            	String erPhone = waiver.getERPhone();
+                 
+            	PreparedStatement preSt1 = 
+            			connection.prepareStatement("UPDATE WAIVER SET date_signed=?, er_first=?, er_last=?,"+
+            			 "er_phone=? WHERE reservation_id=?");
+          
+            	preSt1.setDate(1, Date.valueOf(dateSigned));
+        		preSt1.setString(2, erFirst);
+        		preSt1.setString(3, erLast);
+        		preSt1.setString(4, erPhone);
+        		preSt1.setInt(5, reservationId);
+                
+                int ccConfirmNo = payment.getCCConfirmNo();
+                LocalDate dateProc = payment.getDateProcessed();
+                int amount = payment.getAmount();
+          
+               PreparedStatement preSt2 = 
+            			connection.prepareStatement("UPDATE PAYMENT SET cc_confirm_no=?, date_processed=?, amount=?"+
+            			 "WHERE reservation_id=?");
+          
+            	preSt2.setInt(1, ccConfirmNo);
+        		preSt2.setDate(2, Date.valueOf(dateProc));
+        		preSt2.setInt(3, amount);
+        		preSt2.setInt(4, reservationId);
+                
+                if (preSt1.executeUpdate() == 1 && preSt2.executeUpdate() == 1) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setHeaderText("Saved!");
+                    alert.setContentText("Reservation has successfully been updated in the database.");
+                    alert.showAndWait();
+                } else {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setHeaderText(null);
+                    alert.setContentText("Error Occured with update of reservation.");
+                    alert.showAndWait();
+                }
+                book();
+                showReservationStatusDetails(selectedReservation);
+             }
+         } 
+         else 
+         {
+             Alert alert = new Alert(Alert.AlertType.WARNING);
+             alert.initOwner(DiveSchedulePane.getPrimaryStage());
+             alert.setTitle("No Selection");
+             alert.setHeaderText("No Customer Selected");
+             alert.setContentText("Please select a customer in the table to update.");
+
+             alert.showAndWait();
+         }
+    }
     
+     /**
+     * Updates RESERVATION, WAIVER, and PAYMENT tables to indicate completeness
+     * of data entries
+     * 
+     * @throws FileNotFoundException
+     * @throws IOException
+     * @throws SQLException 
+     */
+    public void book() throws FileNotFoundException, IOException, SQLException {
+        
+        int reservationId = waiver.getReservationId();
+
+        String update = null;		
+        Statement statement = connection.createStatement();
+        
+        if(waiver.isComplete()) 
+        {
+            statement.executeUpdate("UPDATE WAIVER SET waiver_status='Complete' WHERE reservation_id=" + reservationId);
+        } else 
+        {
+           statement.executeUpdate("UPDATE WAIVER SET waiver_status='Incomplete' WHERE reservation_id=" + reservationId);
+        }
+        
+        if(payment.isComplete()) 
+        {
+            statement.executeUpdate("UPDATE PAYMENT SET payment_status='Paid' WHERE reservation_id=" +  + reservationId);
+        } else 
+        {
+            statement.executeUpdate("UPDATE PAYMENT SET payment_status='Unpaid' WHERE reservation_id=" +  + reservationId);
+        }     
+        
+        ResultSet resultSet = null;
+        int availSeats;
+        
+        resultSet = statement.executeQuery("SELECT trip_id FROM RESERVATION WHERE reservation_id=" + reservationId);
+        resultSet.next();
+            
+        tripId = resultSet.getInt(1);
+            
+        resultSet = statement.executeQuery("SELECT available_seats FROM DIVE_TRIP WHERE trip_id=" + tripId);
+        resultSet.next();
+        availSeats = resultSet.getInt(1);
+        if(waiver.isComplete() && payment.isComplete()) 
+        {
+            update = "UPDATE RESERVATION SET reservation_status='Booked' WHERE reservation_id=" + reservationId;            
+            statement.executeUpdate(update);
+            
+            availSeats--;
+            
+        } else 
+        {
+            resultSet = statement.executeQuery("SELECT reservation_status FROM RESERVATION WHERE reservation_id=" + reservationId);
+            resultSet.next();
+            String reservationStatus = resultSet.getString(1);
+            
+            if(reservationStatus != null && reservationStatus.equalsIgnoreCase("Booked"))
+            {
+                statement.executeUpdate("UPDATE RESERVATION SET reservation_status='Pending' WHERE reservation_id=" + reservationId);
+                availSeats++;
+            }
+        }
+        
+        PreparedStatement preSt = 
+               connection.prepareStatement("UPDATE DIVE_TRIP SET available_seats=? WHERE trip_id=?");
+        preSt.setInt(1, availSeats);
+        preSt.setInt(2, tripId);
+        preSt.executeUpdate();
+        loadDiveTrips();
+        
+        statement.close();
+        preSt.close();
+        resultSet.close();
+    }
    
    
     @FXML
@@ -552,6 +824,7 @@ public class DiveSchedulePaneController implements Initializable
     @FXML
     public void transitionToCustomers() throws IOException
     {
+        
         Stage stage = (Stage) rootPane.getScene().getWindow();
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource("/scuba/solutions/ui/customers/view/CustomerPane.fxml"));
@@ -559,5 +832,6 @@ public class DiveSchedulePaneController implements Initializable
         stage.setScene(new Scene(root));
         stage.show( );
     }
+
    
-}
+}    

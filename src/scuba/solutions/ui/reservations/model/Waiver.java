@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package scuba.solutions.ui.dive_schedule.model;
+package scuba.solutions.ui.reservations.model;
 
 import java.time.LocalDate;
 import javafx.beans.property.IntegerProperty;
@@ -24,6 +24,7 @@ public class Waiver {
     private final StringProperty erFirst;
     private final StringProperty erLast;
     private final StringProperty erPhone;
+    private final StringProperty waiverStatus;
     
     public Waiver()
     {
@@ -33,10 +34,11 @@ public class Waiver {
     public Waiver(int reservationId)
     {
         this.reservationId = new SimpleIntegerProperty(reservationId);
-        this.dateSigned = new SimpleObjectProperty<LocalDate>();
+        this.dateSigned = new SimpleObjectProperty();
         this.erFirst = new SimpleStringProperty(null);
         this.erLast = new SimpleStringProperty(null);
         this.erPhone = new SimpleStringProperty(null);
+        this.waiverStatus = new SimpleStringProperty(null);
     }
     
     public int getReservationId() {
@@ -63,6 +65,14 @@ public class Waiver {
         this.erFirst.set(erFirst);
     }
     
+    public String getWaiverStatus(){
+        return waiverStatus.get();
+    }
+    
+    public void setWaiverStatus(String waiverStatus){
+        this.waiverStatus.set(waiverStatus);
+    }
+    
     public String getERLast(){
         return erLast.get();
     }
@@ -81,13 +91,13 @@ public class Waiver {
         this.erPhone.set(erPhone);
     }
     
-    public String isComplete(){
+    public boolean isComplete(){
         if(getReservationId() != 0 && getDateSigned() != null && getERFirst() != null && getERLast() != null && getERPhone() != null )
         {
-            return "Complete";
+            return true;
         }
         
-        return "Incomplete";
+        return false;
     }
            
 }
