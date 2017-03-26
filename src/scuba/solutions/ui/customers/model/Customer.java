@@ -5,7 +5,15 @@
  */
 package scuba.solutions.ui.customers.model;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.LinkedList;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
@@ -13,6 +21,8 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.scene.control.Alert;
+import scuba.solutions.database.DbConnection;
 import scuba.solutions.util.DateUtil;
 
 /**
@@ -33,6 +43,7 @@ public class Customer
     private final StringProperty emailAddress;
     private final StringProperty certAgency;
     private final StringProperty certDiveNo;
+    private static Connection connection;
     
     public Customer()
     {
@@ -233,6 +244,145 @@ public class Customer
 		return false;
 	
         return true;
+    }
+    
+    public static void updateCustomer(Customer customer) throws FileNotFoundException, IOException, SQLException
+    {
+        connection = DbConnection.accessDbConnection().getConnection();
+        int custId = customer.getCustomerID();
+            	String fName = customer.getFirstName();
+            	String lName = customer.getLastName();
+            	String street = customer.getStreet();
+            	String city = customer.getCity();
+            	String state = customer.getState();
+            	String zip = customer.getPostalCode();
+            	String phone = customer.getPhoneNumber();
+            	String email = customer.getEmailAddress();
+            	LocalDate dob = customer.getDateOfBirth();
+            	String certAgen = customer.getCertAgency();
+            	String certDiveNo = customer.getCertDiveNo();
+                 
+            	PreparedStatement preSt = 
+            			connection.prepareStatement("UPDATE CUSTOMER SET first_name=?, last_name=?, street=?,"+
+            			 "city=?, state_of_residence=?, zip=?, phone=?, email=?, dob=?, cert_agency=?, cert_no=?"+
+            			 "WHERE CUST_ID=?");
+          
+            	preSt.setString(1, fName);
+	    		preSt.setString(2, lName);
+	    		preSt.setString(3, street);
+	    		preSt.setString(4, city);
+	    		preSt.setString(5, state);
+	    		preSt.setString(6, zip);
+	    		preSt.setString(7, phone);
+	    		preSt.setString(8, email);
+	    		preSt.setDate(9, Date.valueOf(dob));
+	    		preSt.setString(10, certAgen);
+	    		preSt.setString(11, certDiveNo);
+	    		preSt.setInt(12, custId);
+            	 
+                if (preSt.executeUpdate() == 1)
+                {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setHeaderText("Saved!");
+                    alert.setContentText("Customer has successfully been updated in the database.");
+                    alert.showAndWait();
+                } else 
+                {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setHeaderText(null);
+                    alert.setContentText("Error Occured with update of customer.");
+                    alert.showAndWait();
+                }
+        
+    }
+    
+    
+    public static void addCustomer(Customer customer)  throws FileNotFoundException, IOException, SQLException
+    {
+        connection = DbConnection.accessDbConnection().getConnection();
+        System.out.println(customer );
+        String fName = customer.getFirstName();
+            String lName = customer.getLastName();
+            String street = customer.getStreet();
+            String city = customer.getCity();
+            String state = customer.getState();
+            String zip = customer.getPostalCode();
+            String phone = customer.getPhoneNumber();
+            String email = customer.getEmailAddress();
+            LocalDate dob = customer.getDateOfBirth();
+            String certAgen = customer.getCertAgency();
+            String certDiveNo = customer.getCertDiveNo();
+             
+            PreparedStatement preSt = connection.prepareStatement("INSERT INTO CUSTOMER (first_name, last_name, street, city," +
+                    "state_of_residence, zip, phone, email, dob, cert_agency, cert_no) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        	
+            preSt.setString(1, fName);
+            preSt.setString(2, lName);
+            preSt.setString(3, street);
+            preSt.setString(4, city);
+            preSt.setString(5, state);
+            preSt.setString(6, zip);
+            preSt.setString(7, phone);
+            preSt.setString(8, email);
+            preSt.setDate(9, Date.valueOf(dob));
+            preSt.setString(10, certAgen);
+	    preSt.setString(11, certDiveNo);
+			
+            if (preSt.executeUpdate() == 1) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Saved!");
+                alert.setContentText("Customer has successfully been added to the database.");
+                alert.showAndWait();
+                
+            } else {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setHeaderText("Error!");
+                alert.setContentText("Error Occured");
+                alert.showAndWait();
+                
+            }
+            
+            //preSt.close();
+        
+    }
+    
+    
+    public static int getCustId(Customer customer) throws SQLException, IOException
+    {
+        connection = DbConnection.accessDbConnection().getConnection();
+        int custId;
+        ResultSet result = null;
+        PreparedStatement preSt = 
+            connection.prepareStatement("select cust_id "
+                                     + "from customer where first_name = ?" 
+                                     + "and last_name = ? and dob = ?");
+        
+        preSt.setString(1, customer.getFirstName());
+        preSt.setString(2, customer.getLastName());
+        preSt.setDate(3, Date.valueOf(customer.getDateOfBirth()));
+        
+       result = preSt.executeQuery();
+       result.next();
+       custId = result.getInt(1);
+       
+       result.close();
+       preSt.close( );
+       
+       return custId;
+       
+        
+        
+        
+        
+        
+        
+    }
+    
+    
+    @Override
+    public String toString()
+    {
+        return this.getFullName();
     }
 
 }

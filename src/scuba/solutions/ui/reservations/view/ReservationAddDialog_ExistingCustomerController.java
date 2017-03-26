@@ -23,10 +23,9 @@ import scuba.solutions.ui.customers.view.CustomerEditDialogController;
  *
  * @author Jon
  */
-public class ReservationAddDialog_NewCustomerController extends CustomerEditDialogController implements Initializable {
+public class ReservationAddDialog_ExistingCustomerController extends CustomerEditDialogController implements Initializable {
     
-    
-    private final static String[] STATES = {"AK","AL","AR","AZ","CA","CO","CT","DC","DE","FL","GA","GU",
+     private final static String[] STATES = {"AK","AL","AR","AZ","CA","CO","CT","DC","DE","FL","GA","GU",
                                      "HI","IA","ID", "IL","IN","KS","KY","LA","MA","MD","ME","MH",
                                      "MI","MN","MO","MS","MT","NC","ND","NE","NH","NJ","NM","NV","NY", 
                                      "OH","OK","OR","PA","PR","PW","RI","SC","SD","TN","TX","UT","VA",
@@ -38,7 +37,7 @@ public class ReservationAddDialog_NewCustomerController extends CustomerEditDial
     
     public static Customer customer;
     
-    //private boolean okClicked = false;
+    private boolean okClicked = false;
     @FXML
     private TextField firstNameField;
     @FXML
@@ -65,71 +64,13 @@ public class ReservationAddDialog_NewCustomerController extends CustomerEditDial
     private JFXButton saveButton;
     @FXML
     private JFXButton cancelButton;
-    
-
     /**
      * Initializes the controller class.
      */
     @Override
-    public void initialize(URL url, ResourceBundle rb) {
+    public void initialize(URL url, ResourceBundle rb) 
+    {
         super.initialize(url, rb);
     }    
-
-    /*
-    @FXML
-    public void handleSave(ActionEvent event) 
-    {
-         if (isInputValid()) 
-        {
-            customer.setFirstName(firstNameField.getText());
-            customer.setLastName(lastNameField.getText());
-            customer.setStreet(streetField.getText());
-            customer.setPostalCode(postalCodeField.getText());
-            customer.setCity(cityField.getText());
-            customer.setState(stateComboBox.getValue());
-            customer.setDateOfBirth(dobField.getValue());
-            customer.setPhoneNumber(phoneNumField.getText());
-            customer.setEmailAddress(emailAddressField.getText());
-            customer.setCertAgency(certAgencyField.getText());
-            customer.setCertDiveNo(certDiveNoField.getText());
-            
-            // Confirms the save changes before putting them into effect.
-            boolean confirm = AlertUtil.confirmChangesAlert();
-            if(confirm)
-            {
-            	okClicked = true;
-            	dialogStage.close();
-            }
-            else
-            {
-            	okClicked = false;
-            	dialogStage.close();
-            }
-        }
-    }
-
-    @FXML
-    public void handleCancel(ActionEvent event)
-    {
-        super.handleCancel();
-    }
-    
-    public void setCustomer(Customer customer) 
-    {
-        this.customer = customer;
-     
-    }
-    
-    public void setDialogStage(Stage dialogStage) 
-    {
-        this.dialogStage = dialogStage;
-    }
-    
-       public boolean isOkClicked()
-    {
-        return okClicked;
-    }
-    */
-
     
 }

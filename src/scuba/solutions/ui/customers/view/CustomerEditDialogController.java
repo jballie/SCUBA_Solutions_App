@@ -142,7 +142,7 @@ public class CustomerEditDialogController implements Initializable {
      * Called when the user clicks save. Saves the changes after the confirmation is made.
      */
     @FXML
-    private void handleSave() 
+    public void handleSave() 
     {
         if (isInputValid()) 
         {
@@ -177,7 +177,7 @@ public class CustomerEditDialogController implements Initializable {
      * Called when the user clicks cancel.
      */
     @FXML
-    private void handleCancel() {
+    public void handleCancel() {
         dialogStage.close();
     }
 
@@ -186,7 +186,7 @@ public class CustomerEditDialogController implements Initializable {
      * 
      * @return true if the input is valid
      */
-    private boolean isInputValid() 
+    public boolean isInputValid() 
     {
         String errorMessage = "";
 
@@ -253,7 +253,7 @@ public class CustomerEditDialogController implements Initializable {
     }
     
     // Determines whether the age value inputed is 18 or older.
-    private boolean isAdult()
+    public boolean isAdult()
     {
         int currentYear = LocalDate.now().getYear();
         int birthYear = dobField.getValue().getYear();
@@ -269,14 +269,14 @@ public class CustomerEditDialogController implements Initializable {
     
     
     // Determines whether value inputed is an email address
-    private boolean isEmailAddress()
+    public boolean isEmailAddress()
     {
     	// uses regular expressions to determine this.
     	return false;
     }
     
     // Determines whether value inputes is a postal code
-    private boolean isPostalCode()
+    public boolean isPostalCode()
     {
     	
     	// uses regular expression to determine this.
@@ -286,7 +286,7 @@ public class CustomerEditDialogController implements Initializable {
     
     
     // Goes to the matching letter value in the states comboBox - based on the key user presses.
-    private static String jumpTo(String keyPressed, String currentlySelected, List<String> items) 
+    public static String jumpTo(String keyPressed, String currentlySelected, List<String> items) 
     {
         String key = keyPressed.toUpperCase();
         if (key.matches("^[A-Z]$")) {

@@ -13,12 +13,13 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="815.0" prefWidth="602.0" styleClass="mainFxmlClass" stylesheets="@../../../resources/Material-Design-UI-Components.css" xmlns="http://javafx.com/javafx/8.0.102" xmlns:fx="http://javafx.com/fxml/1" fx:controller="scuba.solutions.ui.reservations.view.ReservationAddDialog_NewCustomerController">
+<AnchorPane id="AnchorPane" prefHeight="815.0" prefWidth="602.0" styleClass="mainFxmlClass" stylesheets="@../../../resources/Material-Design-UI-Components.css" xmlns="http://javafx.com/javafx/8.0.102" xmlns:fx="http://javafx.com/fxml/1" fx:controller="scuba.solutions.ui.reservations.view.ReservationAddDialog_ExistingCustomerController">
    <children>
       <HBox alignment="CENTER" prefHeight="60.0" prefWidth="602.0" style="-fx-background-color: #4059a9;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <Label text="New Reservation --- New Customer Profile" textFill="WHITE" />
-         </children></HBox>
+            <Label text="New Reservation --- Existing Customer Profile" textFill="WHITE" />
+         </children>
+      </HBox>
       <GridPane layoutX="47.0" layoutY="90.0" prefHeight="583.0" prefWidth="504.0" AnchorPane.bottomAnchor="142.0" AnchorPane.leftAnchor="47.0" AnchorPane.rightAnchor="51.0" AnchorPane.topAnchor="90.0">
          <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="266.0" minWidth="10.0" prefWidth="204.0" />

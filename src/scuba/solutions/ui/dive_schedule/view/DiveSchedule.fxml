@@ -39,7 +39,7 @@
                         <Insets />
                      </BorderPane.margin>
                      <children>
-                        <JFXButton fx:id="newReservationButton" buttonType="RAISED" prefHeight="50.0" prefWidth="150.0" style="-fx-background-color: #4059a9;" text="New Reservation" textFill="WHITE">
+                        <JFXButton fx:id="newReservationButton" buttonType="RAISED" onAction="#addReservation" prefHeight="50.0" prefWidth="150.0" style="-fx-background-color: #4059a9;" text="New Reservation" textFill="WHITE">
                            <font>
                               <Font name="Roboto Medium" size="15.0" />
                            </font>

@@ -5,6 +5,11 @@
  */
 package scuba.solutions.ui.reservations.model;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.time.LocalDate;
 
 import javafx.beans.property.IntegerProperty;
@@ -13,7 +18,9 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import scuba.solutions.database.DbConnection;
 import scuba.solutions.ui.customers.model.Customer;
+import scuba.solutions.ui.dive_schedule.model.DiveTrip;
 
 /**
  *
@@ -26,7 +33,7 @@ public class Reservation
     private final IntegerProperty customerId;
     private final StringProperty status;
     private final ObjectProperty<Customer> customer;
-    
+    private static Connection connection;
 
     public Reservation() {
         this(0);
@@ -96,9 +103,28 @@ public class Reservation
 		customer.set(cust);
 	}
 
-	public StringProperty statusProperty()
+    public StringProperty statusProperty()
     {
         return status;
+    }
+    
+    public static void addReservation(int custId, int diveId) throws IOException, FileNotFoundException, SQLException
+    {
+        connection = DbConnection.accessDbConnection().getConnection();
+        PreparedStatement preSt = null;
+                
+        preSt = connection.prepareStatement("INSERT INTO RESERVATION "
+        + "(cust_id, trip_id)"
+        + " values(?, ?)");
+
+        preSt.setInt(1, custId);
+        preSt.setInt(2, diveId);
+
+        preSt.execute();
+        
+        preSt.close();
+     
+        
     }
     
 }

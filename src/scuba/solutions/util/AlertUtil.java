@@ -28,14 +28,24 @@ public class AlertUtil
         alert.showAndWait();
     }
 
-    public static void noSelectionSAlert(String header, String content)
+    public static void noSelectionAlert(String header, String content)
     {
         Alert alert = new Alert(AlertType.WARNING);
-        alert.initOwner(DiveSchedulePane.getPrimaryStage());
         alert.setTitle("No Selection");
         alert.setHeaderText(header);
         alert.setContentText(content);
         alert.showAndWait();
+    }
+    
+    
+    public static void invalidInputAlert(String errorMessage)
+    {
+        Alert alert = new Alert(AlertType.ERROR);
+        alert.setTitle("Invalid Fields");
+        alert.setHeaderText("Please correct invalid fields");
+        alert.setContentText(errorMessage);
+        alert.showAndWait();
+        
     }
 
      // Confirms the customer addition or changes before they are put into effect.

@@ -323,9 +323,9 @@ public class CustomerPaneController implements Initializable {
              alert.setContentText("Please select a customer in the table to update.");
 
              alert.showAndWait();
-             updateCustomerButton.setDisable(false);
          }
          loadCustomers();
+         updateCustomerButton.setDisable(false);
     }
     
     // Initializes the columns for the TableView
@@ -447,7 +447,7 @@ public class CustomerPaneController implements Initializable {
     * Initalizes the search field. Any typed in text in the search text field will
     * show the matching entries in the customer table.
     */
-    private void initalizeSearchField()
+    public void initalizeSearchField()
     {
     	filteredData = new FilteredList<>(customerData, p -> true);
 
