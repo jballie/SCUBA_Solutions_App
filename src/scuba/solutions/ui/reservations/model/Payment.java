@@ -5,6 +5,11 @@
  */
 package scuba.solutions.ui.reservations.model;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import scuba.solutions.ui.dive_schedule.model.*;
 import java.time.LocalDate;
 import javafx.beans.property.IntegerProperty;
@@ -15,6 +20,7 @@ import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import scuba.solutions.database.DbConnection;
 
 /**
  *
@@ -27,6 +33,7 @@ public class Payment {
     private final IntegerProperty ccConfirmNo;
     private final ObjectProperty<LocalDate> dateProcessed;
     private final IntegerProperty amount;
+    private static Connection connection;
     
     public Payment() {
         this(0);
@@ -83,10 +90,26 @@ public class Payment {
     }
     
     public boolean isComplete(){        
-        if(getReservationId() != 0 && getDateProcessed() != null && getCCConfirmNo() > 0 && getAmount() != 0)
+        if(getReservationId() != 0 && getDateProcessed() != null && getCCConfirmNo() > 0 && getAmount() >= 150)
         {
             return true;
         }        
         return false;
+    }
+    
+    public static void addPayment(int resId) throws IOException, FileNotFoundException, SQLException
+    {
+        connection = DbConnection.accessDbConnection().getConnection();
+        PreparedStatement preSt = null;
+                
+        preSt = connection.prepareStatement("INSERT INTO PAYMENT "
+        + "(reservation_id)"
+        + " values(?)");
+
+        preSt.setInt(1, resId);
+
+        preSt.execute();
+        
+        preSt.close();       
     }
 }

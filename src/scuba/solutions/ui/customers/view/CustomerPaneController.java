@@ -36,11 +36,9 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import scuba.solutions.database.DbConnection;
 import scuba.solutions.ui.customers.model.Customer;
 import scuba.solutions.util.DateUtil;
@@ -49,6 +47,9 @@ import scuba.solutions.util.DateUtil;
  * Controller class for the Customer Pane Interface.
  *
  * @author Jonathan Balliet, Samuel Brock
+ * Need to add formating and input validation for Adding and Updating Customer (Zipcode, phone number, email address)
+ * Need to add titles for the Add and Update Customer dialogs to keep front-end consistent
+ * Look into keeping pop-up window open after the cancel button is selected on the confirmation dialog
  */
 public class CustomerPaneController implements Initializable {
       

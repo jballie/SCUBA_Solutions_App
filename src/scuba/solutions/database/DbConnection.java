@@ -35,16 +35,20 @@ public final class DbConnection {
 		private DbConnection(String dbPropertiesFile) throws FileNotFoundException, IOException,
 				SQLException {
 
-			//Properties p = new Properties();
-			//p.load(new FileInputStream(dbPropertiesFile));
-
-			String username = "scott";
-			String password = "tiger";
-			String url = "jdbc:oracle:thin:@localhost:1521:xe";
+		
+                        //Remote Server - Please test out to make sure it works Sam
+                        /*
+			String username = "ScubaNow";
+			String password = "capstone";
+			String url = "jdbc:oracle:thin:@scubasolutionsdb.ctmcz5bqqxdt.us-west-2.rds.amazonaws.com:1521:ORCL";
 			String driver = "oracle.jdbc.driver.OracleDriver";
-			//url = p.getProperty("jdbc.url");
-			//driver = p.getProperty("jdbc.driver");
-			//Class.forName(driver);
+                        */
+                        
+                        //LocalHost normal connection - please use this most of the time!
+                        String username = "scott";
+                        String password = "tiger";
+                        String url = "jdbc:oracle:thin:@localhost:1521:xe";
+                        
 
 			dbConn = DriverManager.getConnection(url, username, password);
 		}

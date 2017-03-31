@@ -47,6 +47,15 @@ public class AlertUtil
         alert.showAndWait();
         
     }
+    
+        public static void showErrorAlert(String content, Exception e)
+    {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setHeaderText("Error!");
+        alert.setContentText(content +
+            "\n\nError Info:\n" + e.toString());
+        alert.showAndWait(); 	
+    }
 
      // Confirms the customer addition or changes before they are put into effect.
      // If the user clicks OK - returns true and update is put into effect.

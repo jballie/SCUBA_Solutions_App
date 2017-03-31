@@ -5,6 +5,11 @@
  */
 package scuba.solutions.ui.reservations.model;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
@@ -12,6 +17,7 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import scuba.solutions.database.DbConnection;
 
 /**
  *
@@ -25,6 +31,7 @@ public class Waiver {
     private final StringProperty erLast;
     private final StringProperty erPhone;
     private final StringProperty waiverStatus;
+    private static Connection connection;
     
     public Waiver()
     {
@@ -98,6 +105,22 @@ public class Waiver {
         }
         
         return false;
+    }
+    
+    public static void addWaiver(int resId) throws IOException, FileNotFoundException, SQLException
+    {
+        connection = DbConnection.accessDbConnection().getConnection();
+        PreparedStatement preSt = null;
+                
+        preSt = connection.prepareStatement("INSERT INTO WAIVER "
+        + "(reservation_id)"
+        + " values(?)");
+
+        preSt.setInt(1, resId);
+
+        preSt.execute();
+        
+        preSt.close();       
     }
            
 }

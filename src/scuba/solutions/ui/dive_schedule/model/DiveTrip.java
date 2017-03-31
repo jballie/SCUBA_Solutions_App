@@ -32,9 +32,19 @@ public class DiveTrip {
     public DiveTrip(int tripId)
     {
     	this.tripId = new SimpleIntegerProperty(tripId);
-        this.tripDate = new SimpleObjectProperty<LocalDate>();
+        this.tripDate = new SimpleObjectProperty();
         this.availSeats = new SimpleIntegerProperty(8);
-        this.departTime = new SimpleObjectProperty<LocalTime>();
+        this.departTime = new SimpleObjectProperty();
+        this.weatherStatus = new SimpleStringProperty("");
+        this.dayOfWeek = new SimpleStringProperty("");
+    }
+    
+    public DiveTrip(int tripId, LocalDate tripDate, LocalTime departTime)
+    {
+    	this.tripId = new SimpleIntegerProperty(tripId);
+        this.tripDate = new SimpleObjectProperty(tripDate);
+        this.availSeats = new SimpleIntegerProperty(8);
+        this.departTime = new SimpleObjectProperty(departTime);
         this.weatherStatus = new SimpleStringProperty("");
         this.dayOfWeek = new SimpleStringProperty("");
     }
