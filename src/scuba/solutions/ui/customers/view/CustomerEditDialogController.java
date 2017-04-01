@@ -177,7 +177,8 @@ public class CustomerEditDialogController implements Initializable {
      * Called when the user clicks cancel.
      */
     @FXML
-    public void handleCancel() {
+    public void handleCancel()
+    {
         dialogStage.close();
     }
 
@@ -190,55 +191,101 @@ public class CustomerEditDialogController implements Initializable {
     {
         String errorMessage = "";
 
-        if (firstNameField.getText() == null || firstNameField.getText().length() == 0) {
+        if (firstNameField.getText() == null || firstNameField.getText().length() == 0) 
+        {
             errorMessage += "No valid first name!\n"; 
         }
-        if (lastNameField.getText() == null || lastNameField.getText().length() == 0) {
+        if (lastNameField.getText() == null || lastNameField.getText().length() == 0) 
+        {
             errorMessage += "No valid last name!\n"; 
         }
-        if (streetField.getText() == null || streetField.getText().length() == 0) {
+        if (streetField.getText() == null || streetField.getText().length() == 0)
+        {
             errorMessage += "No valid street!\n"; 
         }
 
-        if (postalCodeField.getText() == null || postalCodeField.getText().length() == 0) {
-            errorMessage += "No valid postal code!\n"; 
-        } else {
+        if (postalCodeField.getText() == null || (postalCodeField.getText().length() !=5)) {
+            errorMessage += "No valid postal code! Postal code must be 5 characters long! \n"; 
+        } 
+        else 
+        {
             // try to parse the postal code into an int.
-            try {
+            try 
+            {
                 Integer.parseInt(postalCodeField.getText());
-            } catch (NumberFormatException e) {
-                errorMessage += "No valid postal code (must be an integer)!\n"; 
+            } 
+            catch (NumberFormatException e) 
+            {
+                errorMessage += "No valid postal code (must be a number value)!\n"; 
             }
         }
 
-        if (cityField.getText() == null || cityField.getText().length() == 0) {
+        if (cityField.getText() == null || cityField.getText().length() == 0) 
+        {
             errorMessage += "No valid city!\n"; 
         }
         
-        if (stateComboBox.getValue() == null) {
+        if (stateComboBox.getValue() == null || stateComboBox.getValue().length() == 0) 
+        {
             errorMessage += "No valid state!\n"; 
         }
 
-        if (phoneNumField.getText() == null || phoneNumField.getText().length() == 0) {
+        if (phoneNumField.getText() == null || phoneNumField.getText().length() == 0) 
+        {
             errorMessage += "No valid phone number!\n"; 
         }
+            else if(!isPhoneNumber())
+            {
+                errorMessage += "Does not match Phone Number format! Must be formated as: 000-000-0000";
+            }
         
-        if (emailAddressField.getText() == null || emailAddressField.getText().length() == 0) {
+        if (emailAddressField.getText() == null || emailAddressField.getText().length() == 0) 
+        {
             errorMessage += "No valid email address!\n"; 
         }
+            else if(!isEmailAddress())
+            {
+                errorMessage += "Does not match a valid email format! Please enter a valid Email Address!\n";
+            }
     
-        if (dobField.getValue() == null ) {
+        if (dobField.getValue() == null || DateUtil.validDate(dobField.getValue().toString())) 
+        {
             errorMessage += "No valid date of birth!\n";
         }
             else if(!isAdult()) 
             {
-            	errorMessage += "Customer is not an Adult!\n";
+            	errorMessage += "Customer is not an Adult! Customer must be 18 or older! \n";
             
             } 
+        
+        if (certAgencyField.getText() == null || certAgencyField.getText().length() == 0)
+        {
+            errorMessage += "No valid Certification Agency!\n";
+        }
+        
+        if (certDiveNoField.getText() == null || certDiveNoField.getText().length() == 0 )
+        {
+            errorMessage += "No valid Certification Dive No.!\n";
+        } 
+        else 
+        {
+            // try to parse the cert dive no. into an int.
+            try 
+            {
+                Integer.parseInt(postalCodeField.getText());
+            } 
+            catch (NumberFormatException e) 
+            {
+                errorMessage += "No valid certification dive no. (must be a number value)!\n"; 
+            }
+        }
        
-        if (errorMessage.length() == 0) {
+        if (errorMessage.length() == 0) 
+        {
             return true;
-        } else {
+        } 
+        else 
+        {
             // Show the error message.
             Alert alert = new Alert(AlertType.ERROR);
             alert.initOwner(dialogStage);
@@ -260,28 +307,21 @@ public class CustomerEditDialogController implements Initializable {
         
         long years = currentYear - birthYear;
         
-        if(years >= 18) {
-            return true;
-        }
-        
-        return false;
+        return years >= 18;
     }
     
     
     // Determines whether value inputed is an email address
     public boolean isEmailAddress()
     {
-    	// uses regular expressions to determine this.
-    	return false;
+    	return emailAddressField.getText().matches("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+		+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
+                
     }
     
-    // Determines whether value inputes is a postal code
-    public boolean isPostalCode()
+    public boolean isPhoneNumber()
     {
-    	
-    	// uses regular expression to determine this.
-    	return false;
-    	
+        return phoneNumField.getText().matches("\\d{3}[-]\\d{3}[-]\\d{4}");
     }
     
     

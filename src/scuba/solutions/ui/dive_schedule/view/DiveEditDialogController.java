@@ -84,13 +84,13 @@ public class DiveEditDialogController implements Initializable {
         this.trip = trip;
         // sets all the text fields to this customer's attributes.
         tripDatePicker.setValue(trip.getTripDate());
-        departTimePicker.setTime(trip.getDepartTime());    
+        departTimePicker.setTime(trip.getDepartTime());  
     }
     /**
      * Returns true if the user clicked OK, false otherwise.
      * @return 
      */
-    public boolean isOkClicked() 
+    public  boolean isOkClicked() 
     {
         return okClicked;
     }
@@ -103,21 +103,21 @@ public class DiveEditDialogController implements Initializable {
     {
         if (isInputValid()) 
         {
-            trip.setTripDate(tripDatePicker.getValue());
-            trip.setDepartTime(departTimePicker.getTime());
-            if(yesCancelRadio.isSelected())
-            {
-            	trip.setWeatherStatus("Cancelled");
-            }
-            else 
-            {
-            	trip.setWeatherStatus("OK");
-            }
           
             // Confirms the save changes before putting them into effect.
             boolean confirm = AlertUtil.confirmChangesAlert();
             if(confirm)
             {
+               trip.setTripDate(tripDatePicker.getValue());
+               trip.setDepartTime(departTimePicker.getTime());
+               if(yesCancelRadio.isSelected())
+               {
+                   trip.setWeatherStatus("Cancelled");
+               }
+               else 
+               {
+                  
+               }
             	okClicked = true;
             	dialogStage.close();
             }

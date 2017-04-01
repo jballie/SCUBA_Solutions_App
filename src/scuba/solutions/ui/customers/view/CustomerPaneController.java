@@ -22,6 +22,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -54,7 +55,7 @@ import scuba.solutions.util.DateUtil;
 public class CustomerPaneController implements Initializable {
       
     
-    private ObservableList<Customer>  customerData = FXCollections.observableArrayList();
+    private final ObservableList<Customer>  customerData = FXCollections.observableArrayList();
     private FilteredList<Customer> filteredData; 
     private static Connection connection;
     
@@ -150,7 +151,7 @@ public class CustomerPaneController implements Initializable {
          customersTable.getSelectionModel().selectedItemProperty().addListener(
           (observable, oldValue, newValue) -> showCustomerDetails(newValue));
          
-         initalizeSearchField(); 
+         //initalizeSearchField(); 
     }
     
    /**
@@ -243,10 +244,13 @@ public class CustomerPaneController implements Initializable {
                 alert.setContentText("Error Occured");
                 alert.showAndWait();
                 
+                
             }
+            loadCustomers();
         }
+
         addCustomerButton.setDisable(false);
-        loadCustomers();
+
     }
     
     // When the update button is clicked on - goes to edit dialog customer
@@ -309,8 +313,10 @@ public class CustomerPaneController implements Initializable {
                     alert.showAndWait();
                 }
             	 
-                 updateCustomerButton.setDisable(false);
-                 showCustomerDetails(selectedPerson);
+                loadCustomers();
+                showCustomerDetails(selectedPerson);
+                updateCustomerButton.setDisable(false);
+                
 
              }
          } 
@@ -325,7 +331,7 @@ public class CustomerPaneController implements Initializable {
 
              alert.showAndWait();
          }
-         loadCustomers();
+         
          updateCustomerButton.setDisable(false);
     }
     
@@ -403,6 +409,8 @@ public class CustomerPaneController implements Initializable {
 			}
 		}
 	        customersTable.setItems(customerData);
+                
+                initalizeSearchField();
                 
     }
     
@@ -510,4 +518,24 @@ public class CustomerPaneController implements Initializable {
         stage.show( );
             
     }
+    
+        @FXML
+    public void transitionToHome(ActionEvent event) throws IOException 
+    {
+                Stage stage = (Stage) rootPane.getScene().getWindow();
+        FXMLLoader loader = new FXMLLoader();
+	    loader.setLocation(getClass().getResource("/scuba/solutions/ui/home/view/HomePane.fxml"));
+	    Parent root = loader.load();
+        //Stage stage = new Stage();
+        stage.setScene(new Scene(root));
+        stage.show( );
+    }
+    
+    @FXML
+    public void exitProgram(ActionEvent event)
+    {
+        Stage stage = (Stage) rootPane.getScene().getWindow();
+        stage.close();
+    }
+    
 }

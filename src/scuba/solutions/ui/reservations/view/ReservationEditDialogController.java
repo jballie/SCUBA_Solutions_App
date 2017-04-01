@@ -9,6 +9,8 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXTextField;
 import java.net.URL;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
@@ -177,6 +179,16 @@ public class ReservationEditDialogController implements Initializable {
             Integer.parseInt(ccConfirmTextField.getText());
         } catch (NumberFormatException e) {
             errorMessage += "No valid credit card conformation (must be an integer)!\n"; 
+        }
+        
+        if(dateProcDatePicker.getValue().isAfter(LocalDate.now()))
+        {
+            errorMessage += "No valid date processed! Cannot be a future date! \n"; 
+        }
+        
+        if(dateSignedDatePicker.getValue().isAfter(LocalDate.now()))
+        {
+            errorMessage += "No valid date signed! Cannot be a future date! \n"; 
         }
         
         if(errorMessage.equals(" ")) {

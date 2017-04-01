@@ -21,10 +21,16 @@ import java.time.LocalTime;
 import java.util.LinkedList;
 import java.util.Properties;
 import java.util.ResourceBundle;
+import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -33,11 +39,14 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
@@ -63,7 +72,9 @@ import scuba.solutions.ui.reservations.view.ReservationAddDialog_NewCustomerCont
 import scuba.solutions.ui.reservations.view.ReservationAddDialog_SearchCustomerController;
 import scuba.solutions.ui.reservations.view.ReservationEditDialogController;
 import scuba.solutions.util.AlertUtil;
+import scuba.solutions.util.DateUtil;
 import scuba.solutions.util.SQLUtil;
+
 
 /**
  * FXML Controller class
@@ -87,6 +98,7 @@ public class DiveSchedulePaneController implements Initializable
     private static Connection connection;    
     private final ObservableList<Reservation>  reservationData = FXCollections.observableArrayList();
     private final ObservableList<DiveTrip>  tripData = FXCollections.observableArrayList();    
+    private FilteredList<DiveTrip> filteredTripData; 
     private Stage primaryStage;
     private Stage dialogStage;
     private String currentTab;
@@ -174,15 +186,38 @@ public class DiveSchedulePaneController implements Initializable
             AlertUtil.showDbErrorAlert("Error with loading Dive Trips to the Table", e);
         }
         
-        // Clear customer details.
-        
+   
+        initializeSearchField();
 
         tripTable.getSelectionModel().selectedItemProperty().addListener(
         (observable, oldValue, newValue) -> loadTripReservations(newValue));
         
         reservationsTable.getSelectionModel().selectedItemProperty().addListener(
         (observable, oldValue, newValue) -> showReservationStatusDetails(newValue));
-    }    
+        
+        tripTable.getSelectionModel().selectedItemProperty().addListener(
+        (ObservableValue<? extends DiveTrip> observable, DiveTrip oldValue, DiveTrip newValue) ->
+                {
+                    if(newValue.getWeatherStatus().equalsIgnoreCase("Cancelled"))
+                    {
+                        updateDiveButton.setDisable(true);
+                        newReservationButton.setDisable(true);
+                        updateReservationButton.setDisable(true);
+                        
+                    }
+                    else
+                    {
+                        updateDiveButton.setDisable(false);
+                        newReservationButton.setDisable(false);
+                        updateReservationButton.setDisable(false);
+                    }
+            
+        });
+        
+    
+    
+  
+}
     
     public void loadDiveTrips() throws FileNotFoundException, IOException, SQLException
     {
@@ -240,6 +275,8 @@ public class DiveSchedulePaneController implements Initializable
     	}
         
         tripTable.setItems(tripData);
+        
+        initializeSearchField();
     }
     
     // Retrieves customers in dive trip    
@@ -451,6 +488,11 @@ public class DiveSchedulePaneController implements Initializable
         departTimeColumn.setCellValueFactory(cellData -> cellData.getValue().departTimeProperty());
         availSeatsColumn.setCellValueFactory(cellData -> cellData.getValue().availSeatsProperty());
         weatherStatusColumn.setCellValueFactory(cellData -> cellData.getValue().weatherStatusProperty());
+        
+        // Custom rendering of the table cell.
+
+
+        
     }
    
    public void initializeReservation()
@@ -501,11 +543,12 @@ public class DiveSchedulePaneController implements Initializable
 
         if (selectedTrip != null)
         {
-    	    boolean okClicked = showDiveEditDialog(selectedTrip);
+            boolean okClicked = false;
+    	    okClicked = showDiveEditDialog(selectedTrip);
             
             if (okClicked) 
             {
-                int tripId = selectedTrip.getTripId();
+                int trId = selectedTrip.getTripId();
 
                 LocalDate tripDate = selectedTrip.getTripDate();
                 int availSeat = selectedTrip.getAvailSeats();
@@ -526,7 +569,7 @@ public class DiveSchedulePaneController implements Initializable
                     preSt.setInt(2, availSeat);
                     preSt.setString(3, time);
                     preSt.setString(4, tripStatus);
-                    preSt.setInt(5, tripId);
+                    preSt.setInt(5, trId);
 
                     if (preSt.executeUpdate() >= 0)  
                     {
@@ -774,7 +817,7 @@ public class DiveSchedulePaneController implements Initializable
                 
                 
                 //bookReservation(selectedReservation);
-                showReservationStatusDetails(selectedReservation);
+                loadDiveTrips();
              }
          } 
          else 
@@ -878,6 +921,42 @@ public class DiveSchedulePaneController implements Initializable
     @FXML
     private void clearSearch(ActionEvent event) 
     {
+        searchTextField.clear();
+    }
+    
+    public void initializeSearchField()
+    {
+        	filteredTripData = new FilteredList<>(tripData, p -> true);
+
+        // Sets the search filter Predicate whenever the search values change.
+        searchTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredTripData.setPredicate(trip -> {
+                // If the search field text is empty, display all customers in the table
+        if (newValue == null || newValue.isEmpty()) {
+                    return true;
+        }
+
+        // Compares the name, id, and date of birth of every customer with the search text
+        String lowerCaseFilter = newValue.toLowerCase();
+       
+        if (DateUtil.format(trip.getTripDate()).contains(lowerCaseFilter)) {
+            return true; // Search matches date of trip
+        } else if (trip.getDepartTime().toString().contains(lowerCaseFilter)) {
+            return true; // Search matches depart time
+        } else if (trip.getDayOfWeek().toLowerCase().contains(lowerCaseFilter)) {
+            return true;  // Search matches day of week.
+        }
+        return false; // Search does not match any data.
+            });
+        });
+         SortedList<DiveTrip> sortedData = new SortedList<>(filteredTripData);
+
+        //  Bind the SortedList comparator to the TableView comparator.
+        sortedData.comparatorProperty().bind(tripTable.comparatorProperty());
+
+        //  Add sorted (and filtered) data to the table.
+        tripTable.setItems(sortedData);
+       
     }
     
     @FXML
@@ -1169,5 +1248,25 @@ public class DiveSchedulePaneController implements Initializable
               AlertUtil.showErrorAlert("Error with sending Reservation Confirmation Email Message", e);
               throw new RuntimeException(e); 
           }
-    }       
-}    
+    }
+    
+    @FXML
+    public void transitionToHome(ActionEvent event) throws IOException 
+    {
+                Stage stage = (Stage) rootPane.getScene().getWindow();
+        FXMLLoader loader = new FXMLLoader();
+	    loader.setLocation(getClass().getResource("/scuba/solutions/ui/home/view/HomePane.fxml"));
+	    Parent root = loader.load();
+        //Stage stage = new Stage();
+        stage.setScene(new Scene(root));
+        stage.show( );
+    }
+    
+    @FXML
+    public void exitProgram(ActionEvent event)
+    {
+        Stage stage = (Stage) rootPane.getScene().getWindow();
+        stage.close();
+    }
+
+}
