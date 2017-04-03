@@ -168,7 +168,7 @@ public class CustomerEditDialogController implements Initializable {
             else
             {
             	okClicked = false;
-            	dialogStage.close();
+            	//dialogStage.close();
             }
         }
     }

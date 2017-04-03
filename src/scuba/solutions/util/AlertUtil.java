@@ -19,6 +19,14 @@ public class AlertUtil
             "\n\nSQL Error Info:\n" + e.toString());
         alert.showAndWait(); 	
     }
+    
+    public static void showEmailSent(String content)
+    {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setHeaderText("Email Sucessfully Sent!");
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
 
     public static void showDbSavedAlert(String content)
     {

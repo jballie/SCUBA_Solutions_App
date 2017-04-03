@@ -90,7 +90,7 @@ public class Payment {
     }
     
     public boolean isComplete(){        
-        if(getReservationId() != 0 && getDateProcessed() != null && getCCConfirmNo() > 0 && getAmount() >= 150)
+        if(getReservationId() != 0 && getDateProcessed() != null && getCCConfirmNo() > 0 && getAmount() > 0)
         {
             return true;
         }        

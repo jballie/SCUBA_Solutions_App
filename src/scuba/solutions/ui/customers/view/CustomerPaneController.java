@@ -48,9 +48,7 @@ import scuba.solutions.util.DateUtil;
  * Controller class for the Customer Pane Interface.
  *
  * @author Jonathan Balliet, Samuel Brock
- * Need to add formating and input validation for Adding and Updating Customer (Zipcode, phone number, email address)
  * Need to add titles for the Add and Update Customer dialogs to keep front-end consistent
- * Look into keeping pop-up window open after the cancel button is selected on the confirmation dialog
  */
 public class CustomerPaneController implements Initializable {
       

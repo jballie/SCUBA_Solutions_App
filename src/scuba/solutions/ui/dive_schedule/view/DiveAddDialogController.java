@@ -154,7 +154,7 @@ public class DiveAddDialogController implements Initializable {
             else
             {
             	okClicked = false;
-            	dialogStage.close();
+            
             }
         }
     }
@@ -205,7 +205,7 @@ public class DiveAddDialogController implements Initializable {
              else
              {
                 okClicked = false;
-                dialogStage.close();
+              //  dialogStage.close();
              }
         }
     	

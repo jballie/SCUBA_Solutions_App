@@ -35,6 +35,8 @@ public class Reservation
     private final StringProperty status;
     private final ObjectProperty<Customer> customer;
     private final ObjectProperty<DiveTrip> diveTrip;
+    private final ObjectProperty<Waiver> waiver;
+    private final ObjectProperty<Payment> payment;
     private static Connection connection;
 
     public Reservation() {
@@ -48,12 +50,19 @@ public class Reservation
 	 */
 	public Reservation(int id)
 	{
-		reservationId = new SimpleIntegerProperty(id);
-		diveTripId = new SimpleIntegerProperty();
-		customerId = new SimpleIntegerProperty();
-		status = new SimpleStringProperty();
-		customer = new SimpleObjectProperty(null);
-                diveTrip = new SimpleObjectProperty(null);
+		this.reservationId = new SimpleIntegerProperty(id);
+		this.diveTripId = new SimpleIntegerProperty();
+		this.customerId = new SimpleIntegerProperty();
+		this.status = new SimpleStringProperty();
+		this.customer = new SimpleObjectProperty();
+                this.diveTrip = new SimpleObjectProperty();
+                
+                Waiver waiver = new Waiver(id);
+                Payment payment = new Payment(id);
+                
+                this.waiver = new SimpleObjectProperty(waiver);
+                this.payment = new SimpleObjectProperty(payment);
+                
 	}
 	
 	public int getReservationId()
@@ -84,6 +93,26 @@ public class Reservation
         public void setDriveTrip(DiveTrip diveTrip)
         {
             this.diveTrip.set(diveTrip);
+        }
+        
+        public Waiver getWaiver()
+        {
+            return waiver.get();
+        }
+        
+        public void setWaiver(Waiver waiver)
+        {
+            this.waiver.set(waiver);
+        }
+        
+        public Payment getPayment()
+        {
+            return payment.get();
+        }
+        
+        public void setPayment(Payment payment)
+        {
+            this.payment.set(payment);
         }
         
 	public int getCustomerId()

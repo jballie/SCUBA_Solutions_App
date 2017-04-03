@@ -88,7 +88,7 @@ public class ReservationEditDialogController implements Initializable {
             else
             {
             	okClicked = false;
-            	dialogStage.close();
+            	//dialogStage.close();
             }
         }
     }
@@ -181,14 +181,19 @@ public class ReservationEditDialogController implements Initializable {
             errorMessage += "No valid credit card conformation (must be an integer)!\n"; 
         }
         
-        if(dateProcDatePicker.getValue().isAfter(LocalDate.now()))
+       if(dateProcDatePicker.getValue() != null)
         {
-            errorMessage += "No valid date processed! Cannot be a future date! \n"; 
+            if(dateProcDatePicker.getValue().isAfter(LocalDate.now()))
+            {
+                errorMessage += "No valid date signed! Cannot be a future date! \n"; 
+            }
         }
-        
-        if(dateSignedDatePicker.getValue().isAfter(LocalDate.now()))
+        if(dateSignedDatePicker.getValue() != null)
         {
-            errorMessage += "No valid date signed! Cannot be a future date! \n"; 
+            if(dateSignedDatePicker.getValue().isAfter(LocalDate.now()))
+            {
+                errorMessage += "No valid date signed! Cannot be a future date! \n"; 
+            }
         }
         
         if(errorMessage.equals(" ")) {

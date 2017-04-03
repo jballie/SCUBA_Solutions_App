@@ -124,7 +124,7 @@ public class DiveEditDialogController implements Initializable {
             else
             {
             	okClicked = false;
-            	dialogStage.close();
+            	//dialogStage.close();
             }
         }
     }
@@ -151,10 +151,6 @@ public class DiveEditDialogController implements Initializable {
         {
             errorMessage += "No valid date of dive trip!\n"; 
         }
-     //   else if(!isValidDate()) 
-       // {
-        //	errorMessage += "Dive trip date is not valid. Is not a current or future date!\n";
-        //} 
         if (departTimePicker.getTime() == null) 
         {
             errorMessage += "No valid depart time!\n"; 
@@ -179,13 +175,6 @@ public class DiveEditDialogController implements Initializable {
             
             return false;            
         }    
-    }
-    
-    private boolean isValidDate()
-    {
-    	LocalDate date = tripDatePicker.getValue();
-    	
-    	return date.compareTo(LocalDate.now()) >= 0;
     }
     
     
