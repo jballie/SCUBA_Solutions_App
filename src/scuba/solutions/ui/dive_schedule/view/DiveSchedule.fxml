@@ -57,17 +57,9 @@
                               <Font name="Roboto Medium" size="15.0" />
                            </font>
                         </JFXButton>
-                        <JFXButton fx:id="viewWeatherButton" buttonType="RAISED" layoutX="424.0" layoutY="33.0" prefHeight="50.0" prefWidth="150.0" style="-fx-background-color: #4059a9;" text="View Weather" textFill="WHITE">
-                           <HBox.margin>
-                              <Insets />
-                           </HBox.margin>
-                           <font>
-                              <Font name="Roboto Medium" size="15.0" />
-                           </font>
-                        </JFXButton>
                      </children>
                      <padding>
-                        <Insets left="60.0" />
+                        <Insets left="100.0" />
                      </padding>
                   </HBox>
                </bottom>
