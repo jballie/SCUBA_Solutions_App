@@ -529,6 +529,18 @@ public class CustomerPaneController implements Initializable {
         stage.show( );
     }
     
+        @FXML
+    private void transitionToRecords(ActionEvent event) throws IOException 
+    {
+                        Stage stage = (Stage) rootPane.getScene().getWindow();
+        FXMLLoader loader = new FXMLLoader();
+	    loader.setLocation(getClass().getResource("/scuba/solutions/ui/records/view/RecordsPane.fxml"));
+	    Parent root = loader.load();
+        //Stage stage = new Stage();
+        stage.setScene(new Scene(root));
+        stage.show( );
+    }
+    
     @FXML
     public void exitProgram(ActionEvent event)
     {

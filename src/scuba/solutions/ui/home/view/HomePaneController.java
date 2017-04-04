@@ -52,6 +52,8 @@ public class HomePaneController implements Initializable {
     private Label currentTimeLabel;
     @FXML
     private Label currentDateLabel;
+    @FXML
+    private JFXButton recordsButton;
 
     /**
      * Initializes the controller class.
@@ -94,6 +96,18 @@ public class HomePaneController implements Initializable {
     {
         Stage stage = (Stage) rootPane.getScene().getWindow();
         stage.close();
+    }
+
+    @FXML
+    private void transitionToRecords(ActionEvent event) throws IOException 
+    {
+                        Stage stage = (Stage) rootPane.getScene().getWindow();
+        FXMLLoader loader = new FXMLLoader();
+	    loader.setLocation(getClass().getResource("/scuba/solutions/ui/records/view/RecordsPane.fxml"));
+	    Parent root = loader.load();
+        //Stage stage = new Stage();
+        stage.setScene(new Scene(root));
+        stage.show( );
     }
     
 }
