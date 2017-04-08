@@ -13,8 +13,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.LinkedList;
-import javafx.beans.property.BooleanProperty;
+import java.util.Objects;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -23,13 +22,14 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.control.Alert;
 import scuba.solutions.database.DbConnection;
+import scuba.solutions.util.AlertUtil;
 import scuba.solutions.util.DateUtil;
 
 /**
  * Represents a Customer profile for the Scuba Solutions app.
  * @author Jon
  */
-public class Customer
+public class Customer 
 {
     private final IntegerProperty customerID;
     private final StringProperty firstName;
@@ -83,6 +83,30 @@ public class Customer
         this.certDiveNo = new SimpleStringProperty("");
         
     	
+    }
+    
+     public Customer(Customer cust) 
+     {
+         
+         
+     
+         
+    
+        customerID = cust.customerID;
+        
+       this.firstName = new SimpleStringProperty(cust.getFirstName());
+    	this.lastName = new SimpleStringProperty (cust.getLastName());
+    	this.street = new SimpleStringProperty(cust.getStreet());
+        this.postalCode = new SimpleStringProperty(cust.getPostalCode());
+        this.city = new SimpleStringProperty(cust.getCity());
+        this.state = new SimpleStringProperty(cust.getState());
+        this.dateOfBirth = new SimpleObjectProperty<LocalDate>(cust.getDateOfBirth());
+        this.phoneNumber = new SimpleStringProperty(cust.getPhoneNumber());
+        this.emailAddress = new SimpleStringProperty(cust.getEmailAddress());
+        this.certAgency = new SimpleStringProperty(cust.getCertAgency());
+        this.certDiveNo = new SimpleStringProperty(cust.getCertDiveNo());
+        
+
     }
 
     public int getCustomerID() {
@@ -223,33 +247,69 @@ public class Customer
 	return result;
     }
 
-
-	
     @Override
-    public boolean equals(Object obj)
-    {
-	if (this == obj)
-		return true;
-	if (obj == null)
-		return false;
-	if (getClass() != obj.getClass())
-		return false;
-	Customer other = (Customer) obj;
-	if (customerID == null)
-	{
-            if (other.customerID != null)
-		return false;
-	}
-            else if (!customerID.equals(other.customerID))
-		return false;
-	
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Customer other = (Customer) obj;
+        if (this.customerID.get() != other.customerID.get()) {
+            return false;
+        }
+        if (!this.firstName.get().equals(other.firstName.get())) {
+            return false;
+        }
+        if (!this.lastName.get().equals(other.lastName.get())) {
+            return false;
+        }
+        if (!this.street.get().equals(other.street.get())) {
+            return false;
+        }
+        if (!this.postalCode.get().equals(other.postalCode.get())) {
+            return false;
+        }
+        if (!this.city.get().equals(other.city.get())) {
+            return false;
+        }
+        if (!this.state.get().equals(other.state.get())) {
+            return false;
+        }
+        if (!Objects.equals(this.dateOfBirth.get(), other.dateOfBirth.get())) {
+            return false;
+        }
+        if (!Objects.equals(this.phoneNumber.get(), other.phoneNumber.get())) {
+            return false;
+        }
+        if (!Objects.equals(this.emailAddress.get(), other.emailAddress.get())) {
+            return false;
+        }
+        if (!Objects.equals(this.certAgency.get(), other.certAgency.get())) {
+            return false;
+        }
+        if (!Objects.equals(this.certDiveNo.get(), other.certDiveNo.get())) {
+            return false;
+        }
         return true;
     }
+
+
+	
+   
     
     public static void updateCustomer(Customer customer) throws FileNotFoundException, IOException, SQLException
     {
         connection = DbConnection.accessDbConnection().getConnection();
-        int custId = customer.getCustomerID();
+        PreparedStatement preSt = null;
+        try
+        {
+        
+            int custId = customer.getCustomerID();
             	String fName = customer.getFirstName();
             	String lName = customer.getLastName();
             	String street = customer.getStreet();
@@ -262,10 +322,9 @@ public class Customer
             	String certAgen = customer.getCertAgency();
             	String certDiveNo = customer.getCertDiveNo();
                  
-            	PreparedStatement preSt = 
-            			connection.prepareStatement("UPDATE CUSTOMER SET first_name=?, last_name=?, street=?,"+
-            			 "city=?, state_of_residence=?, zip=?, phone=?, email=?, dob=?, cert_agency=?, cert_no=?"+
-            			 "WHERE CUST_ID=?");
+            	preSt = connection.prepareStatement("UPDATE CUSTOMER SET first_name=?, last_name=?, street=?,"+
+                         "city=?, state_of_residence=?, zip=?, phone=?, email=?, dob=?, cert_agency=?, cert_no=?"+
+                         "WHERE CUST_ID=?");
           
             	preSt.setString(1, fName);
 	    		preSt.setString(2, lName);
@@ -293,7 +352,28 @@ public class Customer
                     alert.setContentText("Error Occured with update of customer.");
                     alert.showAndWait();
                 }
+        }
+        catch (SQLException e)
+    	{
+            AlertUtil.showDbErrorAlert("Error with selecting and adding Dive Trips", e);
+    	}
         
+    	finally
+    	{
+            try
+            {
+            	if (preSt!= null)
+            	{
+                    preSt.close();
+            	}
+        
+            }
+            catch (SQLException e)
+            {
+            	AlertUtil.showDbErrorAlert("Error with DB Connection", e);
+            }
+        
+        }
     }
     
     
@@ -382,7 +462,15 @@ public class Customer
     @Override
     public String toString()
     {
-        return this.getFullName();
+        return this.getFullName() + "\n " +
+        this.getLastName() + "\n " +
+        this.getEmailAddress() + "\n " +
+                this.getPhoneNumber() + "\n" +
+        this.getPhoneNumber() + "\n " +
+        this.getCity() + "\n";
+                
+                
     }
+    
 
 }

@@ -111,9 +111,7 @@ public class DiveTrip {
     public String determineDayOfWeek()
     {
        LocalDate date = tripDate.get();
-       
-       // util method for capitalizing words (also needed for adding/updating so it matches DB format)
-       // or Apache Common lang library can be used
+
        String day = date.getDayOfWeek().toString();
       
        String let = day.substring(0, 1).toUpperCase();
@@ -144,5 +142,7 @@ public class DiveTrip {
     {
     	return  "Trip Date: " + tripDate.get().toString() + "\nDeaprt Time: " + departTime.get().toString();
     }
+    
+    
     
 }

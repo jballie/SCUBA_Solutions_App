@@ -14,6 +14,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 import java.util.Random;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -340,6 +341,7 @@ public class CustomerPaneController implements Initializable {
         firstNameColumn.setCellValueFactory(cellData -> cellData.getValue().firstNameProperty());
         lastNameColumn.setCellValueFactory(cellData -> cellData.getValue().lastNameProperty());
         dobColumn.setCellValueFactory(cellData -> cellData.getValue().dateofBirthProperty());
+        dobColumn.setComparator(new DateComparator());
     }
     
     // Loads all the Customers from that database into the tableView
@@ -547,5 +549,19 @@ public class CustomerPaneController implements Initializable {
         Stage stage = (Stage) rootPane.getScene().getWindow();
         stage.close();
     }
+    
+    public class DateComparator implements Comparator<String>
+    {
+        @Override
+        public int compare(String str1, String str2)
+        {
+            LocalDate dateStr1 = DateUtil.parse(str1);
+            LocalDate dateStr2 = DateUtil.parse(str2);
+            
+          
+            return dateStr1.compareTo(dateStr2);
+        }
+    }
+
     
 }

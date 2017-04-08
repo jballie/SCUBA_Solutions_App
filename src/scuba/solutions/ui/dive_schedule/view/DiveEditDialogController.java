@@ -11,11 +11,13 @@ import java.util.ResourceBundle;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXRadioButton;
+import java.time.format.DateTimeFormatter;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import scuba.solutions.ui.dive_schedule.model.DiveTrip;
 import scuba.solutions.util.AlertUtil;
@@ -32,6 +34,11 @@ public class DiveEditDialogController implements Initializable {
     private DiveTrip trip;
 
     private boolean okClicked = false;
+    
+    private static boolean isCancelled = false;
+    private final DateTimeFormatter tripTime =  DateTimeFormatter.ofPattern("h:mm a");
+    private final DateTimeFormatter tripDate = DateTimeFormatter.ofPattern("MMM dd, yyyy");
+    
 	
     @FXML
     private JFXButton saveButton;
@@ -40,19 +47,18 @@ public class DiveEditDialogController implements Initializable {
     private JFXButton cancelButton;
 
     @FXML
-    private JFXDatePicker tripDatePicker;
-
-    @FXML
-    private JFXDatePicker departTimePicker;
-
-    @FXML
-    private JFXRadioButton yesCancelRadio;
+    private JFXRadioButton okRadio;
 
     @FXML
     private ToggleGroup cancelRadios;
-
+    
     @FXML
-    private JFXRadioButton noCancelRadio;
+    private JFXRadioButton cancelledRadio;
+    @FXML
+    private Label tripDateLabel;
+    @FXML
+    private Label departTimeLabel;
+
 
     /**
      * Initializes the controller class.
@@ -83,8 +89,20 @@ public class DiveEditDialogController implements Initializable {
     {
         this.trip = trip;
         // sets all the text fields to this customer's attributes.
-        tripDatePicker.setValue(trip.getTripDate());
-        departTimePicker.setTime(trip.getDepartTime());  
+        tripDateLabel.setText(trip.getTripDate().format(tripDate));
+        departTimeLabel.setText(trip.getDepartTime().format(tripTime)); 
+        String status = trip.getWeatherStatus();
+       
+        
+        if(status.equalsIgnoreCase("OK"))
+        {
+            okRadio.setSelected(true);
+        }
+        else if(status.equalsIgnoreCase("Cancelled"))
+        {
+            cancelledRadio.setSelected(true);
+         }
+        
     }
     /**
      * Returns true if the user clicked OK, false otherwise.
@@ -101,22 +119,32 @@ public class DiveEditDialogController implements Initializable {
     @FXML
     private void handleSave() 
     {
+        boolean confirm = false;
         if (isInputValid()) 
         {
-          
+          if(cancelledRadio.isSelected() && !trip.getWeatherStatus().equalsIgnoreCase("Cancelled"))
+          {
+              confirm = AlertUtil.confirmCancelAlert();
+              isCancelled = true;
+          }
+          else
+          {
+               confirm = AlertUtil.confirmChangesAlert();
+          }
             // Confirms the save changes before putting them into effect.
-            boolean confirm = AlertUtil.confirmChangesAlert();
             if(confirm)
             {
-               trip.setTripDate(tripDatePicker.getValue());
-               trip.setDepartTime(departTimePicker.getTime());
-               if(yesCancelRadio.isSelected())
+             //  trip.setTripDate(tripDatePicker.getValue());
+             //  trip.setDepartTime(departTimePicker.getTime());
+               
+               
+               if(okRadio.isSelected())
                {
-                   trip.setWeatherStatus("Cancelled");
+                   trip.setWeatherStatus("OK");
                }
-               else 
+               else if(cancelledRadio.isSelected())
                {
-                  
+                  trip.setWeatherStatus("CANCELLED");
                }
             	okClicked = true;
             	dialogStage.close();
@@ -147,15 +175,8 @@ public class DiveEditDialogController implements Initializable {
     {
         String errorMessage = "";
 
-        if (tripDatePicker.getValue() == null)
-        {
-            errorMessage += "No valid date of dive trip!\n"; 
-        }
-        if (departTimePicker.getTime() == null) 
-        {
-            errorMessage += "No valid depart time!\n"; 
-        }
-        if (!noCancelRadio.isSelected() && !yesCancelRadio.isSelected())
+ 
+        if (!cancelledRadio.isSelected() && !okRadio.isSelected())
         {
             errorMessage += "No radio button selected for trip status!\n"; 
         }
@@ -175,6 +196,11 @@ public class DiveEditDialogController implements Initializable {
             
             return false;            
         }    
+    }
+    
+    public static boolean isCancelled()
+    {
+        return isCancelled;
     }
     
     

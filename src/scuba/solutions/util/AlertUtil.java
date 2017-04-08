@@ -86,4 +86,15 @@ public class AlertUtil
             return false;
         }
     }
+    
+    public static boolean confirmCancelAlert()
+    {
+        Alert alert = new Alert(AlertType.CONFIRMATION);
+        alert.setTitle("Cancellation");
+        alert.setHeaderText("Please confirm the cancellation for this dive trip.");
+        alert.setContentText("Press OK to confirm this cancellation!");
+            Optional<ButtonType> result = alert.showAndWait();
+        return result.get() == ButtonType.OK; // ... user chose OK
+        // ... user chose CANCEL or closed the dialog
+    }
 }

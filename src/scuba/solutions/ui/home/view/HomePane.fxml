@@ -74,7 +74,7 @@
                         <VBox prefHeight="237.0" prefWidth="455.0" spacing="20.0">
                            <children>
                               <Label alignment="BOTTOM_CENTER" prefHeight="88.0" prefWidth="460.0" style="-fx-font-size: 35; -fx-font-weight: bold;" text="Today's Dive Trips" textFill="#4059a9" />
-                              <Label fx:id="todayDivelabel1" alignment="CENTER" prefHeight="23.0" prefWidth="447.0" style="-fx-font-size: 22;" text="No Dives Today" textFill="#4059a9" />
+                              <Label fx:id="todayDivelabel1" alignment="CENTER" prefHeight="23.0" prefWidth="447.0" style="-fx-font-size: 20;" text="No Dives Today" textFill="#4059a9" />
                               <Label fx:id="todayDivelabel2" alignment="CENTER" prefHeight="23.0" prefWidth="453.0" style="-fx-font-size: 20;" textFill="#4059a9" />
                               <Label fx:id="todayDivelabel3" prefHeight="23.0" prefWidth="477.0" style="-fx-font-size: 20;" textFill="#4059a9" />
                            </children>
@@ -86,7 +86,7 @@
                         <VBox prefHeight="237.0" prefWidth="484.0" spacing="20.0">
                            <children>
                               <Label alignment="BOTTOM_CENTER" prefHeight="89.0" prefWidth="471.0" style="-fx-font-size: 35; -fx-font-weight: bold;" text="Next  Dive Trip" textFill="#4059a9" />
-                              <Label fx:id="nextDiveLabel" alignment="CENTER" prefHeight="23.0" prefWidth="507.0" style="-fx-font-size: 22;" text="4/8/2017 at 8:30" textFill="#4059a9" />
+                              <Label fx:id="nextDiveLabel" alignment="CENTER" prefHeight="23.0" prefWidth="507.0" style="-fx-font-size: 20;" text="4/8/2017 at 8:30" textFill="#4059a9" />
                            </children>
                            <padding>
                               <Insets top="20.0" />

@@ -5,6 +5,7 @@
  */
 package scuba.solutions.emails;
 
+import com.sun.mail.smtp.SMTPMessage;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -38,6 +39,8 @@ public class EmailAlert
 {
     
     public static void sendRequestEmail(int reservationId, Customer customer, DiveTrip selectedTrip) throws IOException, SQLException, InterruptedException {
+          boolean emailSent = false;
+        
           Properties props = new Properties();    
           props.put("mail.smtp.host", "smtp.gmail.com");    
           props.put("mail.smtp.socketFactory.port", "465");    
@@ -89,10 +92,10 @@ public class EmailAlert
            multipart.addBodyPart(messageBodyPart2); 
            
            message.setContent(multipart);
-           
+      
            
            Transport.send(message);
-           
+        
           } 
           catch (MessagingException e) 
           {
@@ -122,7 +125,7 @@ public class EmailAlert
           try {    
            MimeMessage message = new MimeMessage(session);    
            message.addRecipient(Message.RecipientType.TO,new InternetAddress("scubascubanow@gmail.com"));    
-           message.setSubject("Diva Confirmation Email");
+           message.setSubject("Dive Confirmation Email");
                    
            StringBuilder msg = new StringBuilder();
            msg.append("Diver: ");

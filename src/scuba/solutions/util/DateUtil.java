@@ -8,6 +8,7 @@ package scuba.solutions.util;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.Comparator;
 
 /**
  *
@@ -66,6 +67,17 @@ public class DateUtil
         return DateUtil.parse(dateString) != null;
     }
     
-    
+    public class DateComparator implements Comparator<String>
+    {
+        @Override
+        public int compare(String str1, String str2)
+        {
+            LocalDate dateStr1 = DateUtil.parse(str1);
+            LocalDate dateStr2 = DateUtil.parse(str2);
+            
+          
+            return dateStr1.compareTo(dateStr2);
+        }
+    }
     
 }

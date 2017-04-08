@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXButton?>
-<?import com.jfoenix.controls.JFXDatePicker?>
 <?import com.jfoenix.controls.JFXRadioButton?>
 <?import java.net.URL?>
 <?import javafx.geometry.Insets?>
@@ -80,9 +79,7 @@
                               <Insets left="50.0" />
                            </padding>
                         </Label>
-                        <JFXDatePicker fx:id="tripDatePicker" defaultColor="#4059a9" prefHeight="38.0" prefWidth="198.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <JFXDatePicker fx:id="departTimePicker" defaultColor="#4059a9" prefHeight="38.0" prefWidth="198.0" showTime="true" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                        <Label prefHeight="39.0" prefWidth="166.0" style="-fx-font-size: 18;" text="Cancel Dive Trip?" textAlignment="CENTER" textFill="#4059a9" GridPane.rowIndex="3">
+                        <Label prefHeight="39.0" prefWidth="166.0" style="-fx-font-size: 18;" text="Trip Status" textAlignment="CENTER" textFill="#4059a9" GridPane.rowIndex="3">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
@@ -92,7 +89,7 @@
                         </Label>
                         <HBox prefHeight="76.0" prefWidth="269.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
                            <children>
-                              <JFXRadioButton fx:id="yesCancelRadio" prefHeight="113.0" prefWidth="296.0" text="Yes" textFill="#4059a9">
+                              <JFXRadioButton fx:id="okRadio" prefHeight="113.0" prefWidth="296.0" text="OK" textFill="#4059a9">
                                  <font>
                                     <Font name="Roboto" size="18.0" />
                                  </font>
@@ -100,13 +97,29 @@
                                     <ToggleGroup fx:id="cancelRadios" />
                                  </toggleGroup>
                               </JFXRadioButton>
-                              <JFXRadioButton fx:id="noCancelRadio" prefHeight="113.0" prefWidth="331.0" text="No" textFill="#4059a9" toggleGroup="$cancelRadios">
+                              <JFXRadioButton fx:id="cancelledRadio" prefHeight="113.0" prefWidth="331.0" text="Cancelled" textFill="#4059a9" toggleGroup="$cancelRadios">
                                  <font>
                                     <Font name="Roboto" size="18.0" />
                                  </font>
                               </JFXRadioButton>
                            </children>
                         </HBox>
+                        <Label fx:id="tripDateLabel" prefHeight="23.0" prefWidth="326.0" style="-fx-font-size: 18;" textFill="#4059a9" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                           <padding>
+                              <Insets left="50.0" />
+                           </padding>
+                        </Label>
+                        <Label fx:id="departTimeLabel" prefHeight="23.0" prefWidth="366.0" style="-fx-font-size: 18;" textAlignment="CENTER" textFill="#4059a9" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                           <padding>
+                              <Insets left="50.0" />
+                           </padding>
+                        </Label>
                      </children>
                   </GridPane>
                </children>

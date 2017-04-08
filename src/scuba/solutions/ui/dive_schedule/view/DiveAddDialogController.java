@@ -243,15 +243,15 @@ public class DiveAddDialogController implements Initializable {
 
         if (tripDatePicker.getValue() == null || DateUtil.validDate(tripDatePicker.getValue().toString()))
         {
-            errorMessage += "No valid date of dive trip!\n"; 
+            errorMessage += "Dive trip date is not valid. Please select a date value from the date picker.\n"; 
         }
         else if(!isValidDate()) 
         {
-            errorMessage += "Dive trip date is not valid. Is not a current or future date!\n";
+            errorMessage += "Dive trip date is not valid. Please select a current or future date.\n";
         } 
         if (departTimePicker.getTime() == null ) 
         {
-            errorMessage += "No valid depart time!\n"; 
+            errorMessage += "Depart time is not valid. Please select a depart time from the time picker.\n"; 
         }
         if (errorMessage.length() == 0) {
             return true;
@@ -279,25 +279,30 @@ public class DiveAddDialogController implements Initializable {
     	String dayOfWeek = dayOfWeekCombo.getValue();
         String errorMessage = "";
 
-        if (recurringStartDatePicker.getValue() == null || recurringEndDatePicker.getValue() == null)
+        if (recurringStartDatePicker.getValue() == null || recurringEndDatePicker.getValue() == null 
+                || DateUtil.validDate(recurringStartDatePicker.getValue().toString()) || DateUtil.validDate(recurringEndDatePicker.getValue().toString()) )
         {
-            errorMessage += "Not valid dates for a dive trip!\n"; 
+            errorMessage += "Dive trip date/s are not valid. Please select dates value from the date pickers.\n"; 
         }
-        else if(recurringStartDatePicker.getValue().compareTo(LocalDate.now()) >= 0 || recurringEndDatePicker.getValue().compareTo(LocalDate.now()) >= 0)
+        else if(recurringStartDatePicker.getValue().compareTo(LocalDate.now()) < 0 || recurringEndDatePicker.getValue().compareTo(LocalDate.now()) < 0)
         {
-            errorMessage += "Dive trip date/s are not valid. Not current or future dates!\n";
+            errorMessage += "Dive trip date/s are not valid. Please select current or future dates.\n";
+        }
+        else if(!isEndAfterStart())
+        {
+            errorMessage += "Dive trip date/s are not valid. Please select an ending date that comes after the start date.\n ";
         }
         else if(!isValidStartToEndDates())
         {
-            errorMessage += "Start and end dates are not valid. Must be a week between the start and end for a recurring trip!\n";
+            errorMessage += "Start and end dates are not valid. Please select atleast a week between the start date and end date for recurring trips.\n";
         }
         if (recurringDepartTimePicker.getTime() == null) 
         {
-            errorMessage += "No valid depart time!\n"; 
+            errorMessage += "Depart time is not valid. Please select a depart time from the time picker.\n"; 
         }
         if(dayOfWeekCombo.getValue() == null)
         {
-            errorMessage += "No valid day of week!\n";
+            errorMessage += "Day of week is not valid. Please select a day of week from the drop-down menu.\n";
         }
         if (errorMessage.length() == 0) {
             return true;
@@ -323,11 +328,21 @@ public class DiveAddDialogController implements Initializable {
         LocalDate endDate = recurringEndDatePicker.getValue();
         
         
-        if(startDate.isAfter(endDate))
+
+        if((endDate.minusDays(7)).compareTo(startDate) < 0)
         {
             return false;
         }
-        if((endDate.minusDays(7)).compareTo(startDate) < 0)
+        
+        return true;
+    }
+    
+    private boolean isEndAfterStart()
+    {
+        LocalDate startDate = recurringStartDatePicker.getValue();
+        LocalDate endDate = recurringEndDatePicker.getValue();
+        
+        if(startDate.isAfter(endDate))
         {
             return false;
         }
