@@ -14,6 +14,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
@@ -188,6 +189,30 @@ public class DiveSchedulePaneController implements Initializable
             }
         });
         
+        reservationsTable.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends Reservation> observable, Reservation oldValue, Reservation newValue) ->
+        {
+            try
+            {
+                if(newValue.getDiveTrip().getAvailSeats() == 0 || newValue.getDiveTrip().getWeatherStatus().equalsIgnoreCase("Cancelled"))
+                {
+                    updateReservationButton.setDisable(true);
+
+                }
+                else if((newValue.getDiveTrip().getAvailSeats() == 0 && newValue.getStatus().equalsIgnoreCase("Pending")))
+                {
+                    updateReservationButton.setDisable(true);
+                }
+                else
+                {
+                    updateReservationButton.setDisable(false);
+                }
+            }
+            catch(NullPointerException e)
+            {
+
+            }
+            
+        });
     
     
   
@@ -456,6 +481,7 @@ public class DiveSchedulePaneController implements Initializable
         departTimeColumn.setCellValueFactory(cellData -> cellData.getValue().departTimeProperty());
         availSeatsColumn.setCellValueFactory(cellData -> cellData.getValue().availSeatsProperty());
         weatherStatusColumn.setCellValueFactory(cellData -> cellData.getValue().weatherStatusProperty()); 
+        tripDateColumn.setComparator(new DateComparator());
     }
    
    public void initializeReservation()
@@ -512,14 +538,14 @@ public class DiveSchedulePaneController implements Initializable
                 LocalTime departTime = selectedTrip.getDepartTime();
                 String time = SQLUtil.localTimeToInterval(departTime);
                 String tripStatus = selectedTrip.getWeatherStatus();
-                System.out.println(departTime);
+               
 
                 PreparedStatement preSt;
 
                 try 
                 {
                     preSt = connection.prepareStatement("UPDATE DIVE_TRIP SET trip_date=?," +
-                                    "available_seats=?, departure_time=?, weather_status=?" +
+                                    "available_seats=?, departure_time=?, dive_status=?" +
                                     "WHERE TRIP_ID=?");
 
                     preSt.setDate(1, Date.valueOf(tripDate));
@@ -821,20 +847,20 @@ public class DiveSchedulePaneController implements Initializable
         
         if(waiver.isComplete()) 
         {
-            statement.executeUpdate("UPDATE WAIVER SET waiver_status='Complete' WHERE reservation_id=" + reservationId);
+            statement.executeUpdate("UPDATE WAIVER SET waiver_status='COMPLETE' WHERE reservation_id=" + reservationId);
         } 
         else 
         {
-           statement.executeUpdate("UPDATE WAIVER SET waiver_status='Incomplete' WHERE reservation_id=" + reservationId);
+           statement.executeUpdate("UPDATE WAIVER SET waiver_status='INCOMPLETE' WHERE reservation_id=" + reservationId);
         }
         
         if(payment.isComplete()) 
         {
-            statement.executeUpdate("UPDATE PAYMENT SET payment_status='Paid' WHERE reservation_id=" +  + reservationId);
+            statement.executeUpdate("UPDATE PAYMENT SET payment_status='PAID' WHERE reservation_id=" +  + reservationId);
         } 
         else 
         {
-            statement.executeUpdate("UPDATE PAYMENT SET payment_status='Unpaid' WHERE reservation_id=" +  + reservationId);
+            statement.executeUpdate("UPDATE PAYMENT SET payment_status='UNPAID' WHERE reservation_id=" +  + reservationId);
         }     
         
         ResultSet resultSet = null;
@@ -853,7 +879,7 @@ public class DiveSchedulePaneController implements Initializable
         {
             if (selectedReservation.getStatus() == null || selectedReservation.getStatus().equalsIgnoreCase("Pending"))
             {
-                update = "UPDATE RESERVATION SET reservation_status='Booked' WHERE reservation_id=" + reservationId;            
+                update = "UPDATE RESERVATION SET reservation_status='BOOKED' WHERE reservation_id=" + reservationId;            
                 statement.executeUpdate(update);
                 
                 Executors.newSingleThreadExecutor().execute(() -> {
@@ -1045,7 +1071,7 @@ public class DiveSchedulePaneController implements Initializable
     	}	
    }
         @FXML
-    private void addReservation(ActionEvent event) throws IOException, SQLException 
+    private void addReservation(ActionEvent event) throws IOException, SQLException, CloneNotSupportedException 
     {
         DiveTrip selectedTrip = (DiveTrip) tripTable.getSelectionModel().getSelectedItem();
         newReservationButton.setDisable(true);
@@ -1060,16 +1086,22 @@ public class DiveSchedulePaneController implements Initializable
                 if(isProceedClicked && isCustomerFound)
                 {
                     Customer customer = ReservationAddDialog_SearchCustomerController.returnCustomer();
-                    boolean confirmClicked = showReservationAddDialog_ExistingCustomer(customer);
+                    Customer selectedCustomer = new Customer(customer);
+                   
+                    boolean confirmClicked = showReservationAddDialog_ExistingCustomer(selectedCustomer);
                     if(confirmClicked)
                     {
-                        Customer.updateCustomer(customer);
+  
+                        if(!selectedCustomer.equals(customer))
+                        {
+                             Customer.updateCustomer(selectedCustomer);
+                        }
 
-                        int custId = Customer.getCustId(customer);
+                        int custId = Customer.getCustId(selectedCustomer);
 
                         if(Reservation.addReservation(custId, selectedTrip.getTripId()) > 0)
                         {
-                            AlertUtil.showDbSavedAlert("New Reservation for " + customer.getFullName() + " succesfully saved.");
+                            AlertUtil.showDbSavedAlert("New Reservation for " + selectedCustomer.getFullName() + " succesfully saved.");
                             int reservationId = Reservation.getReservationId(custId, selectedTrip.getTripId());
                             Waiver.addWaiver(reservationId);
                             Payment.addPayment(reservationId);
@@ -1077,12 +1109,12 @@ public class DiveSchedulePaneController implements Initializable
                             loadTripReservations(selectedTrip);
                             Executors.newSingleThreadExecutor().execute(() -> {
                                 try {
-                                    EmailAlert.sendRequestEmail(reservationId, customer, selectedTrip);
+                                    EmailAlert.sendRequestEmail(reservationId, selectedCustomer, selectedTrip);
                                 } catch (IOException | SQLException | InterruptedException e){
                                      AlertUtil.showErrorAlert("Email Error!", e);
                                 }
                             });
-                            AlertUtil.showEmailSent("Reservation Email Request Successfully sent to " + customer.getFullName() + ".");
+                            AlertUtil.showEmailSent("Reservation Email Request Successfully sent to " + selectedCustomer.getFullName() + ".");
                         }
 
                     }
@@ -1164,6 +1196,19 @@ public class DiveSchedulePaneController implements Initializable
     {
         Stage stage = (Stage) rootPane.getScene().getWindow();
         stage.close();
+    }
+    
+    public class DateComparator implements Comparator<String>
+    {
+        @Override
+        public int compare(String str1, String str2)
+        {
+            LocalDate dateStr1 = DateUtil.parse(str1);
+            LocalDate dateStr2 = DateUtil.parse(str2);
+            
+          
+            return dateStr1.compareTo(dateStr2);
+        }
     }
 
 }
