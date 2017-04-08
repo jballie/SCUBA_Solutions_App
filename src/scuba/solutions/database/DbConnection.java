@@ -36,7 +36,7 @@ public final class DbConnection {
 				SQLException {
 
 		
-                        //Remote Server - Please test out to make sure it works Sam
+                        //Remote Server 
                         /*
 			String username = "ScubaNow";
 			String password = "capstone";

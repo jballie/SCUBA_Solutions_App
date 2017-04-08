@@ -300,32 +300,38 @@ public class HomePaneController implements Initializable {
         }
         
        LocalDateTime currentDateTime = LocalDateTime.now();
-       DiveTrip nextDive = trips.get(0);
-       for(DiveTrip trip : trips)
+       if (trips.isEmpty())
        {
-          int year = trip.getTripDate().getYear();
-          int month = trip.getTripDate().getMonthValue();
-          int day = trip.getTripDate().getDayOfMonth();
-          int hour = trip.getDepartTime().getHour();
-          int minute = trip.getDepartTime().getMinute();
-          int second = trip.getDepartTime().getSecond();
-          
-          LocalDateTime tripDateTime = LocalDateTime.of(year, month, day, hour, minute, second);
-          if(currentDateTime.compareTo(tripDateTime) < 0)
-          {
-              nextDive = trip;
-              break;
-          }
-          
+              nextDiveLabel.setText("No Dives Scheduled");
        }
-       String nextDiveText = "";
-   
-       nextDiveText += nextDive.getTripDate().format(DateTimeFormatter.ofPattern("MMM dd, yyyy"));
-       nextDiveText += " at ";
-       nextDiveText += nextDive.getDepartTime().format(DateTimeFormatter.ofPattern("h:mm a"));
-       
-       nextDiveLabel.setText(nextDiveText);
-        
+       else
+       {
+            DiveTrip nextDive = trips.get(0);
+            for(DiveTrip trip : trips)
+            {
+               int year = trip.getTripDate().getYear();
+               int month = trip.getTripDate().getMonthValue();
+               int day = trip.getTripDate().getDayOfMonth();
+               int hour = trip.getDepartTime().getHour();
+               int minute = trip.getDepartTime().getMinute();
+               int second = trip.getDepartTime().getSecond();
+
+               LocalDateTime tripDateTime = LocalDateTime.of(year, month, day, hour, minute, second);
+               if(currentDateTime.compareTo(tripDateTime) < 0)
+               {
+                   nextDive = trip;
+                   break;
+               }
+
+            }
+            String nextDiveText = "";
+
+            nextDiveText += nextDive.getTripDate().format(DateTimeFormatter.ofPattern("MMM dd, yyyy"));
+            nextDiveText += " at ";
+            nextDiveText += nextDive.getDepartTime().format(DateTimeFormatter.ofPattern("h:mm a"));
+
+            nextDiveLabel.setText(nextDiveText);
+       }
         
    }
    
