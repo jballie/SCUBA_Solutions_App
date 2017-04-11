@@ -96,6 +96,7 @@ public class ReservationAddDialog_SearchCustomerController extends CustomerPaneC
         (observable, oldValue, newValue) -> showCustomer(newValue));
         
         initalizeSearchField(); 
+        searchTextField.setFocusTraversable(false);
 
     }    
     

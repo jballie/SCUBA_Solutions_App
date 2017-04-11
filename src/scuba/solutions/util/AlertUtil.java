@@ -94,7 +94,14 @@ public class AlertUtil
         alert.setHeaderText("Please confirm the cancellation for this dive trip.");
         alert.setContentText("Press OK to confirm this cancellation!");
             Optional<ButtonType> result = alert.showAndWait();
-        return result.get() == ButtonType.OK; // ... user chose OK
+        if (result.get() == ButtonType.OK)
+        {
+        // ... user chose OK
+            return true;
+        } else 
+        {
         // ... user chose CANCEL or closed the dialog
+            return false;
+        }
     }
 }

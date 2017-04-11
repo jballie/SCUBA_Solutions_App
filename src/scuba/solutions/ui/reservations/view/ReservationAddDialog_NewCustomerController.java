@@ -73,6 +73,8 @@ public class ReservationAddDialog_NewCustomerController extends CustomerEditDial
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         super.initialize(url, rb);
+        
+        
     }    
 
     /*

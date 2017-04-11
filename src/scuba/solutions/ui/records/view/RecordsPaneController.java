@@ -278,12 +278,12 @@ public class RecordsPaneController implements Initializable {
             return true;// Search matches trip date
         } else if (reservation.getDiveTrip().getDepartTime().toString().contains(lowerCaseFilter)) {
             return true; // Search matches depart time
-        } else if (reservation.getStatus().contains(lowerCaseFilter)) {
+       } else if (reservation.getDiveTrip().getWeatherStatus().toLowerCase().contains(lowerCaseFilter)){
+            return true; // Search matches trip status
+        } else if (reservation.getStatus().toLowerCase().contains(lowerCaseFilter)) {
             return true;
         } else if (Integer.toString(reservation.getReservationId()).contains(lowerCaseFilter)){
             return true; // Search matches eservation id.
-        } else if (reservation.getDiveTrip().getWeatherStatus().contains(lowerCaseFilter)){
-            return true; // Search matches trip status
         }
         return false; // Search does not match any data.
         

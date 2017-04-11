@@ -36,6 +36,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TableView.TableViewSelectionModel;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -167,7 +168,7 @@ public class DiveSchedulePaneController implements Initializable
         (observable, oldValue, newValue) -> showReservationStatusDetails(newValue));
         
         tripTable.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends DiveTrip> observable, DiveTrip oldValue, DiveTrip newValue) -> {
-            if(newValue != null && newValue.getWeatherStatus().equalsIgnoreCase("Cancelled"))
+            if(newValue == null || newValue.getWeatherStatus().equalsIgnoreCase("Cancelled"))
             {
                 newReservationButton.setDisable(true);
                 updateReservationButton.setDisable(true);
@@ -179,7 +180,7 @@ public class DiveSchedulePaneController implements Initializable
                 updateReservationButton.setDisable(false);
             }
             
-            if( newValue != null && (newValue.getAvailSeats() == 0 || newValue.getWeatherStatus().equalsIgnoreCase("Cancelled")) )
+            if( newValue == null || (newValue.getAvailSeats() == 0 || newValue.getWeatherStatus().equalsIgnoreCase("Cancelled")) )
             {
                 newReservationButton.setDisable(true);
             }
@@ -196,11 +197,18 @@ public class DiveSchedulePaneController implements Initializable
                 if(newValue.getDiveTrip().getAvailSeats() == 0 || newValue.getDiveTrip().getWeatherStatus().equalsIgnoreCase("Cancelled"))
                 {
                     updateReservationButton.setDisable(true);
+              
 
                 }
                 else if((newValue.getDiveTrip().getAvailSeats() == 0 && newValue.getStatus().equalsIgnoreCase("Pending")))
                 {
                     updateReservationButton.setDisable(true);
+               
+                }
+                else if((newValue.getDiveTrip().getWeatherStatus().equalsIgnoreCase("Cancelled") && newValue.getStatus().equalsIgnoreCase("Pending")))
+                {
+                    updateReservationButton.setDisable(true);
+                 
                 }
                 else
                 {
@@ -285,9 +293,7 @@ public class DiveSchedulePaneController implements Initializable
     private void loadTripReservations(DiveTrip selectedTrip)
     { 
        int tripId = 0;
-       if(selectedTrip != null && selectedTrip.getAvailSeats() == 0){
-           newReservationButton.setDisable(true);
-       }
+
        
         reservationData.clear();
 
@@ -328,7 +334,7 @@ public class DiveSchedulePaneController implements Initializable
                
                LocalDate diveDate = null;
                
-               statement = connection.prepareStatement("SELECT TRIP_DATE, DEPARTURE_TIME FROM DIVE_TRIP WHERE TRIP_ID=?");
+               statement = connection.prepareStatement("SELECT TRIP_DATE, DEPARTURE_TIME, DIVE_STATUS FROM DIVE_TRIP WHERE TRIP_ID=?");
 
                statement.setInt(1, diveID);
 
@@ -340,11 +346,12 @@ public class DiveSchedulePaneController implements Initializable
                
                String strTime = resultSet.getString(2);
                LocalTime time = SQLUtil.intervalToLocalTime(strTime);
-               
+               String tripStatus = resultSet.getString(3);
                
 
                Customer customer = new Customer(custID, firstName, lastName);
                DiveTrip diveTrip = new DiveTrip(diveID, diveDate, time);
+               diveTrip.setWeatherStatus(tripStatus);
                Reservation res = new Reservation(restID);
                res.setCustomer(customer);
                res.setDiveTripId(diveID);
@@ -523,7 +530,8 @@ public class DiveSchedulePaneController implements Initializable
    {
         updateDiveButton.setDisable(true);
         DiveTrip selectedTrip = (DiveTrip) tripTable.getSelectionModel().getSelectedItem();
-
+        TableViewSelectionModel<DiveTrip> selection = tripTable.getSelectionModel();
+   
         if (selectedTrip != null)
         {
             boolean okClicked = false;
@@ -568,7 +576,10 @@ public class DiveSchedulePaneController implements Initializable
                     updateDiveButton.setDisable(false);
                 }
                
-                loadDiveTrips();
+             
+               // loadDiveTrips();
+                tripTable.setSelectionModel(selection);
+               
             
             }
         } 
@@ -579,6 +590,7 @@ public class DiveSchedulePaneController implements Initializable
            
         }
         updateDiveButton.setDisable(false);
+        searchTextField.setFocusTraversable(false);
    }
    
    
@@ -811,7 +823,7 @@ public class DiveSchedulePaneController implements Initializable
                 
                 
                 bookReservation(selectedReservation);
-                showReservationStatusDetails(selectedReservation);
+               // showReservationStatusDetails(selectedReservation);
              }
          } 
          else 
@@ -949,7 +961,10 @@ public class DiveSchedulePaneController implements Initializable
             return true; // Search matches depart time
         } else if (trip.getDayOfWeek().toLowerCase().contains(lowerCaseFilter)) {
             return true;  // Search matches day of week.
+        } else if (trip.getWeatherStatus().toLowerCase().contains(lowerCaseFilter)) {
+            return true;
         }
+        
         return false; // Search does not match any data.
             });
         });
