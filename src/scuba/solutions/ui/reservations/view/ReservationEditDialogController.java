@@ -10,7 +10,6 @@ import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXTextField;
 import java.net.URL;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
@@ -18,7 +17,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import scuba.solutions.ui.reservations.model.Payment;
 import scuba.solutions.ui.reservations.model.Waiver;
@@ -172,27 +170,28 @@ public class ReservationEditDialogController implements Initializable {
         try {
             Integer.parseInt(amountTextField.getText());
         } catch (NumberFormatException e) {
-            errorMessage += "No valid amount (must be an integer)!\n"; 
+            errorMessage += "The amount is not valid. Please enter a number value for the amount.\n"; 
         }
         
         try {
             Integer.parseInt(ccConfirmTextField.getText());
         } catch (NumberFormatException e) {
-            errorMessage += "No valid credit card conformation (must be an integer)!\n"; 
+            errorMessage += "THe credit card confirmation number is not valid. Please enter"
+                    + "number value.!\n"; 
         }
         
        if(dateProcDatePicker.getValue() != null)
         {
             if(dateProcDatePicker.getValue().isAfter(LocalDate.now()))
             {
-                errorMessage += "No valid date signed! Cannot be a future date! \n"; 
+                errorMessage += "The date processed is not valid. Cannot be a future date. \n"; 
             }
         }
         if(dateSignedDatePicker.getValue() != null)
         {
             if(dateSignedDatePicker.getValue().isAfter(LocalDate.now()))
             {
-                errorMessage += "No valid date signed! Cannot be a future date! \n"; 
+                errorMessage += "The date signed is not valid. Cannot be a future date. \n"; 
             }
         }
         

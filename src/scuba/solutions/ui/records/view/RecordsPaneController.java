@@ -160,7 +160,7 @@ public class RecordsPaneController implements Initializable {
     	}
     	catch (SQLException e)
     	{
-            AlertUtil.showDbErrorAlert("Error with selecting and adding Dive Trips", e);
+            AlertUtil.showDbErrorAlert("Error with selecting the reservations to the records table", e);
     	}
         finally
     	{

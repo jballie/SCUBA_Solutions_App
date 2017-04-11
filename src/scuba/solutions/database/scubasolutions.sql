@@ -9,36 +9,36 @@ DROP SEQUENCE S_TRIP_ID;
 DROP SEQUENCE S_RESERVATION_ID;
 /
 
- /
+
 CREATE TABLE DIVE_TRIP(
  trip_id          NUMBER,
  trip_date        DATE,
- available_seats  NUMBER DEFAULT 8,
+ available_seats  NUMBER DEFAULT 6,
  departure_time   INTERVAL DAY(0) TO SECOND,
- weather_status   VARCHAR2(30) DEFAULT 'OK',
+ dive_status   VARCHAR2(10) DEFAULT 'OK',
  CONSTRAINT DIVE_TRIP_PK PRIMARY KEY(trip_id));
  
  /
  CREATE TABLE CUSTOMER(
   cust_id   NUMBER,
-  first_name  VARCHAR(15),
-  last_name VARCHAR (25),
-  street VARCHAR (50),
-  city VARCHAR(30),
+  first_name  VARCHAR2(15),
+  last_name VARCHAR2 (25),
+  street VARCHAR2 (50),
+  city VARCHAR2(30),
   state_of_residence VARCHAR (2),
   zip VARCHAR(5),
   phone VARCHAR(12),
-  email VARCHAR(40),
+  email VARCHAR2(40),
   dob DATE,
-  cert_agency VARCHAR(20),
-  cert_no VARCHAR(20),
+  cert_agency VARCHAR2(20),
+  cert_no VARCHAR2(20),
   CONSTRAINT CUSTOMER_PK PRIMARY KEY (cust_id));
   /
 CREATE TABLE RESERVATION(
  reservation_id NUMBER,
  cust_id NUMBER,
  trip_id NUMBER,
- reservation_status VARCHAR (8),
+ reservation_status VARCHAR2 (8) DEFAULT 'PENDING',
  CONSTRAINT RESERVATION_PK PRIMARY KEY(reservation_id),
  CONSTRAINT RESERVATION_FK_DIVE_TRIP FOREIGN KEY(trip_id) REFERENCES DIVE_TRIP(trip_id) ON DELETE CASCADE,
  CONSTRAINT RESERVATION_FK_CUST_ID FOREIGN KEY(cust_id) REFERENCES CUSTOMER(cust_id) ON DELETE CASCADE);
@@ -46,7 +46,7 @@ CREATE TABLE RESERVATION(
 
 CREATE TABLE PAYMENT(
 reservation_id NUMBER,
-payment_status VARCHAR2(7) DEFAULT 'Unpaid',
+payment_status VARCHAR2(7) DEFAULT 'UNPAID',
 cc_confirm_no NUMBER,
 date_processed DATE,
 amount NUMBER,
@@ -55,11 +55,11 @@ CONSTRAINT PAYMENT_FK_RESERVATION FOREIGN KEY (reservation_id) REFERENCES RESERV
 /
 CREATE TABLE WAIVER(
  reservation_id NUMBER,
- waiver_status VARCHAR(12) DEFAULT 'Incomplete',
+ waiver_status VARCHAR(12) DEFAULT 'INCOMPLETE',
  date_signed DATE,
- er_first VARCHAR(15),
- er_last VARCHAR(30),
- er_phone VARCHAR (12),
+ er_first VARCHAR2(15),
+ er_last VARCHAR2(30),
+ er_phone VARCHAR2 (12),
  CONSTRAINT WAIVER_PK PRIMARY KEY(reservation_id),
  CONSTRAINT WAIVER_FK_RESERVATION FOREIGN KEY(reservation_id) REFERENCES RESERVATION(reservation_id) ON DELETE CASCADE);
  

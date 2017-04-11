@@ -23,7 +23,7 @@ public class AlertUtil
     public static void showEmailSent(String content)
     {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setHeaderText("Email Sucessfully Sent!");
+        alert.setHeaderText("Email Sent!");
         alert.setContentText(content);
         alert.showAndWait();
     }

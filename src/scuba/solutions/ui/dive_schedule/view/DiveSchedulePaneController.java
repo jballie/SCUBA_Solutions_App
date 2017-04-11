@@ -154,7 +154,7 @@ public class DiveSchedulePaneController implements Initializable
         }
         catch (SQLException e)
         {
-            AlertUtil.showDbErrorAlert("Error with loading Dive Trips to the Table", e);
+            AlertUtil.showDbErrorAlert("Error with loading dive trips to the table", e);
         }
         
    
@@ -561,7 +561,7 @@ public class DiveSchedulePaneController implements Initializable
                 } 
                 catch (SQLException e) 
                 {
-                    AlertUtil.showDbErrorAlert("Error Occured with the Update of the Dive Trip", e);
+                    AlertUtil.showDbErrorAlert("Error occured with the update of the dive trip", e);
                 }
                 finally
                 {
@@ -575,7 +575,7 @@ public class DiveSchedulePaneController implements Initializable
         else 
         {
             // If nothing is selected a warning message will pop-up
-            AlertUtil.noSelectionAlert("No Dive Trip Selected", "Please Select A Dive Trip in the Table to Update.");
+            AlertUtil.noSelectionAlert("No Dive Trip Selected", "Please select a dive trip in the dive trips table to update.");
            
         }
         updateDiveButton.setDisable(false);
@@ -641,7 +641,7 @@ public class DiveSchedulePaneController implements Initializable
         }
         catch (SQLException e) 
         {
-                AlertUtil.showDbErrorAlert("Error Occured with the Addition of the Dive Trip.", e);
+                AlertUtil.showDbErrorAlert("Error occured with the addition of the dive trip.", e);
                 
             }
             catch (Exception e)
@@ -687,7 +687,7 @@ public class DiveSchedulePaneController implements Initializable
         }        
         catch (SQLException e) 
         {
-            AlertUtil.showDbErrorAlert("Error Occured with the Additon of the Recurring Dive Trips.", e);
+            AlertUtil.showDbErrorAlert("Error occured with the additon of the recurring dive trips.", e);
         }
         catch (Exception e)
         {
@@ -805,7 +805,7 @@ public class DiveSchedulePaneController implements Initializable
                 } else {
                     Alert alert = new Alert(Alert.AlertType.ERROR);
                     alert.setHeaderText(null);
-                    alert.setContentText("Error Occured with update of reservation.");
+                    alert.setContentText("Error occured with the update of reservation.");
                     alert.showAndWait();
                 }
                 
@@ -819,8 +819,8 @@ public class DiveSchedulePaneController implements Initializable
              Alert alert = new Alert(Alert.AlertType.WARNING);
              alert.initOwner(DiveSchedulePane.getPrimaryStage());
              alert.setTitle("No Selection");
-             alert.setHeaderText("No Customer Selected");
-             alert.setContentText("Please select a customer in the table to update.");
+             alert.setHeaderText("No Reservation Selected");
+             alert.setContentText("Please select a reservation in the reservations table to update.");
 
              alert.showAndWait();
          }
@@ -889,7 +889,7 @@ public class DiveSchedulePaneController implements Initializable
                     }
                 });
                 
-               AlertUtil.showEmailSent("Reservation Email Confirmation Successfully sent to " + selectedReservation.getCustomer().getFullName() + ".");
+               AlertUtil.showEmailSent("Customer has been booked for the dive trip. Email confirmation sent to " + selectedReservation.getCustomer().getFullName() + ".");
                 availSeats--;
             }
             
@@ -1114,7 +1114,7 @@ public class DiveSchedulePaneController implements Initializable
                                      AlertUtil.showErrorAlert("Email Error!", e);
                                 }
                             });
-                            AlertUtil.showEmailSent("Reservation Email Request Successfully sent to " + selectedCustomer.getFullName() + ".");
+                            AlertUtil.showEmailSent("Reservation email request sent to " + selectedCustomer.getFullName() + ".");
                         }
 
                     }
@@ -1145,7 +1145,7 @@ public class DiveSchedulePaneController implements Initializable
                                 } catch (IOException | SQLException | InterruptedException e){
                                 }
                             });
-                            AlertUtil.showEmailSent("Reservation Email Request Successfully sent to " + customer.getFullName() + ".");
+                            AlertUtil.showEmailSent("Reservation email request sent to " + customer.getFullName() + ".");
                         }
 
                     }
@@ -1160,7 +1160,7 @@ public class DiveSchedulePaneController implements Initializable
          }
          else
          {
-             AlertUtil.noSelectionAlert("No Dive Trip Selected", "Please select a dive trip in the table for the new reservation.");
+             AlertUtil.noSelectionAlert("No Dive Trip Selected", "Please select a dive trip in the dive trips table for the new reservation.");
          }
          newReservationButton.setDisable(false);
          

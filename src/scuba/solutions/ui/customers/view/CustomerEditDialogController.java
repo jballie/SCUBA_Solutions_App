@@ -193,19 +193,20 @@ public class CustomerEditDialogController implements Initializable {
 
         if (firstNameField.getText() == null || firstNameField.getText().length() == 0) 
         {
-            errorMessage += "No valid first name!\n"; 
+            errorMessage += "First name is not valid.\n"; 
         }
         if (lastNameField.getText() == null || lastNameField.getText().length() == 0) 
         {
-            errorMessage += "No valid last name!\n"; 
+            errorMessage += "Last name is not valid.\n"; 
         }
         if (streetField.getText() == null || streetField.getText().length() == 0)
         {
-            errorMessage += "No valid street!\n"; 
+            errorMessage += "Street is not valid.\n"; 
         }
 
         if (postalCodeField.getText() == null || (postalCodeField.getText().length() !=5)) {
-            errorMessage += "No valid postal code! Postal code must be 5 characters long! \n"; 
+            errorMessage += "Postal code is not valid. Please enter a postal code that is "
+                    + "5 characters long. \n"; 
         } 
         else 
         {
@@ -216,56 +217,58 @@ public class CustomerEditDialogController implements Initializable {
             } 
             catch (NumberFormatException e) 
             {
-                errorMessage += "No valid postal code (must be a number value)!\n"; 
+                errorMessage += "Postal code is not valid. Please enter a number value for the "
+                        + "postal code.\n"; 
             }
         }
 
         if (cityField.getText() == null || cityField.getText().length() == 0) 
         {
-            errorMessage += "No valid city!\n"; 
+            errorMessage += "City is not valid.\n"; 
         }
         
         if (stateComboBox.getValue() == null || stateComboBox.getValue().length() == 0) 
         {
-            errorMessage += "No valid state!\n"; 
+            errorMessage += "State is not valid.\n"; 
         }
 
         if (phoneNumField.getText() == null || phoneNumField.getText().length() == 0) 
         {
-            errorMessage += "No valid phone number!\n"; 
+            errorMessage += "Phone number is not valid.\n"; 
         }
             else if(!isPhoneNumber())
             {
-                errorMessage += "Does not match Phone Number format! Must be formated as: 000-000-0000";
+                errorMessage += "Phone Number format is not valid. Please enter a phone number"
+                        + "matching the format: 000-000-0000";
             }
         
         if (emailAddressField.getText() == null || emailAddressField.getText().length() == 0) 
         {
-            errorMessage += "No valid email address!\n"; 
+            errorMessage += "Email address is not valid.\n"; 
         }
             else if(!isEmailAddress())
             {
-                errorMessage += "Does not match a valid email format! Please enter a valid Email Address!\n";
+                errorMessage += "Please enter a valid email address that contain a @.com\n";
             }
     
         if (dobField.getValue() == null || DateUtil.validDate(dobField.getValue().toString())) 
         {
-            errorMessage += "No valid date of birth!\n";
+            errorMessage += "Date of Birth is not valid.\n";
         }
             else if(!isAdult()) 
             {
-            	errorMessage += "Customer is not an Adult! Customer must be 18 or older! \n";
+            	errorMessage += "Customer is not an Adult. A customer must be 18 years or older. \n";
             
             } 
         
         if (certAgencyField.getText() == null || certAgencyField.getText().length() == 0)
         {
-            errorMessage += "No valid Certification Agency!\n";
+            errorMessage += "Certification Agency is not valid.\n";
         }
         
         if (certDiveNoField.getText() == null || certDiveNoField.getText().length() == 0 )
         {
-            errorMessage += "No valid Certification Dive No.!\n";
+            errorMessage += "Certification Dive No. is not valid.\n";
         } 
         else 
         {
@@ -276,7 +279,8 @@ public class CustomerEditDialogController implements Initializable {
             } 
             catch (NumberFormatException e) 
             {
-                errorMessage += "No valid certification dive no. (must be a number value)!\n"; 
+                errorMessage += "Certification dive no. is not valid. Please enter a"
+                        + "number\n"; 
             }
         }
        
