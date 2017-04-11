@@ -150,6 +150,12 @@ public class Reservation
         return status;
     }
     
+    public ObjectProperty reservationIdProperty()
+    {
+        return reservationId.asObject();
+    }
+    
+    
     public static int addReservation(int custId, int diveId) throws IOException, FileNotFoundException, SQLException
     {
         connection = DbConnection.accessDbConnection().getConnection();

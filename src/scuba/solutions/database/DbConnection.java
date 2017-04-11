@@ -45,6 +45,7 @@ public final class DbConnection {
                         */
                         
                         //LocalHost normal connection - please use this most of the time!
+                        
                         String username = "scott";
                         String password = "tiger";
                         String url = "jdbc:oracle:thin:@localhost:1521:xe";

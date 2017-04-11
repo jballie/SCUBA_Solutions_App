@@ -15,7 +15,7 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" fx:id="rootPane" prefHeight="820.0" prefWidth="1298.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/8.0.102" xmlns:fx="http://javafx.com/fxml/1" fx:controller="scuba.solutions.ui.records.view.RecordsPaneController">
+<AnchorPane id="AnchorPane" fx:id="rootPane" prefHeight="820.0" prefWidth="1298.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="scuba.solutions.ui.records.view.RecordsPaneController">
    <children>
       <BorderPane prefHeight="580.0" prefWidth="951.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <center>
@@ -66,6 +66,7 @@
                               <TableColumn fx:id="reservationStatusColumn" prefWidth="75.0" text="Reservation Status" />
                               <TableColumn fx:id="customerNameColumn" minWidth="4.0" prefWidth="130.0" text="Customer Name" />
                               <TableColumn fx:id="tripDateColumn" minWidth="0.0" prefWidth="89.0" text="Trip Date" />
+                              <TableColumn fx:id="departTimeColumn" prefWidth="75.0" text="Departure Time" />
                               <TableColumn fx:id="availabilityColumn" prefWidth="75.0" text="Availability" />
                               <TableColumn fx:id="tripStatusColumn" prefWidth="75.0" text="Trip Status" />
                            </columns>
