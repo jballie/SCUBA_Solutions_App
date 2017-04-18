@@ -245,8 +245,11 @@ public class HomePaneController implements Initializable {
    private void setNextDive()
    {
        
-        List<DiveTrip> trips = new LinkedList<>();
+       // List<DiveTrip> trips = new LinkedList<>();
+        DiveTrip trip  = null;
+        boolean found = false;
         LocalDate date = LocalDate.now();
+        date = date.plusDays(1);
         String dateStr = date.format((DateTimeFormatter.ofPattern("dd-MMM-yyyy")));
         
         
@@ -261,18 +264,23 @@ public class HomePaneController implements Initializable {
             preSt.setString(1, dateStr);
             
             result = preSt.executeQuery();
-            while(result.next())
+            if(result.next())
             {
                 int tripID = result.getInt(1);
-                DiveTrip trip = new DiveTrip(tripID);
+                trip = new DiveTrip(tripID);
                 
                 trip.setTripDate((result.getDate(2)).toLocalDate());
                 String strTime = result.getString(4);
                 LocalTime time = SQLUtil.intervalToLocalTime(strTime);
                 trip.setDepartTime(time);
                 
-                trips.add(trip);
+             //   trips.add(trip);
+                found = true;
  
+            }
+            else
+            {
+                found = false;
             }
                  
         } 
@@ -300,12 +308,13 @@ public class HomePaneController implements Initializable {
         }
         
        LocalDateTime currentDateTime = LocalDateTime.now();
-       if (trips.isEmpty())
+       if (found == false)
        {
               nextDiveLabel.setText("No Dives Scheduled");
        }
        else
        {
+           /*
             DiveTrip nextDive = trips.get(0);
             for(DiveTrip trip : trips)
             {
@@ -324,6 +333,9 @@ public class HomePaneController implements Initializable {
                }
 
             }
+             */
+           DiveTrip nextDive;
+           nextDive = trip;
             String nextDiveText = "";
 
             nextDiveText += nextDive.getTripDate().format(DateTimeFormatter.ofPattern("MMM dd, yyyy"));

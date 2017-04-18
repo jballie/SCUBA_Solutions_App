@@ -144,6 +144,7 @@ public class DiveAddDialogController implements Initializable {
             currentTab = "singleDiveTab";
             trip.setTripDate(tripDatePicker.getValue());
             trip.setDepartTime(departTimePicker.getTime());
+            trip.setDayOfWeek(trip.determineDayOfWeek());
 
             boolean confirm = AlertUtil.confirmChangesAlert();
             if(confirm)
@@ -183,13 +184,13 @@ public class DiveAddDialogController implements Initializable {
 
                 if(date.getDayOfWeek().toString().equalsIgnoreCase(dayOfWeek))
                 {
-                    DiveTrip trip = new DiveTrip();
+                    DiveTrip recurTrip = new DiveTrip();
 
-                    trip.setDayOfWeek(dayOfWeek);
-                    trip.setDepartTime(departTime);
-                    trip.setTripDate(date);
+                    recurTrip.setDayOfWeek(dayOfWeek);
+                    recurTrip.setDepartTime(departTime);
+                    recurTrip.setTripDate(date);
 
-                    trips.add(trip);
+                    trips.add(recurTrip);
                 }
 
                 date = date.plusDays(1);

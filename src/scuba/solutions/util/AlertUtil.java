@@ -59,6 +59,7 @@ public class AlertUtil
         public static void showErrorAlert(String content, Exception e)
     {
         Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.initOwner(DiveSchedulePane.getPrimaryStage());
         alert.setHeaderText("Error!");
         alert.setContentText(content +
             "\n\nError Info:\n" + e.toString());

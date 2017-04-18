@@ -102,6 +102,8 @@ public class RecordsPaneController implements Initializable {
         }
         
         initializeSearchField();
+        
+        searchTextField.setFocusTraversable(false);
     }   
     
     

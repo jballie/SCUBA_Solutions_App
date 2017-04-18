@@ -171,7 +171,7 @@ public class Reservation
             preSt.setInt(2, diveId);
 
             result = preSt.executeUpdate();
-            System.out.println(result);
+           
         }
         catch(SQLException e)
         {

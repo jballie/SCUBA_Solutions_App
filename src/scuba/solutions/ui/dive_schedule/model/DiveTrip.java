@@ -33,9 +33,9 @@ public class DiveTrip {
     {
     	this.tripId = new SimpleIntegerProperty(tripId);
         this.tripDate = new SimpleObjectProperty();
-        this.availSeats = new SimpleIntegerProperty(8);
+        this.availSeats = new SimpleIntegerProperty(6);
         this.departTime = new SimpleObjectProperty();
-        this.weatherStatus = new SimpleStringProperty("");
+        this.weatherStatus = new SimpleStringProperty("OK");
         this.dayOfWeek = new SimpleStringProperty("");
     }
     
@@ -43,10 +43,11 @@ public class DiveTrip {
     {
     	this.tripId = new SimpleIntegerProperty(tripId);
         this.tripDate = new SimpleObjectProperty(tripDate);
-        this.availSeats = new SimpleIntegerProperty(8);
+        this.availSeats = new SimpleIntegerProperty(6);
         this.departTime = new SimpleObjectProperty(departTime);
-        this.weatherStatus = new SimpleStringProperty("");
-        this.dayOfWeek = new SimpleStringProperty("");
+        this.weatherStatus = new SimpleStringProperty("OK");
+        String day = this.determineDayOfWeek();
+        this.dayOfWeek = new SimpleStringProperty(day);
     }
 
     public int getTripId() {
@@ -76,10 +77,10 @@ public class DiveTrip {
         this.availSeats.set(availSeats);
     }
     
-    public StringProperty availSeatsProperty() {
+    public ObjectProperty availSeatsProperty() {
       String seatsTemp = Integer.toString(getAvailSeats());
       StringProperty seatsProp = new  SimpleStringProperty(seatsTemp);
-      return seatsProp;
+      return availSeats.asObject();
       
     }
     

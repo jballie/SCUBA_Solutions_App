@@ -19,6 +19,7 @@ import java.util.Random;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -231,13 +232,28 @@ public class CustomerPaneController implements Initializable {
             preSt.setString(10, certAgen);
 	    preSt.setString(11, certDiveNo);
 			
-            if (preSt.executeUpdate() == 1) {
+            if (preSt.executeUpdate() == 1) 
+            {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setHeaderText("Saved!");
                 alert.setContentText("Customer has successfully been added to the database.");
                 alert.showAndWait();
                 
-            } else {
+                customerData.add(tempPerson);
+                Platform.runLater(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        customersTable.requestFocus();
+                        customersTable.getSelectionModel().select(customerData.indexOf(tempPerson));
+                        customersTable.focusModelProperty().get().focus(customerData.indexOf(tempPerson));
+                    }
+                });
+             
+            } 
+            else 
+            {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setHeaderText("Error!");
                 alert.setContentText("Error Occured");
@@ -245,7 +261,7 @@ public class CustomerPaneController implements Initializable {
                 
                 
             }
-            loadCustomers();
+            
         }
 
         addCustomerButton.setDisable(false);
@@ -304,7 +320,10 @@ public class CustomerPaneController implements Initializable {
                     alert.setHeaderText("Saved!");
                     alert.setContentText("Customer has successfully been updated in the database.");
                     alert.showAndWait();
-                } else 
+                    showCustomerDetails(selectedPerson);
+
+                } 
+                else 
                 {
                     Alert alert = new Alert(Alert.AlertType.ERROR);
                     alert.setHeaderText(null);
@@ -312,9 +331,9 @@ public class CustomerPaneController implements Initializable {
                     alert.showAndWait();
                 }
             	 
-                loadCustomers();
+              
                 showCustomerDetails(selectedPerson);
-                updateCustomerButton.setDisable(false);
+              //  updateCustomerButton.setDisable(false);
                 
 
              }
@@ -332,6 +351,7 @@ public class CustomerPaneController implements Initializable {
          }
          
          updateCustomerButton.setDisable(false);
+         searchTextField.setFocusTraversable(false);
     }
     
     // Initializes the columns for the TableView

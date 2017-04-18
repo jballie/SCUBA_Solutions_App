@@ -41,10 +41,10 @@ public class Payment {
     
     public Payment(int reservationId) {
         this.reservationId = new SimpleIntegerProperty(reservationId);
-        this.ccConfirmNo = new SimpleIntegerProperty();
-        this.dateProcessed = new SimpleObjectProperty();
-        this.amount = new SimpleIntegerProperty();
-        this.paymentStatus = new SimpleStringProperty(null);
+        this.ccConfirmNo = new SimpleIntegerProperty(0);
+        this.dateProcessed = new SimpleObjectProperty(null);
+        this.amount = new SimpleIntegerProperty(0);
+        this.paymentStatus = new SimpleStringProperty("UNPAID");
     }
     
     public int getReservationId() {

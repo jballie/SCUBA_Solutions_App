@@ -20,6 +20,7 @@ import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -217,7 +218,7 @@ public class DiveSchedulePaneController implements Initializable
             }
             catch(NullPointerException e)
             {
-
+                
             }
             
         });
@@ -626,16 +627,17 @@ public class DiveSchedulePaneController implements Initializable
    {
        newDiveButton.setDisable(true);
        DiveTrip trip = new DiveTrip();
+       
        boolean okClicked = showDiveAddDialog(trip);
        currentTab = DiveAddDialogController.getTab();
        try 
        {
             if (okClicked && currentTab.equalsIgnoreCase("singleDiveTab"))
             {
-            LocalDate tripDate = trip.getTripDate();
-            LocalTime departTime = trip.getDepartTime();
-            String time = SQLUtil.localTimeToInterval(departTime);
-            PreparedStatement preSt;
+                LocalDate tripDate = trip.getTripDate();
+                LocalTime departTime = trip.getDepartTime();
+                String time = SQLUtil.localTimeToInterval(departTime);
+                PreparedStatement preSt;
 
             
                 preSt = connection.prepareStatement("INSERT INTO DIVE_TRIP "
@@ -648,6 +650,7 @@ public class DiveSchedulePaneController implements Initializable
                 if (preSt.executeUpdate() >= 0)  
                 {
                     AlertUtil.showDbSavedAlert("Dive Trip has successfully been added to the database.");
+                    tripData.add(trip);
                 }
             }
         }
@@ -665,13 +668,14 @@ public class DiveSchedulePaneController implements Initializable
                 newDiveButton.setDisable(false);
             }
 
-            loadDiveTrips();
+            
                   
        try
        {
+           
             if (okClicked && currentTab.equalsIgnoreCase("recurringDiveTab"))
             {
-                 LinkedList<DiveTrip> trips = DiveAddDialogController.getRecurringTrips();
+                 LinkedList<DiveTrip> trips  = DiveAddDialogController.getRecurringTrips();
 
                  PreparedStatement preSt = connection.prepareStatement("INSERT INTO DIVE_TRIP "
                                  + "(trip_date, departure_time)"
@@ -695,6 +699,7 @@ public class DiveSchedulePaneController implements Initializable
                 //{
                 AlertUtil.showDbSavedAlert("Recurring Dive Trips have successfully been added to the database.");
                 //}
+                tripData.addAll(trips);
             }
         }        
         catch (SQLException e) 
@@ -710,7 +715,7 @@ public class DiveSchedulePaneController implements Initializable
             newDiveButton.setDisable(false);
         }
             
-        loadDiveTrips();
+        
    }
    
     public boolean showReservationEditDialog(Reservation reservation) {
@@ -823,7 +828,8 @@ public class DiveSchedulePaneController implements Initializable
                 
                 
                 bookReservation(selectedReservation);
-               // showReservationStatusDetails(selectedReservation);
+                
+                showReservationStatusDetails(selectedReservation);
              }
          } 
          else 
@@ -893,16 +899,24 @@ public class DiveSchedulePaneController implements Initializable
             {
                 update = "UPDATE RESERVATION SET reservation_status='BOOKED' WHERE reservation_id=" + reservationId;            
                 statement.executeUpdate(update);
-                
-                Executors.newSingleThreadExecutor().execute(() -> {
-                    try {
+                selectedReservation.setStatus("BOOKED");
+         
+                Runnable emailTask = () -> 
+                { 
+                    try 
+                    {
                         EmailAlert.sendConfirmationEmail(selectedReservation);
-                    } catch (IOException e) {
                     }
-                });
-                
-               AlertUtil.showEmailSent("Customer has been booked for the dive trip. Email confirmation sent to " + selectedReservation.getCustomer().getFullName() + ".");
+                    catch (IOException | IllegalStateException e)
+                    {
+                        AlertUtil.showErrorAlert("Email Error!", e);
+                    }
+
+                };
+                Platform.runLater(emailTask);
+            
                 availSeats--;
+
             }
             
         } 
@@ -925,8 +939,13 @@ public class DiveSchedulePaneController implements Initializable
         preSt.setInt(2, tripId);
         preSt.executeUpdate();
         
-        loadDiveTrips();
-        loadTripReservations(selectedReservation.getDiveTrip());
+        tripTable.requestFocus();
+        DiveTrip trip = tripTable.getSelectionModel().getSelectedItem();
+        trip.setAvailSeats(availSeats);
+
+        
+        //loadDiveTrips();
+        //loadTripReservations(selectedReservation.getDiveTrip());
         
         statement.close();
         preSt.close();
@@ -942,11 +961,11 @@ public class DiveSchedulePaneController implements Initializable
     
     public void initializeSearchField()
     {
-        	filteredTripData = new FilteredList<>(tripData, p -> true);
+        filteredTripData = new FilteredList<>(tripData, p -> true);
 
         // Sets the search filter Predicate whenever the search values change.
         searchTextField.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
-            filteredTripData.setPredicate(trip -> {
+        filteredTripData.setPredicate(trip -> {
                 // If the search field text is empty, display all customers in the table
         if (newValue == null || newValue.isEmpty()) {
                     return true;
@@ -981,7 +1000,6 @@ public class DiveSchedulePaneController implements Initializable
     @FXML
     public void transitionToCustomers() throws IOException
     {
-        
         Stage stage = (Stage) rootPane.getScene().getWindow();
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource("/scuba/solutions/ui/customers/view/CustomerPane.fxml"));
@@ -994,23 +1012,19 @@ public class DiveSchedulePaneController implements Initializable
     {
         try
         {
-            // Load the fxml file and create a new stage for the popup dialog.
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(DiveSchedulePaneController.class.getResource("/scuba/solutions/ui/reservations/view/ReservationAddDialog_SearchCustomer.fxml"));
             Parent root = loader.load();
 
-            // Create the dialog Stage.
             dialogStage = new Stage();
             dialogStage.initModality(Modality.WINDOW_MODAL);
             dialogStage.initOwner(primaryStage);
             Scene scene = new Scene(root);
             dialogStage.setScene(scene);
 
-            // Set the customer into the controller.
             ReservationAddDialog_SearchCustomerController controller = loader.getController();
             controller.setDialogStage(dialogStage);
 
-            // Show the dialog and wait until the user closes it
             dialogStage.showAndWait();
 
             return controller.isProceedClicked(); 
@@ -1025,24 +1039,20 @@ public class DiveSchedulePaneController implements Initializable
     {
         try
         {
-            // Load the fxml file and create a new stage for the popup dialog.
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(DiveSchedulePaneController.class.getResource("/scuba/solutions/ui/reservations/view/ReservationAddDialog_NewCustomer.fxml"));
             Parent root = loader.load();
 
-            // Create the dialog Stage.
             dialogStage = new Stage();
             dialogStage.initModality(Modality.WINDOW_MODAL);
             dialogStage.initOwner(primaryStage);
             Scene scene = new Scene(root);
             dialogStage.setScene(scene);
 
-            // Set the customer into the controller.
             ReservationAddDialog_NewCustomerController controller = loader.getController();
             controller.setDialogStage(dialogStage);
     	    controller.setCustomer(customer);
 
-            // Show the dialog and wait until the user closes it
             dialogStage.showAndWait();
 
             return controller.isOkClicked(); 
@@ -1058,24 +1068,20 @@ public class DiveSchedulePaneController implements Initializable
     {
         try
         {
-            // Load the fxml file and create a new stage for the popup dialog.
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(DiveSchedulePaneController.class.getResource("/scuba/solutions/ui/reservations/view/ReservationAddDialog_ExistingCustomer.fxml"));
             Parent root = loader.load();
 
-            // Create the dialog Stage.
             dialogStage = new Stage();
             dialogStage.initModality(Modality.WINDOW_MODAL);
             dialogStage.initOwner(primaryStage);
             Scene scene = new Scene(root);
             dialogStage.setScene(scene);
 
-            // Set the customer into the controller.
             ReservationAddDialog_ExistingCustomerController controller = loader.getController();
             controller.setDialogStage(dialogStage);
     	    controller.setCustomer(customer);
 
-            // Show the dialog and wait until the user closes it
             dialogStage.showAndWait();
 
             return controller.isOkClicked(); 
@@ -1094,8 +1100,6 @@ public class DiveSchedulePaneController implements Initializable
          {
             try
             {
-                
-            
                 boolean isProceedClicked = showReservationAddDialog_Search();
                 boolean isCustomerFound = ReservationAddDialog_SearchCustomerController.returnIsCustomerFound();
                 if(isProceedClicked && isCustomerFound)
@@ -1116,20 +1120,36 @@ public class DiveSchedulePaneController implements Initializable
 
                         if(Reservation.addReservation(custId, selectedTrip.getTripId()) > 0)
                         {
+                           
                             AlertUtil.showDbSavedAlert("New Reservation for " + selectedCustomer.getFullName() + " succesfully saved.");
                             int reservationId = Reservation.getReservationId(custId, selectedTrip.getTripId());
+                            Reservation resev = new Reservation(reservationId);
+                            resev.setCustomer(selectedCustomer);
+                            resev.setDriveTrip(selectedTrip);
                             Waiver.addWaiver(reservationId);
                             Payment.addPayment(reservationId);
-                            loadDiveTrips();
-                            loadTripReservations(selectedTrip);
-                            Executors.newSingleThreadExecutor().execute(() -> {
-                                try {
+                            resev.setCustomerId(custId);
+                            resev.setDiveTripId(selectedTrip.getTripId());
+                           
+                            resev.setStatus("PENDING");
+                            reservationData.add(resev);
+                            //loadDiveTrips();
+                           // loadTripReservations(selectedTrip);
+                 
+                            Runnable emailTask = () -> 
+                            { 
+                                try 
+                                {
                                     EmailAlert.sendRequestEmail(reservationId, selectedCustomer, selectedTrip);
-                                } catch (IOException | SQLException | InterruptedException e){
+                                }
+                                catch (IOException | SQLException | InterruptedException | IllegalStateException e)
+                                {
                                      AlertUtil.showErrorAlert("Email Error!", e);
                                 }
-                            });
-                            AlertUtil.showEmailSent("Reservation email request sent to " + selectedCustomer.getFullName() + ".");
+                                       
+                            };
+                            Platform.runLater(emailTask);
+ 
                         }
 
                     }
@@ -1150,17 +1170,32 @@ public class DiveSchedulePaneController implements Initializable
                         {
                             AlertUtil.showDbSavedAlert("New Reservation for " + customer.getFullName() + " succesfully saved.");
                             int reservationId = Reservation.getReservationId(custId, selectedTrip.getTripId());
+                            Reservation resev = new Reservation(reservationId);
+                            resev.setCustomer(customer);
+                            resev.setDriveTrip(selectedTrip);
                             Waiver.addWaiver(reservationId);
                             Payment.addPayment(reservationId);
-                            loadDiveTrips();
-                            loadTripReservations(selectedTrip);
-                            Executors.newSingleThreadExecutor().execute(() -> {
-                                try {
-                                    EmailAlert.sendRequestEmail(reservationId, customer, selectedTrip);
-                                } catch (IOException | SQLException | InterruptedException e){
-                                }
-                            });
-                            AlertUtil.showEmailSent("Reservation email request sent to " + customer.getFullName() + ".");
+                            resev.setCustomerId(custId);
+                            resev.setDiveTripId(selectedTrip.getTripId());
+                           
+                            resev.setStatus("PENDING");
+                            reservationData.add(resev);
+                     
+                            
+                            
+                            Runnable emailTask = () -> 
+                            { 
+                               try 
+                               {
+                                   EmailAlert.sendRequestEmail(reservationId, customer, selectedTrip);
+                               }
+                               catch (IOException | SQLException | InterruptedException | IllegalStateException e)
+                               {
+                                    AlertUtil.showErrorAlert("Email Error!", e);
+                               }
+
+                           };
+                           Platform.runLater(emailTask);
                         }
 
                     }
@@ -1170,14 +1205,14 @@ public class DiveSchedulePaneController implements Initializable
             }
             catch(SQLException e)
             {
-                 AlertUtil.showDbErrorAlert("Error with adding new Reservation", e);
+                AlertUtil.showDbErrorAlert("Error with adding new Reservation", e);
             }
          }
          else
          {
-             AlertUtil.noSelectionAlert("No Dive Trip Selected", "Please select a dive trip in the dive trips table for the new reservation.");
+            AlertUtil.noSelectionAlert("No Dive Trip Selected", "Please select a dive trip in the dive trips table for the new reservation.");
          }
-         newReservationButton.setDisable(false);
+        newReservationButton.setDisable(false);
          
     } 
     
@@ -1185,23 +1220,21 @@ public class DiveSchedulePaneController implements Initializable
     @FXML
     public void transitionToHome(ActionEvent event) throws IOException 
     {
-                Stage stage = (Stage) rootPane.getScene().getWindow();
+        Stage stage = (Stage) rootPane.getScene().getWindow();
         FXMLLoader loader = new FXMLLoader();
-	    loader.setLocation(getClass().getResource("/scuba/solutions/ui/home/view/HomePane.fxml"));
-	    Parent root = loader.load();
-        //Stage stage = new Stage();
+        loader.setLocation(getClass().getResource("/scuba/solutions/ui/home/view/HomePane.fxml"));
+        Parent root = loader.load();
         stage.setScene(new Scene(root));
         stage.show( );
     }
     
-        @FXML
-    private void transitionToRecords(ActionEvent event) throws IOException 
+    @FXML
+    public void transitionToRecords(ActionEvent event) throws IOException 
     {
-                        Stage stage = (Stage) rootPane.getScene().getWindow();
+        Stage stage = (Stage) rootPane.getScene().getWindow();
         FXMLLoader loader = new FXMLLoader();
-	    loader.setLocation(getClass().getResource("/scuba/solutions/ui/records/view/RecordsPane.fxml"));
-	    Parent root = loader.load();
-        //Stage stage = new Stage();
+        loader.setLocation(getClass().getResource("/scuba/solutions/ui/records/view/RecordsPane.fxml"));
+        Parent root = loader.load();
         stage.setScene(new Scene(root));
         stage.show( );
     }

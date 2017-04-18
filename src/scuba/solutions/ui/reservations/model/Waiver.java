@@ -41,11 +41,11 @@ public class Waiver {
     public Waiver(int reservationId)
     {
         this.reservationId = new SimpleIntegerProperty(reservationId);
-        this.dateSigned = new SimpleObjectProperty();
+        this.dateSigned = new SimpleObjectProperty(null);
         this.erFirst = new SimpleStringProperty(null);
         this.erLast = new SimpleStringProperty(null);
         this.erPhone = new SimpleStringProperty(null);
-        this.waiverStatus = new SimpleStringProperty(null);
+        this.waiverStatus = new SimpleStringProperty("INCOMPLETE");
     }
     
     public int getReservationId() {
