@@ -6,12 +6,16 @@
 package scuba.solutions.ui.dive_schedule.view;
 
 import java.net.URL;
-import java.time.LocalDate;
 import java.util.ResourceBundle;
 import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXRadioButton;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.format.DateTimeFormatter;
+import java.util.concurrent.Executors;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
@@ -19,7 +23,11 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
+import scuba.solutions.database.DbConnection;
+import scuba.solutions.emails.EmailAlert;
+import scuba.solutions.ui.customers.model.Customer;
 import scuba.solutions.ui.dive_schedule.model.DiveTrip;
+import scuba.solutions.ui.reservations.model.Reservation;
 import scuba.solutions.util.AlertUtil;
 
 /**
@@ -30,7 +38,7 @@ import scuba.solutions.util.AlertUtil;
 public class DiveEditDialogController implements Initializable {
 	
     private Stage dialogStage;
-
+    private static Connection connection; 
     private DiveTrip trip;
 
     private boolean okClicked = false;
@@ -145,6 +153,16 @@ public class DiveEditDialogController implements Initializable {
                else if(cancelledRadio.isSelected())
                {
                   trip.setWeatherStatus("CANCELLED");
+                   Executors.newSingleThreadExecutor().execute(() -> {
+                    try {
+                    sendCancellationEmails();
+                  } catch (SQLException e)
+                  {
+                      System.out.println(e);
+                  } catch (IOException e)
+                  {
+                      System.out.println(e);
+                  }});
                }
             	okClicked = true;
             	dialogStage.close();
@@ -201,6 +219,39 @@ public class DiveEditDialogController implements Initializable {
     public static boolean isCancelled()
     {
         return isCancelled;
+    }
+    
+    public void sendCancellationEmails() throws SQLException, IOException
+    {
+        Customer customer = new Customer();
+        Reservation reservation = new Reservation();
+        connection = DbConnection.accessDbConnection().getConnection();
+        Statement statement = connection.createStatement();
+        String query = "SELECT RESERVATION_ID, CUST_ID FROM RESERVATION WHERE TRIP_ID=" + trip.getTripId();
+        ResultSet results = statement.executeQuery(query);
+        
+        while(results.next())
+        {
+            int resId = results.getInt(1);
+            int custId = results.getInt(2);
+            Statement st = connection.createStatement();
+            String custQuery = "SELECT FIRST_NAME, LAST_NAME, EMAIL FROM CUSTOMER WHERE CUST_ID=" + custId;
+            ResultSet result = st.executeQuery(custQuery);
+            
+            result.next();
+           
+            customer.setFirstName(result.getString(1));           
+            customer.setLastName(result.getString(2));
+            customer.setEmailAddress(result.getString(3));
+            
+            reservation.setReservationId(resId);
+            reservation.setCustomerId(custId);
+            reservation.setCustomer(customer);
+            reservation.setDriveTrip(trip);
+            
+            EmailAlert.sendCancellationEmail(reservation);
+        }
+        
     }
     
     

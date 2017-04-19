@@ -914,7 +914,8 @@ public class DiveSchedulePaneController implements Initializable
 
                 };
                 Platform.runLater(emailTask);
-            
+                //Thread thread = new Thread(emailTask);
+                //thread.start();
                 availSeats--;
 
             }
@@ -1055,7 +1056,7 @@ public class DiveSchedulePaneController implements Initializable
 
             dialogStage.showAndWait();
 
-            return controller.isOkClicked(); 
+            return controller.isSaveClicked(); 
         }
         catch (IOException e) 
     	{
@@ -1084,7 +1085,7 @@ public class DiveSchedulePaneController implements Initializable
 
             dialogStage.showAndWait();
 
-            return controller.isOkClicked(); 
+            return controller.isSaveClicked(); 
         }
         catch (IOException e) 
     	{
@@ -1117,39 +1118,49 @@ public class DiveSchedulePaneController implements Initializable
                         }
 
                         int custId = Customer.getCustId(selectedCustomer);
-
-                        if(Reservation.addReservation(custId, selectedTrip.getTripId()) > 0)
+                        int diveId = selectedTrip.getTripId();
+                        
+                        boolean alreadyReserved = Reservation.isCustomerAlreadyReserved(custId, diveId);
+        
+                        if(alreadyReserved)
                         {
-                           
-                            AlertUtil.showDbSavedAlert("New Reservation for " + selectedCustomer.getFullName() + " succesfully saved.");
-                            int reservationId = Reservation.getReservationId(custId, selectedTrip.getTripId());
-                            Reservation resev = new Reservation(reservationId);
-                            resev.setCustomer(selectedCustomer);
-                            resev.setDriveTrip(selectedTrip);
-                            Waiver.addWaiver(reservationId);
-                            Payment.addPayment(reservationId);
-                            resev.setCustomerId(custId);
-                            resev.setDiveTripId(selectedTrip.getTripId());
-                           
-                            resev.setStatus("PENDING");
-                            reservationData.add(resev);
-                            //loadDiveTrips();
-                           // loadTripReservations(selectedTrip);
-                 
-                            Runnable emailTask = () -> 
-                            { 
-                                try 
-                                {
-                                    EmailAlert.sendRequestEmail(reservationId, selectedCustomer, selectedTrip);
-                                }
-                                catch (IOException | SQLException | InterruptedException | IllegalStateException e)
-                                {
-                                     AlertUtil.showErrorAlert("Email Error!", e);
-                                }
-                                       
-                            };
-                            Platform.runLater(emailTask);
- 
+                            AlertUtil.showCustomerAlreadyThere();
+                        }
+                        else 
+                        {
+                            if(Reservation.addReservation(custId, diveId) > 0)
+                            {
+
+                                AlertUtil.showDbSavedAlert("New Reservation for " + selectedCustomer.getFullName() + " succesfully saved.");
+                                int reservationId = Reservation.getReservationId(custId, selectedTrip.getTripId());
+                                Reservation resev = new Reservation(reservationId);
+                                resev.setCustomer(selectedCustomer);
+                                resev.setDriveTrip(selectedTrip);
+                                Waiver.addWaiver(reservationId);
+                                Payment.addPayment(reservationId);
+                                resev.setCustomerId(custId);
+                                resev.setDiveTripId(selectedTrip.getTripId());
+
+                                resev.setStatus("PENDING");
+                                reservationData.add(resev);
+                                //loadDiveTrips();
+                               // loadTripReservations(selectedTrip);
+
+                                Runnable emailTask = () -> 
+                                { 
+                                    try 
+                                    {
+                                        EmailAlert.sendRequestEmail(reservationId, selectedCustomer, selectedTrip);
+                                    }
+                                    catch (IOException | SQLException | InterruptedException | IllegalStateException e)
+                                    {
+                                         AlertUtil.showErrorAlert("Email Error!", e);
+                                    }
+
+                                };
+                                Platform.runLater(emailTask);
+
+                            }
                         }
 
                     }

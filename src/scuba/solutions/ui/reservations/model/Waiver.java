@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package scuba.solutions.ui.reservations.model;
 
 import java.io.FileNotFoundException;
@@ -20,8 +16,8 @@ import javafx.beans.property.StringProperty;
 import scuba.solutions.database.DbConnection;
 
 /**
- *
- * @author Samuel
+ * Represents the Waiver information for a Reservation.
+ * @author Samuel Brock, Jonathan Balliet
  */
 public class Waiver {
     
@@ -98,6 +94,7 @@ public class Waiver {
         this.erPhone.set(erPhone);
     }
     
+    // Determines whether the Waiver information is complete.
     public boolean isComplete(){
         if(getReservationId() != 0 && getDateSigned() != null && getERFirst() != null && getERLast() != null && getERPhone() != null )
         {
@@ -107,6 +104,7 @@ public class Waiver {
         return false;
     }
     
+    // Adds the waiver information to its corresponding reservation.
     public static void addWaiver(int resId) throws IOException, FileNotFoundException, SQLException
     {
         connection = DbConnection.accessDbConnection().getConnection();

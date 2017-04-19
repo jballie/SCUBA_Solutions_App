@@ -20,6 +20,15 @@ public class AlertUtil
         alert.showAndWait(); 	
     }
     
+    public static void showCustomerAlreadyThere()
+    {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setHeaderText("Customer already signed up for this event");
+        // alert.setContentText(content);
+        alert.showAndWait();
+    }
+    
+    
     public static void showEmailSent(String content)
     {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -56,7 +65,7 @@ public class AlertUtil
         
     }
     
-        public static void showErrorAlert(String content, Exception e)
+    public static void showErrorAlert(String content, Exception e)
     {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.initOwner(DiveSchedulePane.getPrimaryStage());
@@ -72,18 +81,17 @@ public class AlertUtil
     public static boolean confirmChangesAlert()
     {
         Alert alert = new Alert(AlertType.CONFIRMATION);
-        alert.setTitle("Confirmation Dialog");
-        alert.setHeaderText("Please confirm the update");
-        alert.setContentText("Press OK to confirm the update!");
+        alert.setTitle("Confirmation!");
+        alert.setHeaderText("Please confirm the update or addition");
+        alert.setContentText("Press OK to confirm!");
 
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK)
         {
-        // ... user chose OK
             return true;
-        } else 
+        } 
+        else 
         {
-        // ... user chose CANCEL or closed the dialog
             return false;
         }
     }
@@ -91,17 +99,17 @@ public class AlertUtil
     public static boolean confirmCancelAlert()
     {
         Alert alert = new Alert(AlertType.CONFIRMATION);
-        alert.setTitle("Cancellation");
+        alert.setTitle("Cancellation!");
         alert.setHeaderText("Please confirm the cancellation for this dive trip.");
         alert.setContentText("Press OK to confirm this cancellation!");
             Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK)
         {
-        // ... user chose OK
             return true;
-        } else 
+        } 
+        else 
         {
-        // ... user chose CANCEL or closed the dialog
+
             return false;
         }
     }

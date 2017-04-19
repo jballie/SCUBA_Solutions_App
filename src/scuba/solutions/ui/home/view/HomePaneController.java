@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package scuba.solutions.ui.home.view;
 
 import com.jfoenix.controls.JFXButton;
@@ -14,9 +10,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -39,11 +35,12 @@ import scuba.solutions.util.AlertUtil;
 import scuba.solutions.util.SQLUtil;
 
 /**
- * FXML Controller class
+ * Controller class for the Home Pane
  *
- * @author Jon
+ * @author Jonathan Balliet, Samuel Brock
  */
-public class HomePaneController implements Initializable {
+public class HomePaneController implements Initializable 
+{
     Stage primaryStage;
     private final DateTimeFormatter currentTime =  DateTimeFormatter.ofPattern("h:mm:ss a");
     private final DateTimeFormatter currentDate = DateTimeFormatter.ofPattern("MMM dd, yyyy");
@@ -80,72 +77,28 @@ public class HomePaneController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) 
     {
-        homeButton.setDisable(true);
-        setTimeDisplay();
-        setDateDisplay();
-        setTodaysDives();
-        setNextDive();
+        homeButton.setDisable(true);   // disables the Home Button
+        setTimeDisplay();              // sets the current time
+        setDateDisplay();              // sets the current date
+        setTodaysDives();             // sets todays dives
+        setNextDive();                // sets the next dive scheduled beginning from a future date
     }
 
 
-
-    
-
-    @FXML
-    public void transitionToCustomers(ActionEvent event) throws IOException
-    {
-              Stage stage = (Stage) rootPane.getScene().getWindow();
-        FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(getClass().getResource("/scuba/solutions/ui/customers/view/CustomerPane.fxml"));
-        Parent root = loader.load();
-        stage.setScene(new Scene(root));
-        stage.show( );
-    }
-    
-    @FXML
-    public void transitionToDiveSchedule(ActionEvent event) throws IOException 
-    {
-                Stage stage = (Stage) rootPane.getScene().getWindow();
-        FXMLLoader loader = new FXMLLoader();
-	    loader.setLocation(getClass().getResource("/scuba/solutions/ui/dive_schedule/view/DiveSchedule.fxml"));
-	    Parent root = loader.load();
-        //Stage stage = new Stage();
-        stage.setScene(new Scene(root));
-        stage.show( );
-    }
-    
-    @FXML
-    public void exitProgram(ActionEvent event)
-    {
-        Stage stage = (Stage) rootPane.getScene().getWindow();
-        stage.close();
-    }
-
-    @FXML
-    private void transitionToRecords(ActionEvent event) throws IOException 
-    {
-                        Stage stage = (Stage) rootPane.getScene().getWindow();
-        FXMLLoader loader = new FXMLLoader();
-	    loader.setLocation(getClass().getResource("/scuba/solutions/ui/records/view/RecordsPane.fxml"));
-	    Parent root = loader.load();
-        //Stage stage = new Stage();
-        stage.setScene(new Scene(root));
-        stage.show( );
-    }
-    
-    
+    // Sets the current time Home Pane display. The time displays the seconds amount
+    // and constantly updates every second.
     private void setTimeDisplay()
     {
 
-            Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(0),
-                                                      event -> currentTimeLabel.setText(LocalTime.now().format(currentTime))),
-                                         new KeyFrame(Duration.seconds(1)));
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(0),
+                                        event -> currentTimeLabel.setText(LocalTime.now().format(currentTime))),
+                                        new KeyFrame(Duration.seconds(1)));
 
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
     }
     
-    
+    // Sets the current date on the Home Pane display.
     private void setDateDisplay()
     {
         LocalDate date = LocalDate.now();
@@ -153,15 +106,18 @@ public class HomePaneController implements Initializable {
         
     }
     
-    
+   // Sets the current dives schedules scheduled for the day.
+   // A maxmimum of three dives can be displayed.
    private void setTodaysDives()
    {
        
-        List<DiveTrip> trips = new LinkedList<>();
+        List<DiveTrip> trips = new LinkedList<>();   // list to store the trips
         LocalDate date = LocalDate.now();
+        
         Connection connection = null;
         PreparedStatement preSt = null;
         ResultSet result = null;
+        
         try 
         {
             connection = DbConnection.accessDbConnection().getConnection();
@@ -170,6 +126,7 @@ public class HomePaneController implements Initializable {
             preSt.setDate(1, Date.valueOf(date));
             
             result = preSt.executeQuery();
+            
             while(result.next())
             {
                 int tripID = result.getInt(1);
@@ -198,9 +155,6 @@ public class HomePaneController implements Initializable {
                 
                 if(result != null)
                     result.close();
-                
-               // if(connection != null)
-                  //  connection.close();
             }
             catch (SQLException e)
             {
@@ -208,22 +162,23 @@ public class HomePaneController implements Initializable {
             } 
         }
         
-
         if(trips.isEmpty())
         {
             
-         todayDivelabel1.setText("No Dives Today");
+            todayDivelabel1.setText("No Dives Today");   // displays No Dives Today is list is empty
+         
         }
         else
         {
+            Collections.sort(trips);          // sorts the dive trips to be displayed 
+            
             for(int i = 0; i < trips.size(); i++)
             {
-               
                 String diveText = "Dive at ";
                 diveText += trips.get(i).getDepartTime().format(DateTimeFormatter.ofPattern("h:mm a"));
-               // diveText += " on ";
-               // diveText += trips.get(i).getTripDate().format(DateTimeFormatter.ofPattern("MM/dd/yyyy"));
-                switch (i) {
+     
+                switch (i) 
+                {
                     case 0:
                         todayDivelabel1.setText(diveText);
                         break;
@@ -237,15 +192,14 @@ public class HomePaneController implements Initializable {
                         break;
                 }
             }   
-             
         }
-   
    }
    
+   // Sets the date and time for the next scheduled dive. This dive 
+   // starts from the next day (must be a future date).
    private void setNextDive()
    {
        
-       // List<DiveTrip> trips = new LinkedList<>();
         DiveTrip trip  = null;
         boolean found = false;
         LocalDate date = LocalDate.now();
@@ -264,8 +218,11 @@ public class HomePaneController implements Initializable {
             preSt.setString(1, dateStr);
             
             result = preSt.executeQuery();
+            
             if(result.next())
             {
+                found = true;
+                
                 int tripID = result.getInt(1);
                 trip = new DiveTrip(tripID);
                 
@@ -273,10 +230,6 @@ public class HomePaneController implements Initializable {
                 String strTime = result.getString(4);
                 LocalTime time = SQLUtil.intervalToLocalTime(strTime);
                 trip.setDepartTime(time);
-                
-             //   trips.add(trip);
-                found = true;
- 
             }
             else
             {
@@ -297,9 +250,6 @@ public class HomePaneController implements Initializable {
                 
                 if(result != null)
                     result.close();
-                
-               // if(connection != null)
-                  //  connection.close();
             }
             catch (SQLException e)
             {
@@ -307,35 +257,15 @@ public class HomePaneController implements Initializable {
             } 
         }
         
-       LocalDateTime currentDateTime = LocalDateTime.now();
-       if (found == false)
-       {
-              nextDiveLabel.setText("No Dives Scheduled");
-       }
-       else
-       {
-           /*
-            DiveTrip nextDive = trips.get(0);
-            for(DiveTrip trip : trips)
-            {
-               int year = trip.getTripDate().getYear();
-               int month = trip.getTripDate().getMonthValue();
-               int day = trip.getTripDate().getDayOfMonth();
-               int hour = trip.getDepartTime().getHour();
-               int minute = trip.getDepartTime().getMinute();
-               int second = trip.getDepartTime().getSecond();
+        if (found == false)
+        {
+             nextDiveLabel.setText("No Dives Scheduled");
+        }
+        else
+        {
 
-               LocalDateTime tripDateTime = LocalDateTime.of(year, month, day, hour, minute, second);
-               if(currentDateTime.compareTo(tripDateTime) < 0)
-               {
-                   nextDive = trip;
-                   break;
-               }
-
-            }
-             */
-           DiveTrip nextDive;
-           nextDive = trip;
+            DiveTrip nextDive;
+            nextDive = trip;
             String nextDiveText = "";
 
             nextDiveText += nextDive.getTripDate().format(DateTimeFormatter.ofPattern("MMM dd, yyyy"));
@@ -346,6 +276,53 @@ public class HomePaneController implements Initializable {
        }
         
    }
+   
+   
+    // Transitions to the Customer Pane when Customer button clicked.
+    @FXML
+    public void transitionToCustomers(ActionEvent event) throws IOException
+    {
+        Stage stage = (Stage) rootPane.getScene().getWindow();
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("/scuba/solutions/ui/customers/view/CustomerPane.fxml"));
+        Parent root = loader.load();
+        stage.setScene(new Scene(root));
+        stage.show( );
+    }
+    
+    // Transitions to the Dive Schedule Pane when Dive Schedule button clicked.
+    @FXML
+    public void transitionToDiveSchedule(ActionEvent event) throws IOException 
+    {
+        Stage stage = (Stage) rootPane.getScene().getWindow();
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("/scuba/solutions/ui/dive_schedule/view/DiveSchedule.fxml"));
+        Parent root = loader.load();
+        stage.setScene(new Scene(root));
+        stage.show( );
+    }
+    
+    // Transitions to the Records Pane when Records button clicked.
+    @FXML
+    public void transitionToRecords(ActionEvent event) throws IOException 
+    {
+        Stage stage = (Stage) rootPane.getScene().getWindow();
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("/scuba/solutions/ui/records/view/RecordsPane.fxml"));
+        Parent root = loader.load();
+        stage.setScene(new Scene(root));
+        stage.show( );
+    }
+    
+    // Exits the application when the Exit button clicked.
+    @FXML
+    public void exitProgram(ActionEvent event)
+    {
+        Stage stage = (Stage) rootPane.getScene().getWindow();
+        stage.close();
+    }
+
+
    
    
 }

@@ -5,9 +5,7 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDatePicker;
 import java.net.URL;
 import java.time.LocalDate;
-import java.time.Period;
 import java.util.List;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 import javafx.collections.FXCollections;
@@ -17,7 +15,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
@@ -28,7 +25,7 @@ import scuba.solutions.util.DateUtil;
 
 /**
  * Controller class for the edit dialog for a Customer. This class handles the additions and changes for 
- * a Customer profile in Scuba Solutions's databases.
+ * a Customer profile for SCUBA SCUBA Now.
  * @author Jonathan Balliet, Samuel Brock
  * 
  */
@@ -46,7 +43,7 @@ public class CustomerEditDialogController implements Initializable {
     
     private Customer customer;
     
-    private boolean okClicked = false;
+    private boolean savedClicked = false;
     
     @FXML
     private TextField streetField;
@@ -131,11 +128,11 @@ public class CustomerEditDialogController implements Initializable {
         certDiveNoField.setText(customer.getCertDiveNo());       
     }
     /**
-     * Returns true if the user clicked OK, false otherwise.
+     * Returns true if the user clicked Save, false otherwise.
      */
-    public boolean isOkClicked()
+    public boolean isSaveClicked()
     {
-        return okClicked;
+        return savedClicked;
     }
 
     /**
@@ -162,12 +159,12 @@ public class CustomerEditDialogController implements Initializable {
             boolean confirm = AlertUtil.confirmChangesAlert();
             if(confirm)
             {
-            	okClicked = true;
+            	savedClicked = true;
             	dialogStage.close();
             }
             else
             {
-            	okClicked = false;
+            	savedClicked = false;
             	//dialogStage.close();
             }
         }

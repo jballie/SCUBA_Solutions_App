@@ -5,7 +5,6 @@
  */
 package scuba.solutions.emails;
 
-import com.sun.mail.smtp.SMTPMessage;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -32,13 +31,15 @@ import scuba.solutions.ui.reservations.model.Reservation;
 import scuba.solutions.util.AlertUtil;
 
 /**
- *
- * @author Jon
+ * Email Alerts to be sent to customers after certain actions in the application.
+ * @author Samuel Brock, Jonathan Balliet
  */
 public class EmailAlert 
 {
-    
-    public static void sendRequestEmail(int reservationId, Customer customer, DiveTrip selectedTrip) throws IOException, SQLException, InterruptedException {
+    // Sends an email request to the Customer for a reservation with the attached Waiver information and contact information
+    // for making the dive payment. This email is sent after a customer is added to a reservation for a dive trip.
+    public static void sendRequestEmail(int reservationId, Customer customer, DiveTrip selectedTrip) throws IOException, SQLException, InterruptedException 
+    {
           boolean emailSent = false;
         
           Properties props = new Properties();    
@@ -106,6 +107,8 @@ public class EmailAlert
           }
     }
     
+     // Sends a confirmation email to a customer for a their reservation for a dive trip. This email is sent after
+    // the waiver and payment information for a reservation has been complete and the customer status is changed to Booked.
     public static void sendConfirmationEmail(Reservation selectedReservation) throws IOException{   
           Properties props = new Properties();    
           props.put("mail.smtp.host", "smtp.gmail.com");    
@@ -151,6 +154,57 @@ public class EmailAlert
           catch (MessagingException e) 
           {
               AlertUtil.showErrorAlert("Error with sending Reservation Confirmation Email Message\n", e);
+              throw new RuntimeException(e);
+          }  
+    }
+    
+    // Sends a cancellation email to a customer when their scheduled reservation for a dive trip has been cancelled. 
+    // This occurs once the status for a dive trip has been changed from OK to Cancelled.
+    public static void sendCancellationEmail(Reservation selectedReservation) throws IOException
+    {   
+          Properties props = new Properties();    
+          props.put("mail.smtp.host", "smtp.gmail.com");    
+          props.put("mail.smtp.socketFactory.port", "465");    
+          props.put("mail.smtp.socketFactory.class",    
+                    "javax.net.ssl.SSLSocketFactory");    
+          props.put("mail.smtp.auth", "true");    
+          props.put("mail.smtp.port", "465");    
+       
+          Session session = Session.getDefaultInstance(props,    
+           new javax.mail.Authenticator() {    
+           @Override
+           protected PasswordAuthentication getPasswordAuthentication() {    
+           return new PasswordAuthentication("scubascubanow@gmail.com","capstone");  
+           }    
+          });    
+          
+          try {    
+           MimeMessage message = new MimeMessage(session);    
+           message.addRecipient(Message.RecipientType.TO,new InternetAddress("scubascubanow@gmail.com"));    
+           message.setSubject("Dive Cancellation Email");
+                   
+           StringBuilder msg = new StringBuilder();
+           msg.append("Diver: ");
+           msg.append(selectedReservation.getCustomer().getFullName());
+           msg.append("\n\nReservation Number: ");
+           msg.append(selectedReservation.getReservationId());
+           msg.append("\n\nDive Date: ");
+           msg.append(selectedReservation.getDiveTrip().getTripDate());
+           msg.append("\n\nDepart Time: ");
+           msg.append(selectedReservation.getDiveTrip().getDepartTime());
+           msg.append("\n\n\n\nGreetings ");
+           msg.append(selectedReservation.getCustomer().getFirstName());
+           msg.append(",\n\n");
+           
+           Files.lines(Paths.get("CancellationLetter.txt"), StandardCharsets.UTF_8).forEach(s -> msg.append(s).append("\n"));
+           
+           message.setText(msg.toString());
+           
+           Transport.send(message); 
+          } 
+          catch (MessagingException e) 
+          {
+              AlertUtil.showErrorAlert("Error with sending Reservation Cancellation Email Message\n", e);
               throw new RuntimeException(e);
           }  
     }

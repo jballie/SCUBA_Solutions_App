@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package scuba.solutions.ui.reservations.model;
 
 import java.io.FileNotFoundException;
@@ -24,8 +20,8 @@ import scuba.solutions.ui.dive_schedule.model.DiveTrip;
 import scuba.solutions.util.AlertUtil;
 
 /**
- *
- * @author Samuel
+ * Represents a Reservation for a dive trip for a specific customer.
+ * @author Samuel Brock, Jonathan Balliet
  */
 public class Reservation 
 {
@@ -39,111 +35,112 @@ public class Reservation
     private final ObjectProperty<Payment> payment;
     private static Connection connection;
 
-    public Reservation() {
+    // Default Constructor
+    public Reservation() 
+    {
         this(0);
     }
 	
     
     /**
-	 * Constructs a new Reservation object. (Insert any further description that is needed)
-	 * @param i
-	 */
-	public Reservation(int id)
-	{
-		this.reservationId = new SimpleIntegerProperty(id);
-		this.diveTripId = new SimpleIntegerProperty();
-		this.customerId = new SimpleIntegerProperty();
-		this.status = new SimpleStringProperty();
-		this.customer = new SimpleObjectProperty();
-                this.diveTrip = new SimpleObjectProperty();
-                
-                Waiver waiver = new Waiver(id);
-                Payment payment = new Payment(id);
-                
-                this.waiver = new SimpleObjectProperty(waiver);
-                this.payment = new SimpleObjectProperty(payment);
-                
-	}
-	
-	public int getReservationId()
-	{
-		return reservationId.get();
-	}
-	
-	public void setReservationId(int id)
-	{
-		reservationId.set(id);
-	}
-	
-	public int getDiveTripId()
-	{
-		return diveTripId.get();
-	}
-	
-	public void setDiveTripId(int id)
-	{
-		diveTripId.set(id);
-	}
-	
-        public DiveTrip getDiveTrip()
-        {
-            return diveTrip.get();
-        }
-        
-        public void setDriveTrip(DiveTrip diveTrip)
-        {
-            this.diveTrip.set(diveTrip);
-        }
-        
-        public Waiver getWaiver()
-        {
-            return waiver.get();
-        }
-        
-        public void setWaiver(Waiver waiver)
-        {
-            this.waiver.set(waiver);
-        }
-        
-        public Payment getPayment()
-        {
-            return payment.get();
-        }
-        
-        public void setPayment(Payment payment)
-        {
-            this.payment.set(payment);
-        }
-        
-	public int getCustomerId()
-	{
-		return customerId.get();
-	}
-	
-	public void setCustomerId(int id)
-	{
-		customerId.set(id);
-	}
-	
-	public String getStatus()
-	{
-		return status.get();
-	}
-	
-	public void setStatus(String stat)
-	{
-		status.set(stat);
-	}
-	
-	public Customer getCustomer()
-	{
-		return customer.get();
-	}
-	
-	public void setCustomer(Customer cust)
-	{
-		customer.set(cust);
-	}
+    * Constructs a new Reservation object. 
+    */
+    public Reservation(int id)
+    {
+        this.reservationId = new SimpleIntegerProperty(id);
+        this.diveTripId = new SimpleIntegerProperty();
+        this.customerId = new SimpleIntegerProperty();
+        this.status = new SimpleStringProperty();
+        this.customer = new SimpleObjectProperty();
+        this.diveTrip = new SimpleObjectProperty();
+
+        Waiver waiver = new Waiver(id);
+        Payment payment = new Payment(id);
+
+        this.waiver = new SimpleObjectProperty(waiver);
+        this.payment = new SimpleObjectProperty(payment);
+
+    }
+
+    public int getReservationId()
+    {
+        return reservationId.get();
+    }
+
+    public void setReservationId(int id)
+    {
+        reservationId.set(id);
+    }
+
+    public int getDiveTripId()
+    {
+        return diveTripId.get();
+    }
+
+    public void setDiveTripId(int id)
+    {
+        diveTripId.set(id);
+    }
+
+     public DiveTrip getDiveTrip()
+    {
+        return diveTrip.get();
+    }
+
+    public void setDriveTrip(DiveTrip diveTrip)
+    {
+        this.diveTrip.set(diveTrip);
+    }
+
+    public Waiver getWaiver()
+    {
+        return waiver.get();
+    }
+
+    public void setWaiver(Waiver waiver)
+    {
+        this.waiver.set(waiver);
+    }
+
+    public Payment getPayment()
+    {
+        return payment.get();
+    }
+
+    public void setPayment(Payment payment)
+    {
+        this.payment.set(payment);
+    }
+
+    public int getCustomerId()
+    {
+        return customerId.get();
+    }
+
+    public void setCustomerId(int id)
+    {
+        customerId.set(id);
+    }
+
+    public String getStatus()
+    {
+        return status.get();
+    }
+
+    public void setStatus(String stat)
+    {
+        status.set(stat);
+    }
+
+    public Customer getCustomer()
+    {
+        return customer.get();
+    }
+
+    public void setCustomer(Customer cust)
+    {
+        customer.set(cust);
+    }
 
     public StringProperty statusProperty()
     {
@@ -155,7 +152,7 @@ public class Reservation
         return reservationId.asObject();
     }
     
-    
+    // Adds the reservation based on the customer id and dive trip id.
     public static int addReservation(int custId, int diveId) throws IOException, FileNotFoundException, SQLException
     {
         connection = DbConnection.accessDbConnection().getConnection();
@@ -182,6 +179,7 @@ public class Reservation
         return result;
     }
     
+    // Gets the reservation id for the passed in values.
     public static int getReservationId(int custId, int diveId) throws IOException, FileNotFoundException, SQLException
     {
         connection = DbConnection.accessDbConnection().getConnection();
@@ -202,4 +200,28 @@ public class Reservation
         return reservationId;
     }
     
+    
+    // Determines whether a customer is already reserved for the dive trip.
+    public static boolean isCustomerAlreadyReserved(int custId, int diveId) throws FileNotFoundException, IOException, SQLException
+    {
+    	
+    	
+        connection = DbConnection.accessDbConnection().getConnection();
+        PreparedStatement statement = null;
+        statement = connection.prepareStatement("SELECT * FROM RESERVATION WHERE CUST_ID=? AND TRIP_ID =?");
+
+        statement.setInt(1, custId);
+        statement.setInt(2, diveId);
+
+        ResultSet results = statement.executeQuery();
+
+        if(results.next())
+        {
+           return true;
+        }
+
+        statement.close();
+        return false;
+
+    }
 }

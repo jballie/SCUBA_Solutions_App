@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package scuba.solutions.ui.customers.model;
 
 import java.io.FileNotFoundException;
@@ -26,8 +22,8 @@ import scuba.solutions.util.AlertUtil;
 import scuba.solutions.util.DateUtil;
 
 /**
- * Represents a Customer profile for the Scuba Solutions app.
- * @author Jon
+ * Represents a Customer Profile for the SCUBA SCUBA Now company.
+ * @author Jonathan Balliet, Samuel Brock
  */
 public class Customer 
 {
@@ -50,7 +46,6 @@ public class Customer
     	this(0, null, null);
     }
     
-    
     public Customer(int customerID)
     {
     	this.customerID = new SimpleIntegerProperty(customerID);
@@ -60,7 +55,7 @@ public class Customer
         this.postalCode = new SimpleStringProperty("");
         this.city = new SimpleStringProperty("");
         this.state = new SimpleStringProperty("");
-        this.dateOfBirth = new SimpleObjectProperty<LocalDate>();
+        this.dateOfBirth = new SimpleObjectProperty<>();
         this.phoneNumber = new SimpleStringProperty("");
         this.emailAddress = new SimpleStringProperty("");
         this.certAgency = new SimpleStringProperty("");
@@ -76,7 +71,7 @@ public class Customer
         this.postalCode = new SimpleStringProperty("");
         this.city = new SimpleStringProperty("");
         this.state = new SimpleStringProperty("");
-        this.dateOfBirth = new SimpleObjectProperty<LocalDate>();
+        this.dateOfBirth = new SimpleObjectProperty<>();
         this.phoneNumber = new SimpleStringProperty("");
         this.emailAddress = new SimpleStringProperty("");
         this.certAgency = new SimpleStringProperty("");
@@ -85,137 +80,148 @@ public class Customer
     	
     }
     
-     public Customer(Customer cust) 
-     {
-         
-         
-     
-         
-    
+    // Copy Constructor for a Customer
+    public Customer(Customer cust) 
+    {
+       
         customerID = cust.customerID;
-        
-       this.firstName = new SimpleStringProperty(cust.getFirstName());
+        this.firstName = new SimpleStringProperty(cust.getFirstName());
     	this.lastName = new SimpleStringProperty (cust.getLastName());
     	this.street = new SimpleStringProperty(cust.getStreet());
         this.postalCode = new SimpleStringProperty(cust.getPostalCode());
         this.city = new SimpleStringProperty(cust.getCity());
         this.state = new SimpleStringProperty(cust.getState());
-        this.dateOfBirth = new SimpleObjectProperty<LocalDate>(cust.getDateOfBirth());
+        this.dateOfBirth = new SimpleObjectProperty<>(cust.getDateOfBirth());
         this.phoneNumber = new SimpleStringProperty(cust.getPhoneNumber());
         this.emailAddress = new SimpleStringProperty(cust.getEmailAddress());
         this.certAgency = new SimpleStringProperty(cust.getCertAgency());
         this.certDiveNo = new SimpleStringProperty(cust.getCertDiveNo());
-        
-
     }
 
-    public int getCustomerID() {
+    public int getCustomerID() 
+    {
         return customerID.get();
     }
     
-    
-    public StringProperty customerIdProperty() {
-      String cusIdTemp = Integer.toString(getCustomerID());
-      StringProperty cusIdProp = new  SimpleStringProperty(cusIdTemp);
-      return cusIdProp;
-      
-    }
-    
-    public String getFirstName() {
+    public String getFirstName() 
+    {
         return firstName.get();
     }
     
-     public void setFirstName(String firstName) {
+    public void setFirstName(String firstName) 
+    {
         this.firstName.set(firstName);
     }
     
-     public StringProperty firstNameProperty() {
-         return firstName;
-     }
+    public StringProperty firstNameProperty() 
+    {
+        return firstName;
+    }
 
-    public String getLastName() {
+    public String getLastName()
+    {
         return lastName.get();
     }
 
-     public void setLastName(String lastName) {
+    public void setLastName(String lastName) 
+    {
         this.lastName.set(lastName);
     }
      
-    public StringProperty lastNameProperty() {
-         return lastName;
-     }
+    public StringProperty lastNameProperty() 
+    {
+        return lastName;
+    }
 
-    public String getStreet() {
+    public String getStreet() 
+    {
         return street.get();
     }
     
-     public void setStreet(String street) {
+    public void setStreet(String street) 
+    {
         this.street.set(street);
     }
 
-    public String getPostalCode() {
+    public String getPostalCode() 
+    {
         return postalCode.get();
     }
     
-    public void setPostalCode(String postalCode) {
+    public void setPostalCode(String postalCode) 
+    {
         this.postalCode.set(postalCode);
     }
 
-    public String getCity() {
+    public String getCity() 
+    {
         return city.get();
     }
     
-    public void setCity(String city){
+    public void setCity(String city)
+    {
         this.city.set(city);
     }
     
-    public String getState() {
+    public String getState() 
+    {
     	return state.get();
     }
     
-    public void setState(String state){
+    public void setState(String state)
+    {
     	this.state.set(state);
     }
 
-    public String getPhoneNumber() {
+    public String getPhoneNumber() 
+    {
         return phoneNumber.get();
     }
     
-    public void setPhoneNumber(String phoneNumber){
+    public void setPhoneNumber(String phoneNumber)
+    {
         this.phoneNumber.set(phoneNumber);
     }
     
-    public LocalDate getDateOfBirth() {
+    public LocalDate getDateOfBirth() 
+    {
         return dateOfBirth.get();
     }
     
-    public void setDateOfBirth(LocalDate dateOfBirth) {
+    public void setDateOfBirth(LocalDate dateOfBirth) 
+    {
         this.dateOfBirth.set(dateOfBirth);
     }
     
-    public StringProperty dateofBirthProperty() {
+    public StringProperty dateofBirthProperty() 
+    {
     	String dobTemp = DateUtil.format(getDateOfBirth());
     	StringProperty dobProp = new SimpleStringProperty(dobTemp);
     	return dobProp;
     }
 
-    public String getEmailAddress() {
+    public String getEmailAddress() 
+    {
         return emailAddress.get();
     }
     
-    public void setEmailAddress(String emailAddress){
+    public void setEmailAddress(String emailAddress)
+    {
         this.emailAddress.set(emailAddress);
     }
 
-    public String getCertAgency() {
+    public String getCertAgency() 
+    {
         return certAgency.get();
     }
     
-    public void setCertAgency(String certAgency) {
+    public void setCertAgency(String certAgency) 
+    {
         this.certAgency.set(certAgency);
     }
     
-    public String getCertDiveNo() {
+    public String getCertDiveNo() 
+    {
         return certDiveNo.get();
     }
     
@@ -232,9 +238,8 @@ public class Customer
     
      public StringProperty fullNameProperty() 
      {
-         StringProperty fullNameProp = new SimpleStringProperty(getFullName());
-         
-         return fullNameProp;
+        StringProperty fullNameProp = new SimpleStringProperty(getFullName()); 
+        return fullNameProp;
      }
     
     @Override
@@ -246,9 +251,10 @@ public class Customer
             + ((customerID == null) ? 0 : customerID.hashCode());
 	return result;
     }
-
+    
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(Object obj) 
+    {
         if (this == obj) {
             return true;
         }
@@ -299,9 +305,6 @@ public class Customer
     }
 
 
-	
-   
-    
     public static void updateCustomer(Customer customer) throws FileNotFoundException, IOException, SQLException
     {
         connection = DbConnection.accessDbConnection().getConnection();
@@ -421,9 +424,6 @@ public class Customer
                 alert.showAndWait();
                 
             }
-            
-            //preSt.close();
-        
     }
     
     
@@ -449,28 +449,7 @@ public class Customer
        preSt.close( );
        
        return custId;
-       
-        
-        
-        
-        
-        
         
     }
-    
-    
-    @Override
-    public String toString()
-    {
-        return this.getFullName() + "\n " +
-        this.getLastName() + "\n " +
-        this.getEmailAddress() + "\n " +
-                this.getPhoneNumber() + "\n" +
-        this.getPhoneNumber() + "\n " +
-        this.getCity() + "\n";
-                
-                
-    }
-    
 
 }

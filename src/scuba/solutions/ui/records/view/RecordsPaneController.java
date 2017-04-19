@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package scuba.solutions.ui.records.view;
 
 import com.jfoenix.controls.JFXButton;
@@ -44,9 +40,10 @@ import scuba.solutions.util.DateUtil;
 import scuba.solutions.util.SQLUtil;
 
 /**
- * FXML Controller class
+ * 
+ * Controller class for the Records Pane.
  *
- * @author Jon
+ * @author Jonathan Balliet, Samuel Brock
  */
 public class RecordsPaneController implements Initializable {
     private static Connection connection;    
@@ -93,20 +90,24 @@ public class RecordsPaneController implements Initializable {
     {
        recordsButton.setDisable(true);
        initalizeRecordColumns();
-        try {
+        try 
+        {
             loadRecords();
-        } catch (IOException ex) {
+        } 
+        catch (IOException ex) 
+        {
             Logger.getLogger(RecordsPaneController.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
+        } 
+        catch (SQLException ex) 
+        {
             Logger.getLogger(RecordsPaneController.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         initializeSearchField();
-        
         searchTextField.setFocusTraversable(false);
     }   
     
-    
+    // Loads all of the historical data for the company into the Records Table.
     private void loadRecords() throws IOException, FileNotFoundException, SQLException
     {
         StringBuilder recordsQuery = new StringBuilder();
@@ -185,13 +186,10 @@ public class RecordsPaneController implements Initializable {
     	}
         
         recordsTable.setItems(recordsData);
-        
       //  initializeSearchField();
     }
         
-        
-    
-    
+    // Initializes the columns for the Records Table.
     private void initalizeRecordColumns()
     {
         reservationIdColumn.setCellValueFactory(cellData -> cellData.getValue().reservationIdProperty());
@@ -206,15 +204,97 @@ public class RecordsPaneController implements Initializable {
         tripDateColumn.setComparator(new DateComparator());
         
     }
+    
+    // Compares the string dates stored in the Records Table according to their date value.
+    public class DateComparator implements Comparator<String>
+    {
+        @Override
+        public int compare(String str1, String str2)
+        {
+            LocalDate dateStr1 = DateUtil.parse(str1);
+            LocalDate dateStr2 = DateUtil.parse(str2);
+
+            return dateStr1.compareTo(dateStr2);
+        }
+    }
+    
+    // Clears the search bar. All stored data will be shown in the Records table.
+    @FXML
+    private void clearSearch(ActionEvent event) 
+    {
+        searchTextField.clear();
+    }
+    
+    
+    public void initializeSearchField()
+    {
+        
+        filteredRecords= new FilteredList<>(recordsData, p -> true);
+
+        // Sets the search filter Predicate whenever the search values change.
+        searchTextField.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> 
+        {
+            filteredRecords.setPredicate( reservation -> 
+            {
+                // If the search field text is empty, display all customers in the table
+                if (newValue == null || newValue.isEmpty()) 
+                {
+                    return true;
+                }
+
+                // Compares the name, id, and date of birth of every customer with the search text
+        
+                String lowerCaseFilter = newValue.toLowerCase();
+
+
+                if (reservation.getCustomer().getFullName().toLowerCase().contains(lowerCaseFilter)) 
+                {
+                    return true; // Search matches full name
+                } 
+                else if (DateUtil.format(reservation.getDiveTrip().getTripDate()).contains(lowerCaseFilter)) 
+                {
+                    return true;// Search matches trip date
+                } 
+                else if (reservation.getDiveTrip().getDepartTime().toString().contains(lowerCaseFilter)) 
+                {
+                    return true; // Search matches depart time
+                } 
+                else if (reservation.getDiveTrip().getWeatherStatus().toLowerCase().contains(lowerCaseFilter))
+                {
+                    return true; // Search matches trip status
+                } 
+                else if (reservation.getStatus().toLowerCase().contains(lowerCaseFilter)) 
+                {
+                    return true;
+                } 
+                else if (Integer.toString(reservation.getReservationId()).contains(lowerCaseFilter))
+                {
+                    return true; // Search matches eservation id.
+                }
+                
+                return false; // Search does not match any data.
+        
+            });
+        });
+     
+     
+        SortedList<Reservation> sortedData = new SortedList<>(filteredRecords);
+
+        //  Bind the SortedList comparator to the TableView comparator.
+        sortedData.comparatorProperty().bind(recordsTable.comparatorProperty());
+
+        //  Add sorted (and filtered) data to the table.
+        recordsTable.setItems(sortedData);
+       
+    }
 
     @FXML
     private void transitionToHome(ActionEvent event) throws IOException
     {
-                     Stage stage = (Stage) rootPane.getScene().getWindow();
+        Stage stage = (Stage) rootPane.getScene().getWindow();
         FXMLLoader loader = new FXMLLoader();
-	    loader.setLocation(getClass().getResource("/scuba/solutions/ui/home/view/HomePane.fxml"));
-	    Parent root = loader.load();
-        //Stage stage = new Stage();
+        loader.setLocation(getClass().getResource("/scuba/solutions/ui/home/view/HomePane.fxml"));
+        Parent root = loader.load();
         stage.setScene(new Scene(root));
         stage.show( );
     }
@@ -223,11 +303,10 @@ public class RecordsPaneController implements Initializable {
     @FXML
     private void transitionToDiveSchedule(ActionEvent event) throws IOException 
     {
-                        Stage stage = (Stage) rootPane.getScene().getWindow();
+        Stage stage = (Stage) rootPane.getScene().getWindow();
         FXMLLoader loader = new FXMLLoader();
-	    loader.setLocation(getClass().getResource("/scuba/solutions/ui/dive_schedule/view/DiveSchedule.fxml"));
-	    Parent root = loader.load();
-        //Stage stage = new Stage();
+        loader.setLocation(getClass().getResource("/scuba/solutions/ui/dive_schedule/view/DiveSchedule.fxml"));
+        Parent root = loader.load();
         stage.setScene(new Scene(root));
         stage.show( );
     }
@@ -235,7 +314,7 @@ public class RecordsPaneController implements Initializable {
     @FXML
     private void transitionToCustomers(ActionEvent event) throws IOException 
     {
-                      Stage stage = (Stage) rootPane.getScene().getWindow();
+        Stage stage = (Stage) rootPane.getScene().getWindow();
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource("/scuba/solutions/ui/customers/view/CustomerPane.fxml"));
         Parent root = loader.load();
@@ -250,70 +329,8 @@ public class RecordsPaneController implements Initializable {
         stage.close();
     }
 
-    @FXML
-    private void clearSearch(ActionEvent event) 
-    {
-        searchTextField.clear();
-    }
+
     
-    public void initializeSearchField()
-    {
-        
-        	filteredRecords= new FilteredList<>(recordsData, p -> true);
-
-        // Sets the search filter Predicate whenever the search values change.
-        searchTextField.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
-            filteredRecords.setPredicate( reservation -> {
-                // If the search field text is empty, display all customers in the table
-        if (newValue == null || newValue.isEmpty()) {
-                    return true;
-        }
-
-        // Compares the name, id, and date of birth of every customer with the search text
-        
-       String lowerCaseFilter = newValue.toLowerCase();
-      
-       
-        if (reservation.getCustomer().getFullName().toLowerCase().contains(lowerCaseFilter)) {
-            return true; // Search matches full name
-        } else if (DateUtil.format(reservation.getDiveTrip().getTripDate()).contains(lowerCaseFilter)) {
-            return true;// Search matches trip date
-        } else if (reservation.getDiveTrip().getDepartTime().toString().contains(lowerCaseFilter)) {
-            return true; // Search matches depart time
-       } else if (reservation.getDiveTrip().getWeatherStatus().toLowerCase().contains(lowerCaseFilter)){
-            return true; // Search matches trip status
-        } else if (reservation.getStatus().toLowerCase().contains(lowerCaseFilter)) {
-            return true;
-        } else if (Integer.toString(reservation.getReservationId()).contains(lowerCaseFilter)){
-            return true; // Search matches eservation id.
-        }
-        return false; // Search does not match any data.
-        
-            });
-        });
-     
-     
-         SortedList<Reservation> sortedData = new SortedList<>(filteredRecords);
-
-        //  Bind the SortedList comparator to the TableView comparator.
-        sortedData.comparatorProperty().bind(recordsTable.comparatorProperty());
-
-        //  Add sorted (and filtered) data to the table.
-        recordsTable.setItems(sortedData);
-       
-    }
-    
-     public class DateComparator implements Comparator<String>
-    {
-        @Override
-        public int compare(String str1, String str2)
-        {
-            LocalDate dateStr1 = DateUtil.parse(str1);
-            LocalDate dateStr2 = DateUtil.parse(str2);
-            
-          
-            return dateStr1.compareTo(dateStr2);
-        }
-    }
+ 
     
 }

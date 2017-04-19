@@ -13,9 +13,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
-import java.util.Random;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,16 +26,12 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
@@ -74,16 +68,12 @@ public class CustomerPaneController implements Initializable {
     private JFXButton updateCustomerButton;
     @FXML
     private TableView<Customer> customersTable;
-    //@FXML
-   // private TableColumn<Customer, String> customerIdColumn;
     @FXML
     private TableColumn<Customer, String> firstNameColumn;
     @FXML
     private TableColumn<Customer, String> lastNameColumn;
     @FXML
     private TableColumn<Customer, String> dobColumn;
-   // @FXML
-    //private Label customerIdLabel;
     @FXML
     private Label firstNameLabel;
     @FXML
@@ -148,10 +138,10 @@ public class CustomerPaneController implements Initializable {
         showCustomerDetails(null);
 
         // Listen for selection changes and show the cutomer details when changed.
-         customersTable.getSelectionModel().selectedItemProperty().addListener(
+        customersTable.getSelectionModel().selectedItemProperty().addListener(
           (observable, oldValue, newValue) -> showCustomerDetails(newValue));
          
-         //initalizeSearchField(); 
+        initalizeSearchField(); 
     }
     
    /**
@@ -162,7 +152,7 @@ public class CustomerPaneController implements Initializable {
     {
     	try
     	{
-    		// Load the fxml file and create a new stage for the popup dialog.
+    	    // Load the fxml file and create a new stage for the popup dialog.
     	    FXMLLoader loader = new FXMLLoader();
     	    loader.setLocation(CustomerPaneController.class.getResource("CustomerEditDialog.fxml"));
     	    Parent root = loader.load();
@@ -182,10 +172,10 @@ public class CustomerPaneController implements Initializable {
     	    // Show the dialog and wait until the user closes it
     	    dialogStage.showAndWait();
     	    
-    	    return controller.isOkClicked();
+    	    return controller.isSaveClicked();
     	    
     	}
-		catch (IOException e) 
+	catch (IOException e) 
     	{
             e.printStackTrace();
     	    return false;
@@ -193,17 +183,16 @@ public class CustomerPaneController implements Initializable {
     }
         
 
-    // When the add button is clicked on - goes to edit dialog customer
+    // When the Add Customer button is clicked on - opens the edit customer dialog
     // for adding the information for a new customer.
     @FXML
     public void addCustomer() throws SQLException, FileNotFoundException, IOException
     {   
         addCustomerButton.setDisable(true);
         Customer tempPerson = new Customer();
-        boolean okClicked = showCustomerEditDialog(tempPerson);
-        
-        
-        if (okClicked) 
+        boolean savedClicked = showCustomerEditDialog(tempPerson);
+
+        if (savedClicked) 
         {	
             String fName = tempPerson.getFirstName();
             String lName = tempPerson.getLastName();
@@ -258,17 +247,15 @@ public class CustomerPaneController implements Initializable {
                 alert.setHeaderText("Error!");
                 alert.setContentText("Error Occured");
                 alert.showAndWait();
-                
-                
+
             }
-            
         }
 
         addCustomerButton.setDisable(false);
 
     }
     
-    // When the update button is clicked on - goes to edit dialog customer
+    // When the Update Customer button is clicked on - opens the edit dialog customer
     // for updating the information for the selected customer.
     @FXML
     public void updateCustomer() throws FileNotFoundException, IOException, SQLException
@@ -278,9 +265,9 @@ public class CustomerPaneController implements Initializable {
  
          if (selectedPerson != null)
          {
-            boolean okClicked = showCustomerEditDialog(selectedPerson);
+            boolean savedClicked = showCustomerEditDialog(selectedPerson);
             
-            if (okClicked) 
+            if (savedClicked) 
             {
             	 
             	int custId = selectedPerson.getCustomerID();
@@ -354,7 +341,7 @@ public class CustomerPaneController implements Initializable {
          searchTextField.setFocusTraversable(false);
     }
     
-    // Initializes the columns for the TableView
+    // Initializes the columns for the Customer Table
     public void initalizeCustomer()
     {
     	//customerIdColumn.setCellValueFactory(cellData -> cellData.getValue().customerIdProperty());
@@ -364,9 +351,7 @@ public class CustomerPaneController implements Initializable {
         dobColumn.setComparator(new DateComparator());
     }
     
-    // Loads all the Customers from that database into the tableView
-    // Think of it as a 'refresh' (will be called when transitions to Customer pane
-    // and after any customers have been added or updated.
+    // Loads all the Customers from that database into the Customer table
     public void loadCustomers() throws FileNotFoundException, IOException, SQLException
     {
         
@@ -435,14 +420,13 @@ public class CustomerPaneController implements Initializable {
     }
     
     /**
-    * Fills all text fields to show details about the customer.
+    * Fills all text fields in the Customer Details pane to show details about the customer.
     * If the specified customer is null, all the text fields are cleared.
     */
     private void showCustomerDetails(Customer customer)
     {
         if (customer != null) 
         {
-            //customerIdLabel.setText(Integer.toString(customer.getCustomerID()));
             firstNameLabel.setText(customer.getFirstName());
             lastNameLabel.setText(customer.getLastName());
             streetLabel.setText(customer.getStreet());
@@ -457,7 +441,6 @@ public class CustomerPaneController implements Initializable {
         } 
         else 
         {
-           // customerIdLabel.setText("");
             firstNameLabel.setText("");
             lastNameLabel.setText("");
             streetLabel.setText("");
@@ -525,15 +508,27 @@ public class CustomerPaneController implements Initializable {
 
     }
     
-    // Transitions to the Dive Schedule Scene
+    
+    public class DateComparator implements Comparator<String>
+    {
+        @Override
+        public int compare(String str1, String str2)
+        {
+            LocalDate dateStr1 = DateUtil.parse(str1);
+            LocalDate dateStr2 = DateUtil.parse(str2);
+            
+            return dateStr1.compareTo(dateStr2);
+        }
+    }
+    
+    
     @FXML
     public void transitionToDiveSchedule() throws IOException
     {
         Stage stage = (Stage) rootPane.getScene().getWindow();
         FXMLLoader loader = new FXMLLoader();
-	    loader.setLocation(getClass().getResource("/scuba/solutions/ui/dive_schedule/view/DiveSchedule.fxml"));
-	    Parent root = loader.load();
-        //Stage stage = new Stage();
+        loader.setLocation(getClass().getResource("/scuba/solutions/ui/dive_schedule/view/DiveSchedule.fxml"));
+        Parent root = loader.load();
         stage.setScene(new Scene(root));
         stage.show( );
             
@@ -542,23 +537,21 @@ public class CustomerPaneController implements Initializable {
         @FXML
     public void transitionToHome(ActionEvent event) throws IOException 
     {
-                Stage stage = (Stage) rootPane.getScene().getWindow();
+        Stage stage = (Stage) rootPane.getScene().getWindow();
         FXMLLoader loader = new FXMLLoader();
-	    loader.setLocation(getClass().getResource("/scuba/solutions/ui/home/view/HomePane.fxml"));
-	    Parent root = loader.load();
-        //Stage stage = new Stage();
+        loader.setLocation(getClass().getResource("/scuba/solutions/ui/home/view/HomePane.fxml"));
+        Parent root = loader.load();
         stage.setScene(new Scene(root));
         stage.show( );
     }
     
-        @FXML
+    @FXML
     private void transitionToRecords(ActionEvent event) throws IOException 
     {
-                        Stage stage = (Stage) rootPane.getScene().getWindow();
+        Stage stage = (Stage) rootPane.getScene().getWindow();
         FXMLLoader loader = new FXMLLoader();
-	    loader.setLocation(getClass().getResource("/scuba/solutions/ui/records/view/RecordsPane.fxml"));
-	    Parent root = loader.load();
-        //Stage stage = new Stage();
+        loader.setLocation(getClass().getResource("/scuba/solutions/ui/records/view/RecordsPane.fxml"));
+        Parent root = loader.load();
         stage.setScene(new Scene(root));
         stage.show( );
     }
@@ -569,19 +562,5 @@ public class CustomerPaneController implements Initializable {
         Stage stage = (Stage) rootPane.getScene().getWindow();
         stage.close();
     }
-    
-    public class DateComparator implements Comparator<String>
-    {
-        @Override
-        public int compare(String str1, String str2)
-        {
-            LocalDate dateStr1 = DateUtil.parse(str1);
-            LocalDate dateStr2 = DateUtil.parse(str2);
-            
-          
-            return dateStr1.compareTo(dateStr2);
-        }
-    }
 
-    
 }
