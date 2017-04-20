@@ -17,7 +17,9 @@ import java.time.LocalTime;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
@@ -58,15 +60,9 @@ import scuba.solutions.util.SQLUtil;
 
 
 /**
- * FXML Controller class
- *
+ * Controller class for the Dive Schedule Pane.
+ * 
  * @author Jonathan Balliet, Samuel Brock
- * Bugs/TODO:
- * BIG ISSUE: Can add more than one reservation for a single person for a dive event - are also allowed to do this in the DB? 
- * BIG ISSUE: Need to possibly look at ways around security limitations (anti-virus) - causing program to freeze otherwise!
- * Need to make sure resultSets and statements are closed and try/catch statements with DB calls
- * Need to figure out confirmation for email being sent
- * Need to look into selections staying at same place in table view after updates
  */
 public class DiveSchedulePaneController implements Initializable 
 {
@@ -128,10 +124,6 @@ public class DiveSchedulePaneController implements Initializable
     @FXML
     private JFXButton updateReservationButton;
     
-
-
- 
-
     /**
      * Initializes the controller class.
      */
@@ -168,19 +160,20 @@ public class DiveSchedulePaneController implements Initializable
         reservationsTable.getSelectionModel().selectedItemProperty().addListener(
         (observable, oldValue, newValue) -> showReservationStatusDetails(newValue));
         
-        tripTable.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends DiveTrip> observable, DiveTrip oldValue, DiveTrip newValue) -> {
+        tripTable.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends DiveTrip> observable, DiveTrip oldValue, DiveTrip newValue) -> 
+        {
             if(newValue == null || newValue.getWeatherStatus().equalsIgnoreCase("Cancelled"))
             {
                 newReservationButton.setDisable(true);
                 updateReservationButton.setDisable(true);
-                
+
             }
             else
             {
                 newReservationButton.setDisable(false);
                 updateReservationButton.setDisable(false);
             }
-            
+
             if( newValue == null || (newValue.getAvailSeats() == 0 || newValue.getWeatherStatus().equalsIgnoreCase("Cancelled")) )
             {
                 newReservationButton.setDisable(true);
@@ -222,9 +215,6 @@ public class DiveSchedulePaneController implements Initializable
             }
             
         });
-    
-    
-  
 }
     
     public void loadDiveTrips() throws FileNotFoundException, IOException, SQLException
@@ -293,117 +283,122 @@ public class DiveSchedulePaneController implements Initializable
     // Retrieves customers in dive trip    
     private void loadTripReservations(DiveTrip selectedTrip)
     { 
-       int tripId = 0;
+        int tripId = 0;
+        
+        if(!reservationData.isEmpty())
+        {
+            reservationData.clear();
+        }
 
-       
-        reservationData.clear();
-
-       if (selectedTrip != null) 
-       {
+        if (selectedTrip != null) 
+        {
             tripId = selectedTrip.getTripId();
-       }
-               
-        PreparedStatement preSt = null;           
-        ResultSet result = null;          
-        PreparedStatement statement = null;
-        ResultSet resultSet = null; 
 
-        try
-        {
-            preSt = connection.prepareStatement("SELECT * FROM RESERVATION WHERE TRIP_ID=?");
+            PreparedStatement preSt = null;           
+            ResultSet result = null;          
+            PreparedStatement statement = null;
+            ResultSet resultSet = null; 
 
-            preSt.setInt(1, tripId);
-
-            result = preSt.executeQuery();
-
-           while(result.next())
-           {
-               int restID = result.getInt(1);
-               int custID = result.getInt(2);
-               int diveID = result.getInt(3);
-               String status = result.getString(4);
-
-               statement = connection.prepareStatement("SELECT FIRST_NAME, LAST_NAME FROM CUSTOMER WHERE CUST_ID=?");
-
-               statement.setInt(1, custID);
-
-               resultSet = statement.executeQuery();
-               resultSet.next();
-
-               String firstName = resultSet.getString(1);
-               String lastName = resultSet.getString(2);
-               
-               LocalDate diveDate = null;
-               
-               statement = connection.prepareStatement("SELECT TRIP_DATE, DEPARTURE_TIME, DIVE_STATUS FROM DIVE_TRIP WHERE TRIP_ID=?");
-
-               statement.setInt(1, diveID);
-
-               resultSet = statement.executeQuery();
-               resultSet.next();
-
-               if(resultSet.getDate(1) != null)
-                diveDate = resultSet.getDate(1).toLocalDate();
-               
-               String strTime = resultSet.getString(2);
-               LocalTime time = SQLUtil.intervalToLocalTime(strTime);
-               String tripStatus = resultSet.getString(3);
-               
-
-               Customer customer = new Customer(custID, firstName, lastName);
-               DiveTrip diveTrip = new DiveTrip(diveID, diveDate, time);
-               diveTrip.setWeatherStatus(tripStatus);
-               Reservation res = new Reservation(restID);
-               res.setCustomer(customer);
-               res.setDiveTripId(diveID);
-               res.setDriveTrip(diveTrip);
-               res.setStatus(status);
-
-               reservationData.add(res);
-           }
-        }
-        catch (SQLException e)
-        {
-        }
-        finally
-        {
             try
             {
-               if (statement != null)
-                           statement.close();
+                preSt = connection.prepareStatement("SELECT * FROM RESERVATION WHERE TRIP_ID=?");
 
-               if(preSt != null)
-                   preSt.close();
+                preSt.setInt(1, tripId);
 
-               if(resultSet != null)
-                   resultSet.close();
+                result = preSt.executeQuery();
 
-               if(result != null)
-                   result.close();
+                while(result.next())
+                {
+                    int restID = result.getInt(1);
+                    int custID = result.getInt(2);
+                    int diveID = result.getInt(3);
+                    String status = result.getString(4);
 
-               } catch (SQLException e) {
-                   Logger.getLogger(DiveSchedulePaneController.class.getName()).log(Level.SEVERE, null, e);
-               }
-               }
+                    statement = connection.prepareStatement("SELECT FIRST_NAME, LAST_NAME FROM CUSTOMER WHERE CUST_ID=?");
 
-       reservationsTable.setItems(reservationData);   
+                    statement.setInt(1, custID);
+
+                    resultSet = statement.executeQuery();
+                    resultSet.next();
+
+                    String firstName = resultSet.getString(1);
+                    String lastName = resultSet.getString(2);
+
+                    LocalDate diveDate = null;
+
+                    statement = connection.prepareStatement("SELECT TRIP_DATE, DEPARTURE_TIME, DIVE_STATUS FROM DIVE_TRIP WHERE TRIP_ID=?");
+
+                    statement.setInt(1, diveID);
+
+                    resultSet = statement.executeQuery();
+                    resultSet.next();
+
+                    if(resultSet.getDate(1) != null)
+                        diveDate = resultSet.getDate(1).toLocalDate();
+
+                    String strTime = resultSet.getString(2);
+                    LocalTime time = SQLUtil.intervalToLocalTime(strTime);
+                    String tripStatus = resultSet.getString(3);
+
+                    Customer customer = new Customer(custID, firstName, lastName);
+                    DiveTrip diveTrip = new DiveTrip(diveID, diveDate, time);
+                    diveTrip.setWeatherStatus(tripStatus);
+                    Reservation res = new Reservation(restID);
+                    
+                    res.setCustomer(customer);
+                    res.setDiveTripId(diveID);
+                    res.setDriveTrip(diveTrip);
+                    res.setStatus(status);
+
+                    reservationData.add(res);
+                }
+            }
+            catch (SQLException e)
+            {
+                AlertUtil.showDbErrorAlert("Error with Database", e);
+            }
+            finally
+            {
+                try
+                {
+                    if (statement != null)
+                        statement.close();
+
+                    if(preSt != null)
+                        preSt.close();
+
+                    if(resultSet != null)
+                        resultSet.close();
+
+                    if(result != null)
+                        result.close();
+
+                   } 
+                catch (SQLException e) 
+                {
+                    AlertUtil.showDbErrorAlert("Error with Database", e);
+                }
+            }
+
+            reservationsTable.setItems(reservationData);   
+        }
     }
 
     
     // Retrieves customers in dive trip    
- private void showReservationStatusDetails(Reservation reservation)
+    private void showReservationStatusDetails(Reservation reservation)
     {
         int reservationId = 0;
         Waiver waiver = null;
         Payment payment = null;
-        
+
         if(reservation != null) 
         {
             reservationId = reservation.getReservationId();        
             waiver = reservation.getWaiver();
             payment = reservation.getPayment();
         }
-        
+
         PreparedStatement statement = null;
         ResultSet resultSet = null; 
 
@@ -417,10 +412,10 @@ public class DiveSchedulePaneController implements Initializable
             if(resultSet.next()) 
             {
                 waiver.setWaiverStatus(resultSet.getString(2));
-                
+
                 if(resultSet.getDate(3) != null)
                     waiver.setDateSigned(resultSet.getDate(3).toLocalDate());
-                
+
                 waiver.setERFirst(resultSet.getString(4));
                 waiver.setERLast(resultSet.getString(5));
                 waiver.setERPhone(resultSet.getString(6));
@@ -435,34 +430,31 @@ public class DiveSchedulePaneController implements Initializable
                 payment.setReservationId(reservationId);
                 payment.setPaymentStatus(resultSet.getString(2));
                 payment.setCCConfirmNo(resultSet.getInt(3));
-                
+
                 if(resultSet.getDate(4) != null)
                     payment.setDateProcessed(resultSet.getDate(4).toLocalDate());
-                
+
                 payment.setAmount(resultSet.getInt(5));
             }
 
         } 
         catch (SQLException | NullPointerException e)
         {
+            AlertUtil.showErrorAlert("Error with Database", e);
         }
         finally
         {
             try
             {
                 if (statement != null)
-                {
                     statement.close();
-                }
-                
-                resultSet.close();
+
+                if(resultSet != null)
+                    resultSet.close();
             }
-            catch (SQLException e)
+            catch (SQLException | NullPointerException e)
             {
-                Logger.getLogger(DiveSchedulePaneController.class.getName()).log(Level.SEVERE, null, e);
-            }
-            catch(NullPointerException e)
-            {
+                AlertUtil.showErrorAlert("Error with Database", e);        
             }
         }
 
@@ -482,9 +474,9 @@ public class DiveSchedulePaneController implements Initializable
         }
     }
    
-   public void initializeTrip()
-   {
-    	tripDateColumn.setCellValueFactory(cellData -> cellData.getValue().tripDateProperty());
+    public void initializeTrip()
+    {
+        tripDateColumn.setCellValueFactory(cellData -> cellData.getValue().tripDateProperty());
         dayOfWeekColumn.setCellValueFactory(cellData -> cellData.getValue().dayOfWeekProperty());
         departTimeColumn.setCellValueFactory(cellData -> cellData.getValue().departTimeProperty());
         availSeatsColumn.setCellValueFactory(cellData -> cellData.getValue().availSeatsProperty());
@@ -517,7 +509,7 @@ public class DiveSchedulePaneController implements Initializable
             controller.setDive(trip);
 
             dialogStage.showAndWait();
-            return controller.isOkClicked(); 
+            return controller.isSaveClicked(); 
         }
         catch (IOException e) 
     	{
@@ -549,7 +541,7 @@ public class DiveSchedulePaneController implements Initializable
                 String tripStatus = selectedTrip.getWeatherStatus();
                
 
-                PreparedStatement preSt;
+                PreparedStatement preSt = null;
 
                 try 
                 {
@@ -575,20 +567,27 @@ public class DiveSchedulePaneController implements Initializable
                 finally
                 {
                     updateDiveButton.setDisable(false);
+                
+        
+                    try
+                    {
+                        if (preSt != null)
+                            preSt.close();
+
+                    }
+                    catch (SQLException | NullPointerException e)
+                    {
+                        AlertUtil.showErrorAlert("Error with Database", e);        
+                    }
                 }
-               
-             
-               // loadDiveTrips();
+                
                 tripTable.setSelectionModel(selection);
-               
-            
             }
         } 
         else 
         {
             // If nothing is selected a warning message will pop-up
             AlertUtil.noSelectionAlert("No Dive Trip Selected", "Please select a dive trip in the dive trips table to update.");
-           
         }
         updateDiveButton.setDisable(false);
         searchTextField.setFocusTraversable(false);
@@ -614,7 +613,7 @@ public class DiveSchedulePaneController implements Initializable
             controller.setDive(trip);
 
             dialogStage.showAndWait();
-            return controller.isOkClicked();
+            return controller.isSaveClicked();
         }
 	catch (IOException e) 
 	{
@@ -738,7 +737,7 @@ public class DiveSchedulePaneController implements Initializable
 
     	   dialogStage.showAndWait();
 
-    	   return controller.isOkClicked();
+    	   return controller.isSaveClicked();
     	   
         }
        catch (IOException e) 
@@ -905,19 +904,26 @@ public class DiveSchedulePaneController implements Initializable
                 { 
                     try 
                     {
-                        EmailAlert.sendConfirmationEmail(selectedReservation);
+                       EmailAlert.sendConfirmationEmail(selectedReservation);
+                        
+                       Platform.runLater(()->
+                       AlertUtil.showEmailSent("Customer has been booked for the dive trip."
+                         + " Email confirmation sent to " + selectedReservation.getCustomer().getFullName() + "."));
+                  
                     }
-                    catch (IOException | IllegalStateException e)
+                    catch (IOException | IllegalStateException  e)
                     {
-                        AlertUtil.showErrorAlert("Email Error!", e);
+                        Platform.runLater(()-> AlertUtil.showErrorAlert("Email Error!", e));
+                           
                     }
 
                 };
-                Platform.runLater(emailTask);
-                //Thread thread = new Thread(emailTask);
-                //thread.start();
+     
+                ExecutorService executor = Executors.newSingleThreadExecutor();
+                executor.execute(emailTask);
+                executor.shutdown();
+       
                 availSeats--;
-
             }
             
         } 

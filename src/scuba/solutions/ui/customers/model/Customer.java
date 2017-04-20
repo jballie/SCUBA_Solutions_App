@@ -27,7 +27,7 @@ import scuba.solutions.util.DateUtil;
  */
 public class Customer 
 {
-    private final IntegerProperty customerID;
+    private final IntegerProperty customerId;
     private final StringProperty firstName;
     private final StringProperty lastName;
     private final StringProperty street;
@@ -41,14 +41,16 @@ public class Customer
     private final StringProperty certDiveNo;
     private static Connection connection;
     
+    // Default Constructor
     public Customer()
     {
     	this(0, null, null);
     }
     
-    public Customer(int customerID)
+    // Constructor for a new Customer object with a passed in customer id.
+    public Customer(int customerId)
     {
-    	this.customerID = new SimpleIntegerProperty(customerID);
+    	this.customerId = new SimpleIntegerProperty(customerId);
     	this.firstName = new SimpleStringProperty("");
     	this.lastName = new SimpleStringProperty ("");
     	this.street = new SimpleStringProperty("");
@@ -62,9 +64,10 @@ public class Customer
         this.certDiveNo = new SimpleStringProperty("");
     }
     
-    public Customer(int customerID, String firstName, String lastName)
+    // Constructor for a customer object with passed in customer id, first name, and last name
+    public Customer(int customerId, String firstName, String lastName)
     {
-    	this.customerID = new SimpleIntegerProperty(customerID);
+    	this.customerId = new SimpleIntegerProperty(customerId);
     	this.firstName = new SimpleStringProperty(firstName);
     	this.lastName = new SimpleStringProperty (lastName);
     	this.street = new SimpleStringProperty("");
@@ -84,7 +87,7 @@ public class Customer
     public Customer(Customer cust) 
     {
        
-        customerID = cust.customerID;
+        customerId = cust.customerId;
         this.firstName = new SimpleStringProperty(cust.getFirstName());
     	this.lastName = new SimpleStringProperty (cust.getLastName());
     	this.street = new SimpleStringProperty(cust.getStreet());
@@ -100,7 +103,7 @@ public class Customer
 
     public int getCustomerID() 
     {
-        return customerID.get();
+        return customerId.get();
     }
     
     public String getFirstName() 
@@ -243,16 +246,6 @@ public class Customer
      }
     
     @Override
-    public int hashCode()
-    {
-        final int prime = 31;
-	int result = 1;
-	result = prime * result
-            + ((customerID == null) ? 0 : customerID.hashCode());
-	return result;
-    }
-    
-    @Override
     public boolean equals(Object obj) 
     {
         if (this == obj) {
@@ -265,7 +258,7 @@ public class Customer
             return false;
         }
         final Customer other = (Customer) obj;
-        if (this.customerID.get() != other.customerID.get()) {
+        if (this.customerId.get() != other.customerId.get()) {
             return false;
         }
         if (!this.firstName.get().equals(other.firstName.get())) {
@@ -304,61 +297,63 @@ public class Customer
         return true;
     }
 
-
+    // Updates the customer profile in the database
     public static void updateCustomer(Customer customer) throws FileNotFoundException, IOException, SQLException
     {
-        connection = DbConnection.accessDbConnection().getConnection();
         PreparedStatement preSt = null;
+        
         try
         {
-        
+            connection = DbConnection.accessDbConnection().getConnection();
+            
             int custId = customer.getCustomerID();
-            	String fName = customer.getFirstName();
-            	String lName = customer.getLastName();
-            	String street = customer.getStreet();
-            	String city = customer.getCity();
-            	String state = customer.getState();
-            	String zip = customer.getPostalCode();
-            	String phone = customer.getPhoneNumber();
-            	String email = customer.getEmailAddress();
-            	LocalDate dob = customer.getDateOfBirth();
-            	String certAgen = customer.getCertAgency();
-            	String certDiveNo = customer.getCertDiveNo();
+            String fName = customer.getFirstName();
+            String lName = customer.getLastName();
+            String street = customer.getStreet();
+            String city = customer.getCity();
+            String state = customer.getState();
+            String zip = customer.getPostalCode();
+            String phone = customer.getPhoneNumber();
+            String email = customer.getEmailAddress();
+            LocalDate dob = customer.getDateOfBirth();
+            String certAgen = customer.getCertAgency();
+            String certDiveNo = customer.getCertDiveNo();
                  
-            	preSt = connection.prepareStatement("UPDATE CUSTOMER SET first_name=?, last_name=?, street=?,"+
-                         "city=?, state_of_residence=?, zip=?, phone=?, email=?, dob=?, cert_agency=?, cert_no=?"+
-                         "WHERE CUST_ID=?");
-          
-            	preSt.setString(1, fName);
-	    		preSt.setString(2, lName);
-	    		preSt.setString(3, street);
-	    		preSt.setString(4, city);
-	    		preSt.setString(5, state);
-	    		preSt.setString(6, zip);
-	    		preSt.setString(7, phone);
-	    		preSt.setString(8, email);
-	    		preSt.setDate(9, Date.valueOf(dob));
-	    		preSt.setString(10, certAgen);
-	    		preSt.setString(11, certDiveNo);
-	    		preSt.setInt(12, custId);
-            	 
-                if (preSt.executeUpdate() == 1)
-                {
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setHeaderText("Saved!");
-                    alert.setContentText("Customer has successfully been updated in the database.");
-                    alert.showAndWait();
-                } else 
-                {
-                    Alert alert = new Alert(Alert.AlertType.ERROR);
-                    alert.setHeaderText(null);
-                    alert.setContentText("Error Occured with update of customer.");
-                    alert.showAndWait();
-                }
+            preSt = connection.prepareStatement("UPDATE CUSTOMER SET first_name=?, last_name=?, street=?,"+
+                     "city=?, state_of_residence=?, zip=?, phone=?, email=?, dob=?, cert_agency=?, cert_no=?"+
+                     "WHERE CUST_ID=?");
+
+            preSt.setString(1, fName);
+            preSt.setString(2, lName);
+            preSt.setString(3, street);
+            preSt.setString(4, city);
+            preSt.setString(5, state);
+            preSt.setString(6, zip);
+            preSt.setString(7, phone);
+            preSt.setString(8, email);
+            preSt.setDate(9, Date.valueOf(dob));
+            preSt.setString(10, certAgen);
+            preSt.setString(11, certDiveNo);
+            preSt.setInt(12, custId);
+
+            if (preSt.executeUpdate() == 1)
+            {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Saved!");
+                alert.setContentText("Customer has successfully been updated in the database.");
+                alert.showAndWait();
+            } 
+            else 
+            {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setHeaderText(null);
+                alert.setContentText("Error Occured with update of customer.");
+                alert.showAndWait();
+            }
         }
         catch (SQLException e)
     	{
-            AlertUtil.showDbErrorAlert("Error with selecting and adding Dive Trips", e);
+            AlertUtil.showDbErrorAlert("Error with Database.", e);
     	}
         
     	finally
@@ -373,18 +368,22 @@ public class Customer
             }
             catch (SQLException e)
             {
-            	AlertUtil.showDbErrorAlert("Error with DB Connection", e);
+            	AlertUtil.showDbErrorAlert("Error with Database Connection.", e);
             }
         
         }
     }
     
-    
+    // Adds the new customer profile to the database
     public static void addCustomer(Customer customer)  throws FileNotFoundException, IOException, SQLException
     {
-        connection = DbConnection.accessDbConnection().getConnection();
-        System.out.println(customer );
-        String fName = customer.getFirstName();
+        PreparedStatement preSt = null;
+        
+        try
+        {
+            connection = DbConnection.accessDbConnection().getConnection();
+            
+            String fName = customer.getFirstName();
             String lName = customer.getLastName();
             String street = customer.getStreet();
             String city = customer.getCity();
@@ -395,10 +394,11 @@ public class Customer
             LocalDate dob = customer.getDateOfBirth();
             String certAgen = customer.getCertAgency();
             String certDiveNo = customer.getCertDiveNo();
-             
-            PreparedStatement preSt = connection.prepareStatement("INSERT INTO CUSTOMER (first_name, last_name, street, city," +
-                    "state_of_residence, zip, phone, email, dob, cert_agency, cert_no) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        	
+
+            preSt = connection.prepareStatement("INSERT INTO CUSTOMER (first_name, last_name, "
+                    + "street, city, state_of_residence, zip, phone, email, dob, cert_agency, cert_no) "
+                    + "values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
             preSt.setString(1, fName);
             preSt.setString(2, lName);
             preSt.setString(3, street);
@@ -409,47 +409,92 @@ public class Customer
             preSt.setString(8, email);
             preSt.setDate(9, Date.valueOf(dob));
             preSt.setString(10, certAgen);
-	    preSt.setString(11, certDiveNo);
-			
-            if (preSt.executeUpdate() == 1) {
+            preSt.setString(11, certDiveNo);
+
+            if (preSt.executeUpdate() == 1) 
+            {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setHeaderText("Saved!");
                 alert.setContentText("Customer has successfully been added to the database.");
                 alert.showAndWait();
-                
-            } else {
+
+            } 
+            else 
+            {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setHeaderText("Error!");
                 alert.setContentText("Error Occured");
                 alert.showAndWait();
-                
+
             }
+        }
+        catch (SQLException e)
+    	{
+            AlertUtil.showDbErrorAlert("Error with Database.", e);
+    	}        
+        finally
+        {
+            try
+            {
+            	if (preSt!= null)
+            	{
+                    preSt.close();
+            	}
+        
+            }
+            catch (SQLException e)
+            {
+            	AlertUtil.showDbErrorAlert("Error with Database Connection.", e);
+            }
+        
+        }    
     }
     
-    
+    // Gets the customer id of the passed in customer object.
     public static int getCustId(Customer customer) throws SQLException, IOException
     {
-        connection = DbConnection.accessDbConnection().getConnection();
-        int custId;
+        int custId = 0;
         ResultSet result = null;
-        PreparedStatement preSt = 
-            connection.prepareStatement("select cust_id "
-                                     + "from customer where first_name = ?" 
-                                     + "and last_name = ? and dob = ?");
+        PreparedStatement preSt = null;
         
-        preSt.setString(1, customer.getFirstName());
-        preSt.setString(2, customer.getLastName());
-        preSt.setDate(3, Date.valueOf(customer.getDateOfBirth()));
-        
-       result = preSt.executeQuery();
-       result.next();
-       custId = result.getInt(1);
-       
-       result.close();
-       preSt.close( );
-       
-       return custId;
-        
-    }
+        try
+        {
+            connection = DbConnection.accessDbConnection().getConnection();
+            preSt = connection.prepareStatement("select cust_id "
+                                         + "from customer where first_name = ?" 
+                                         + "and last_name = ? and dob = ?");
 
+            preSt.setString(1, customer.getFirstName());
+            preSt.setString(2, customer.getLastName());
+            preSt.setDate(3, Date.valueOf(customer.getDateOfBirth()));
+
+            result = preSt.executeQuery();
+            result.next();
+            custId = result.getInt(1);
+        }
+        catch (SQLException e)
+    	{
+            AlertUtil.showDbErrorAlert("Error with Database.", e);
+    	}        
+        finally
+        {
+            try
+            {
+            	if (preSt!= null)
+            	{
+                    preSt.close();
+            	}
+                if (result != null)
+                {
+                    result.close();
+                }
+        
+            }
+            catch (SQLException e)
+            {
+            	AlertUtil.showDbErrorAlert("Error with Database Connection.", e);
+            }
+        }    
+        return custId;
+    }
 }

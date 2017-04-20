@@ -109,7 +109,6 @@ public class AlertUtil
         } 
         else 
         {
-
             return false;
         }
     }

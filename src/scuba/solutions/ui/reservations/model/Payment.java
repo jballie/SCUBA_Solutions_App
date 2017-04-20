@@ -14,6 +14,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import scuba.solutions.database.DbConnection;
+import scuba.solutions.util.AlertUtil;
 
 /**
  * Represents the Payment to be completed by the Customer for each Reservation.
@@ -103,15 +104,33 @@ public class Payment
     {
         connection = DbConnection.accessDbConnection().getConnection();
         PreparedStatement preSt = null;
-                
-        preSt = connection.prepareStatement("INSERT INTO PAYMENT "
-        + "(reservation_id)"
-        + " values(?)");
+        try
+        {
+            preSt = connection.prepareStatement("INSERT INTO PAYMENT "
+            + "(reservation_id)"
+            + " values(?)");
 
-        preSt.setInt(1, resId);
+            preSt.setInt(1, resId);
 
-        preSt.execute();
-        
-        preSt.close();       
+            preSt.execute();
+
+            preSt.close(); 
+        }
+        catch (SQLException e)
+        {
+            AlertUtil.showDbErrorAlert("Error with Database", e);
+        }
+        finally
+        {
+            try
+            {
+                if (preSt != null)
+                    preSt.close();
+            } 
+            catch (SQLException e) 
+            {
+                AlertUtil.showDbErrorAlert("Error with Database", e);
+            }
+        }
     }
 }

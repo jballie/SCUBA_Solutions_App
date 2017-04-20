@@ -41,7 +41,6 @@ public class Reservation
         this(0);
     }
 	
-    
     /**
     * Constructs a new Reservation object. 
     */
@@ -174,7 +173,18 @@ public class Reservation
         {
             AlertUtil.showDbErrorAlert("Error with adding new Reservation", e);
         }
-        preSt.close();
+        finally
+        {
+            try
+            {
+                if (preSt != null)
+                    preSt.close();
+            } 
+            catch (SQLException e) 
+            {
+                AlertUtil.showDbErrorAlert("Error with Database", e);
+            }
+        }
         
         return result;
     }
@@ -182,20 +192,40 @@ public class Reservation
     // Gets the reservation id for the passed in values.
     public static int getReservationId(int custId, int diveId) throws IOException, FileNotFoundException, SQLException
     {
-        connection = DbConnection.accessDbConnection().getConnection();
         PreparedStatement preSt = null;
+        int reservationId = 0;
         
-        preSt = connection.prepareStatement("SELECT reservation_id FROM RESERVATION WHERE cust_id=? AND trip_id=?");
+        try
+        {
+            connection = DbConnection.accessDbConnection().getConnection();
+            preSt = connection.prepareStatement("SELECT reservation_id FROM RESERVATION WHERE cust_id=? AND trip_id=?");
 
-        preSt.setInt(1, custId);
-        preSt.setInt(2, diveId);
-        
-        ResultSet resultSet = preSt.executeQuery();
-        resultSet.next();
-        
-        int reservationId = resultSet.getInt(1); //not null?
-        
-        preSt.close();
+            preSt.setInt(1, custId);
+            preSt.setInt(2, diveId);
+
+            ResultSet resultSet = preSt.executeQuery();
+            resultSet.next();
+
+            reservationId = resultSet.getInt(1); //not null?
+
+            preSt.close();
+        }
+        catch(SQLException e)
+        {
+            AlertUtil.showDbErrorAlert("Error with adding new Reservation", e);
+        }
+        finally
+        {
+            try
+            {
+                if (preSt != null)
+                    preSt.close();
+            } 
+            catch (SQLException e) 
+            {
+                AlertUtil.showDbErrorAlert("Error with Database", e);
+            }
+        }
      
         return reservationId;
     }
@@ -204,24 +234,42 @@ public class Reservation
     // Determines whether a customer is already reserved for the dive trip.
     public static boolean isCustomerAlreadyReserved(int custId, int diveId) throws FileNotFoundException, IOException, SQLException
     {
-    	
-    	
         connection = DbConnection.accessDbConnection().getConnection();
         PreparedStatement statement = null;
-        statement = connection.prepareStatement("SELECT * FROM RESERVATION WHERE CUST_ID=? AND TRIP_ID =?");
-
-        statement.setInt(1, custId);
-        statement.setInt(2, diveId);
-
-        ResultSet results = statement.executeQuery();
-
-        if(results.next())
+        ResultSet results = null;
+        try
         {
-           return true;
+            connection = DbConnection.accessDbConnection().getConnection();
+            statement = connection.prepareStatement("SELECT * FROM RESERVATION WHERE CUST_ID=? AND TRIP_ID =?");
+
+            statement.setInt(1, custId);
+            statement.setInt(2, diveId);
+
+            results = statement.executeQuery();
+
+            if(results.next())
+            {
+               return true;
+            }
         }
-
-        statement.close();
+        catch(SQLException e)
+        {
+            AlertUtil.showDbErrorAlert("Error with Database", e);
+        }
+        finally
+        {
+            try
+            {
+                if (statement != null)
+                    statement.close();
+                if (results != null)
+                    results.close();
+            } 
+            catch (SQLException e) 
+            {
+                AlertUtil.showDbErrorAlert("Error with Database", e);
+            }
+        }
         return false;
-
     }
 }

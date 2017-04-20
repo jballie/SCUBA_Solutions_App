@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package scuba.solutions.util;
 
 import java.time.LocalDate;
@@ -12,7 +8,7 @@ import java.util.Comparator;
 
 /**
  *
- * @author Jon
+ * @author Jonathan Balliet, Samuel Brock
  */
 public class DateUtil 
 {
@@ -24,11 +20,7 @@ public class DateUtil
             DateTimeFormatter.ofPattern(DATE_PATTERN);
 
     /**
-     * Returns the given date as a well formatted String. The above defined 
-     * {@link DateUtil#DATE_PATTERN} is used.
-     * 
-     * @param date the date to be returned as a string
-     * @return formatted string
+     * Returns the given date as  formatted String. 
      */
     public static String format(LocalDate date) {
         if (date == null) {
@@ -38,9 +30,7 @@ public class DateUtil
     }
 
     /**
-     * Converts a String in the format of the defined {@link DateUtil#DATE_PATTERN} 
-     * to a {@link LocalDate} object.
-     * 
+     * Converts a String in the format of the defined 
      * Returns null if the String could not be converted.
      * 
      * @param dateString the date as String

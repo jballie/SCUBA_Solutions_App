@@ -3,49 +3,39 @@ package scuba.solutions.ui.dive_schedule.view;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.fxml.Initializable;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXTabPane;
-import com.jfoenix.controls.JFXTextField;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Tab;
-import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
-import scuba.solutions.ui.customers.model.Customer;
 import scuba.solutions.ui.dive_schedule.model.DiveTrip;
 import scuba.solutions.util.AlertUtil;
 import scuba.solutions.util.DateUtil;
 
 /**
  * Controller class for adding Dive Trips. Contains two tabs - allowing the user to
- * add a single Diven Trip or recurring Dive Trips.
- *
- * @author Jonathan Balliet
+ * add a single Dive Trip or recurring Dive Trips.
+ * 
+ * @author Jonathan Balliet, Samuel Brock
  */
 public class DiveAddDialogController implements Initializable {
 	
     private final static String[] DAYS_OF_WEEK = {"Monday","Tuesday","Wednesday", "Thursday",
-                                                                             "Friday", "Saturday", "Sunday"};
-
+                                                   "Friday", "Saturday", "Sunday"};
     private ObservableList<String> daysOfWeekData;
 
     private Stage dialogStage;
 	
     private DiveTrip trip;
     
-    private boolean okClicked = false;
+    private boolean saveClicked = false;
     
     private static LinkedList<DiveTrip> trips = new LinkedList<>();
     
@@ -112,13 +102,12 @@ public class DiveAddDialogController implements Initializable {
         this.dialogStage = dialogStage;
     }
     
-
     /**
      * Returns true if the user clicked OK, false otherwise.
      */
-    public boolean isOkClicked() 
+    public boolean isSaveClicked() 
     {
-        return okClicked;
+        return saveClicked;
     }
     
     /**
@@ -149,13 +138,12 @@ public class DiveAddDialogController implements Initializable {
             boolean confirm = AlertUtil.confirmChangesAlert();
             if(confirm)
             {
-            	okClicked = true;
+            	saveClicked = true;
             	dialogStage.close();
             }
             else
             {
-            	okClicked = false;
-            
+            	saveClicked = false;
             }
         }
     }
@@ -196,20 +184,18 @@ public class DiveAddDialogController implements Initializable {
                 date = date.plusDays(1);
             }
 
-             boolean confirm =  AlertUtil.confirmChangesAlert();
+            boolean confirm =  AlertUtil.confirmChangesAlert();
 
-             if(confirm)
-             {
-                okClicked = true;
+            if(confirm)
+            {
+                saveClicked = true;
                 dialogStage.close();
-             }
-             else
-             {
-                okClicked = false;
-              //  dialogStage.close();
-             }
+            }
+            else
+            {
+                saveClicked = false;
+            }
         }
-    	
     }
 
     /**
@@ -221,9 +207,9 @@ public class DiveAddDialogController implements Initializable {
         dialogStage.close();
     }
     
-    
     /**
      * Gets the current Tab of the user.
+     * @return 
      */
     public static String getTab()
     {
@@ -232,6 +218,7 @@ public class DiveAddDialogController implements Initializable {
     
     /**
      * Gets the list of recurring dive trips.
+     * @return 
      */
     public static LinkedList<DiveTrip> getRecurringTrips()
     {
@@ -256,16 +243,10 @@ public class DiveAddDialogController implements Initializable {
         }
         if (errorMessage.length() == 0) {
             return true;
-        } else {
-            // Show the error message.
-            Alert alert = new Alert(AlertType.ERROR);
-            alert.initOwner(dialogStage);
-            alert.setTitle("Invalid Fields");
-            alert.setHeaderText("Please correct invalid fields");
-            alert.setContentText(errorMessage);
-            
-            alert.showAndWait();
-            
+        } 
+        else 
+        {   
+            AlertUtil.invalidInputAlert(errorMessage);
             return false;            
         }    
         
@@ -289,7 +270,7 @@ public class DiveAddDialogController implements Initializable {
         {
             errorMessage += "Dive trip date/s are not valid. Please select current or future dates.\n";
         }
-        else if(!isEndAfterStart())
+        else if(!isStartAfterEnd())
         {
             errorMessage += "Dive trip date/s are not valid. Please select an ending date that comes after the start date.\n ";
         }
@@ -312,10 +293,9 @@ public class DiveAddDialogController implements Initializable {
             AlertUtil.invalidInputAlert(errorMessage);
             return false;            
         }    
-        
     }
     
-    
+    // Determines whether the date for the dive trip is a current or future date.
     private boolean isValidDate()
     {
     	LocalDate date = tripDatePicker.getValue();
@@ -323,32 +303,22 @@ public class DiveAddDialogController implements Initializable {
     	return date.compareTo(LocalDate.now()) >= 0;
     }
     
+    // Determines whether there is a week in between the start to end dtate for recurring dive
     private boolean isValidStartToEndDates()
     {
         LocalDate startDate = recurringStartDatePicker.getValue();
         LocalDate endDate = recurringEndDatePicker.getValue();
-        
-        
 
-        if((endDate.minusDays(7)).compareTo(startDate) < 0)
-        {
-            return false;
-        }
-        
-        return true;
+        return (endDate.minusDays(7)).compareTo(startDate) >= 0;
     }
     
-    private boolean isEndAfterStart()
+    // Determines whether the start date for recurring dives is after the end date.
+    private boolean isStartAfterEnd()
     {
         LocalDate startDate = recurringStartDatePicker.getValue();
         LocalDate endDate = recurringEndDatePicker.getValue();
         
-        if(startDate.isAfter(endDate))
-        {
-            return false;
-        }
-        
-        return true;
+        return !startDate.isAfter(endDate);
     }
 
 }

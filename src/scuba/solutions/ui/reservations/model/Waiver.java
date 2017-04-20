@@ -14,6 +14,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import scuba.solutions.database.DbConnection;
+import scuba.solutions.util.AlertUtil;
 
 /**
  * Represents the Waiver information for a Reservation.
@@ -44,43 +45,53 @@ public class Waiver {
         this.waiverStatus = new SimpleStringProperty("INCOMPLETE");
     }
     
-    public int getReservationId() {
+    public int getReservationId() 
+    {
         return reservationId.get();
     }
    
-    public void setReservationId(int reservationId) {
+    public void setReservationId(int reservationId) 
+    {
         this.reservationId.set(reservationId);
     }
     
-    public LocalDate getDateSigned() {
+    public LocalDate getDateSigned() 
+    {
         return dateSigned.get();
     }
     
-    public void setDateSigned(LocalDate dateSigned) {
+    public void setDateSigned(LocalDate dateSigned) 
+    {
         this.dateSigned.set(dateSigned);
     }
     
-    public String getERFirst(){
+    public String getERFirst()
+    {
         return erFirst.get();
     }
     
-    public void setERFirst(String erFirst){
+    public void setERFirst(String erFirst)
+    {
         this.erFirst.set(erFirst);
     }
     
-    public String getWaiverStatus(){
+    public String getWaiverStatus()
+    {
         return waiverStatus.get();
     }
     
-    public void setWaiverStatus(String waiverStatus){
+    public void setWaiverStatus(String waiverStatus)
+    {
         this.waiverStatus.set(waiverStatus);
     }
     
-    public String getERLast(){
+    public String getERLast()
+    {
         return erLast.get();
     }
     
-    public void setERLast(String erLast){
+    public void setERLast(String erLast)
+    {
         this.erLast.set(erLast);
     }
     
@@ -95,30 +106,43 @@ public class Waiver {
     }
     
     // Determines whether the Waiver information is complete.
-    public boolean isComplete(){
-        if(getReservationId() != 0 && getDateSigned() != null && getERFirst() != null && getERLast() != null && getERPhone() != null )
-        {
-            return true;
-        }
-        
-        return false;
+    public boolean isComplete()
+    {
+        return getReservationId() != 0 && getDateSigned() != null && getERFirst() != null && getERLast() != null && getERPhone() != null;
     }
     
     // Adds the waiver information to its corresponding reservation.
     public static void addWaiver(int resId) throws IOException, FileNotFoundException, SQLException
     {
-        connection = DbConnection.accessDbConnection().getConnection();
         PreparedStatement preSt = null;
-                
-        preSt = connection.prepareStatement("INSERT INTO WAIVER "
-        + "(reservation_id)"
-        + " values(?)");
+        try
+        {
+            connection = DbConnection.accessDbConnection().getConnection();
+            preSt = connection.prepareStatement("INSERT INTO WAIVER "
+            + "(reservation_id)"
+            + " values(?)");
 
-        preSt.setInt(1, resId);
+            preSt.setInt(1, resId);
 
-        preSt.execute();
-        
-        preSt.close();       
+            preSt.execute();
+
+            preSt.close(); 
+        }
+        catch (SQLException e)
+        {
+            AlertUtil.showDbErrorAlert("Error with Database", e);
+        }
+        finally
+        {
+            try
+            {
+                if (preSt != null)
+                    preSt.close();
+            } 
+            catch (SQLException e) 
+            {
+                AlertUtil.showDbErrorAlert("Error with Database", e);
+            }
+        }
     }
-           
 }

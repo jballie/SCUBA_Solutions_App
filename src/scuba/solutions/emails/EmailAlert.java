@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package scuba.solutions.emails;
 
 import java.io.IOException;
@@ -149,7 +145,7 @@ public class EmailAlert
            message.setText(msg.toString());
            
            Transport.send(message); 
-           AlertUtil.showEmailSent("Customer has been booked for the dive trip. Email confirmation sent to " + selectedReservation.getCustomer().getFullName() + ".");
+          // AlertUtil.showEmailSent("Customer has been booked for the dive trip. Email confirmation sent to " + selectedReservation.getCustomer().getFullName() + ".");
           } 
           catch (MessagingException e) 
           {

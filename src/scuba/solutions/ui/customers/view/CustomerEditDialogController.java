@@ -27,50 +27,49 @@ import scuba.solutions.util.DateUtil;
  * Controller class for the edit dialog for a Customer. This class handles the additions and changes for 
  * a Customer profile for SCUBA SCUBA Now.
  * @author Jonathan Balliet, Samuel Brock
- * 
  */
 public class CustomerEditDialogController implements Initializable {
     
-    private final static String[] STATES = {"AK","AL","AR","AZ","CA","CO","CT","DC","DE","FL","GA","GU",
+    protected final static String[] STATES = {"AK","AL","AR","AZ","CA","CO","CT","DC","DE","FL","GA","GU",
                                      "HI","IA","ID", "IL","IN","KS","KY","LA","MA","MD","ME","MH",
                                      "MI","MN","MO","MS","MT","NC","ND","NE","NH","NJ","NM","NV","NY", 
                                      "OH","OK","OR","PA","PR","PW","RI","SC","SD","TN","TX","UT","VA",
                                      "VI","VT","WA","WI","WV","WY"};
     
-    private ObservableList<String> statesData;
+    protected ObservableList<String> statesData;
     
-    private Stage dialogStage;
+    protected Stage dialogStage;
     
-    private Customer customer;
+    protected Customer customer;
     
-    private boolean savedClicked = false;
+    protected boolean saveClicked = false;
     
     @FXML
-    private TextField streetField;
+    protected TextField streetField;
     @FXML
-    private TextField lastNameField;
+    protected TextField lastNameField;
     @FXML
-    private TextField firstNameField;
+    protected TextField firstNameField;
     @FXML
-    private TextField cityField;
+    protected TextField cityField;
     @FXML
-    private ComboBox<String> stateComboBox;
+    protected ComboBox<String> stateComboBox;
     @FXML
-    private TextField postalCodeField;
+    protected TextField postalCodeField;
     @FXML
-    private TextField phoneNumField;
+    protected TextField phoneNumField;
     @FXML
-    private TextField emailAddressField;
+    protected TextField emailAddressField;
     @FXML
-    private JFXDatePicker dobField;
+    protected JFXDatePicker dobField;
     @FXML
-    private TextField certAgencyField;
+    protected TextField certAgencyField;
     @FXML
-    private TextField certDiveNoField;
+    protected TextField certDiveNoField;
     @FXML
-    private JFXButton saveButton;
+    protected JFXButton saveButton;
     @FXML
-    private JFXButton cancelButton;
+    protected JFXButton cancelButton;
     
     /**
      * Initializes the controller class.
@@ -132,7 +131,7 @@ public class CustomerEditDialogController implements Initializable {
      */
     public boolean isSaveClicked()
     {
-        return savedClicked;
+        return saveClicked;
     }
 
     /**
@@ -159,12 +158,12 @@ public class CustomerEditDialogController implements Initializable {
             boolean confirm = AlertUtil.confirmChangesAlert();
             if(confirm)
             {
-            	savedClicked = true;
+            	saveClicked = true;
             	dialogStage.close();
             }
             else
             {
-            	savedClicked = false;
+            	saveClicked = false;
             	//dialogStage.close();
             }
         }
@@ -203,7 +202,7 @@ public class CustomerEditDialogController implements Initializable {
 
         if (postalCodeField.getText() == null || (postalCodeField.getText().length() !=5)) {
             errorMessage += "Postal code is not valid. Please enter a postal code that is "
-                    + "5 characters long. \n"; 
+                    + "5 digits long. \n"; 
         } 
         else 
         {
@@ -214,7 +213,7 @@ public class CustomerEditDialogController implements Initializable {
             } 
             catch (NumberFormatException e) 
             {
-                errorMessage += "Postal code is not valid. Please enter a number value for the "
+                errorMessage += "Postal code is not valid. Please enter digits for the "
                         + "postal code.\n"; 
             }
         }
@@ -287,7 +286,7 @@ public class CustomerEditDialogController implements Initializable {
         } 
         else 
         {
-            // Show the error message.
+            // Shows the error message.
             Alert alert = new Alert(AlertType.ERROR);
             alert.initOwner(dialogStage);
             alert.setTitle("Invalid Fields");
@@ -312,7 +311,7 @@ public class CustomerEditDialogController implements Initializable {
     }
     
     
-    // Determines whether value inputed is an email address
+    // Determines whether value inputed matches an email adress format.
     public boolean isEmailAddress()
     {
     	return emailAddressField.getText().matches("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
@@ -320,6 +319,7 @@ public class CustomerEditDialogController implements Initializable {
                 
     }
     
+    // Determines whether the phone number entered matached the ###-###-#### format.
     public boolean isPhoneNumber()
     {
         return phoneNumField.getText().matches("\\d{3}[-]\\d{3}[-]\\d{4}");
@@ -331,8 +331,7 @@ public class CustomerEditDialogController implements Initializable {
     {
         String key = keyPressed.toUpperCase();
         if (key.matches("^[A-Z]$")) {
-            // Only act on letters so that navigating with cursor keys does not
-            // try to jump somewhere.
+     
             boolean letterFound = false;
             boolean foundCurrent = currentlySelected == null;
             for (String s : items) {

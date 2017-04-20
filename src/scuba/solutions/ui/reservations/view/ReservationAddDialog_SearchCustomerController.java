@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package scuba.solutions.ui.reservations.view;
 
 import com.jfoenix.controls.JFXButton;
@@ -10,17 +5,8 @@ import com.jfoenix.controls.JFXTextField;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
-import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -28,26 +14,21 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.stage.Stage;
-import scuba.solutions.database.DbConnection;
 import scuba.solutions.ui.customers.model.Customer;
 import scuba.solutions.ui.customers.view.CustomerPaneController;
-import scuba.solutions.util.DateUtil;
+import scuba.solutions.util.AlertUtil;
 
 /**
- * FXML Controller class
- *
- * @author Jon
+ * Controller class for searching for a customer in the new reservation process.
+ * This class inherits from its parent CustomerPane.
+ * @author Jonathan Balliet, Samuel Brock
  */
-public class ReservationAddDialog_SearchCustomerController extends CustomerPaneController  implements Initializable  {
-    private ObservableList<Customer>  customerData = FXCollections.observableArrayList();
-    private FilteredList<Customer> filteredData; 
-    private static Connection connection;
+public class ReservationAddDialog_SearchCustomerController extends CustomerPaneController  implements Initializable 
+{
     private static boolean isCustomerFound = false;
     private boolean isProceedClicked = false;
     private Stage dialogStage;
     private static Customer customer;
-
-    
     @FXML
     private JFXButton proceedButton;
     @FXML
@@ -71,24 +52,20 @@ public class ReservationAddDialog_SearchCustomerController extends CustomerPaneC
     @Override
     public void initialize(URL url, ResourceBundle rb) 
     {
-         initalizeCustomer();
+        initalizeCustomer();
          
-          try
-		{
-	    	loadCustomers();
-		}
-		catch (FileNotFoundException e)
-		{
-			e.printStackTrace();
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-	    }
-		catch (SQLException e)
-		{
-			e.printStackTrace();
-		}
+        try
+        {
+            loadCustomers();
+        }
+        catch (FileNotFoundException e)
+        {
+            AlertUtil.showErrorAlert("Error with loading customers!\n", e);
+        }
+        catch (IOException | SQLException e)
+        {
+            AlertUtil.showErrorAlert("Error with loading customers!\n", e);
+        }
         
         showCustomer(null);
         
@@ -106,7 +83,7 @@ public class ReservationAddDialog_SearchCustomerController extends CustomerPaneC
         if (customer != null)
         {
             customerLabel.setText(customer.getFullName());
-            this.customer = customer;
+            ReservationAddDialog_SearchCustomerController.customer = customer;
         }
         else
         {
@@ -138,7 +115,8 @@ public class ReservationAddDialog_SearchCustomerController extends CustomerPaneC
         dialogStage.close();
     }
 
-    public void setDialogStage(Stage dialogStage) {
+    public void setDialogStage(Stage dialogStage) 
+    {
        this.dialogStage = dialogStage;
     }
 

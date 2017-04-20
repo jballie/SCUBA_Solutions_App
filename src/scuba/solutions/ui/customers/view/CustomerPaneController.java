@@ -7,17 +7,12 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.Connection;
-import java.sql.Date;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -38,6 +33,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import scuba.solutions.database.DbConnection;
 import scuba.solutions.ui.customers.model.Customer;
+import scuba.solutions.util.AlertUtil;
 import scuba.solutions.util.DateUtil;
 
 /**
@@ -117,22 +113,18 @@ public class CustomerPaneController implements Initializable {
         
         initalizeCustomer();
         
-	    try
-		{
-	    	loadCustomers();
-		}
-		catch (FileNotFoundException e)
-		{
-			e.printStackTrace();
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-	    }
-		catch (SQLException e)
-		{
-			e.printStackTrace();
-		}
+        try
+        {
+            loadCustomers();
+        }
+        catch (FileNotFoundException e)
+        {
+            AlertUtil.showErrorAlert("Error with loading customers!\n", e);
+        }
+        catch (IOException | SQLException e)
+        {
+            AlertUtil.showErrorAlert("Error with loading customers!\n", e);
+        }
          
         // Clear customer details.
         showCustomerDetails(null);
@@ -140,13 +132,15 @@ public class CustomerPaneController implements Initializable {
         // Listen for selection changes and show the cutomer details when changed.
         customersTable.getSelectionModel().selectedItemProperty().addListener(
           (observable, oldValue, newValue) -> showCustomerDetails(newValue));
-         
+        
+        // initalize the search field
         initalizeSearchField(); 
     }
     
    /**
     * Displays the customer Edit Dialog and passes in the wanted customer
     * for either adding or updating.
+     * @param customer
     */
     public boolean showCustomerEditDialog(Customer customer) 
     {
@@ -177,82 +171,27 @@ public class CustomerPaneController implements Initializable {
     	}
 	catch (IOException e) 
     	{
-            e.printStackTrace();
+            AlertUtil.showErrorAlert("Error with opening customer dialog!\n", e);
     	    return false;
     	}
     }
         
 
     // When the Add Customer button is clicked on - opens the edit customer dialog
-    // for adding the information for a new customer.
+    // for adding the information for a new customer profile.
     @FXML
     public void addCustomer() throws SQLException, FileNotFoundException, IOException
     {   
         addCustomerButton.setDisable(true);
-        Customer tempPerson = new Customer();
-        boolean savedClicked = showCustomerEditDialog(tempPerson);
+        Customer customer = new Customer();
+        boolean saveClicked = showCustomerEditDialog(customer);
 
-        if (savedClicked) 
-        {	
-            String fName = tempPerson.getFirstName();
-            String lName = tempPerson.getLastName();
-            String street = tempPerson.getStreet();
-            String city = tempPerson.getCity();
-            String state = tempPerson.getState();
-            String zip = tempPerson.getPostalCode();
-            String phone = tempPerson.getPhoneNumber();
-            String email = tempPerson.getEmailAddress();
-            LocalDate dob = tempPerson.getDateOfBirth();
-            String certAgen = tempPerson.getCertAgency();
-            String certDiveNo = tempPerson.getCertDiveNo();
-             
-            PreparedStatement preSt = connection.prepareStatement("INSERT INTO CUSTOMER (first_name, last_name, street, city," +
-                    "state_of_residence, zip, phone, email, dob, cert_agency, cert_no) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        	
-            preSt.setString(1, fName);
-            preSt.setString(2, lName);
-            preSt.setString(3, street);
-            preSt.setString(4, city);
-            preSt.setString(5, state);
-            preSt.setString(6, zip);
-            preSt.setString(7, phone);
-            preSt.setString(8, email);
-            preSt.setDate(9, Date.valueOf(dob));
-            preSt.setString(10, certAgen);
-	    preSt.setString(11, certDiveNo);
-			
-            if (preSt.executeUpdate() == 1) 
-            {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setHeaderText("Saved!");
-                alert.setContentText("Customer has successfully been added to the database.");
-                alert.showAndWait();
-                
-                customerData.add(tempPerson);
-                Platform.runLater(new Runnable()
-                {
-                    @Override
-                    public void run()
-                    {
-                        customersTable.requestFocus();
-                        customersTable.getSelectionModel().select(customerData.indexOf(tempPerson));
-                        customersTable.focusModelProperty().get().focus(customerData.indexOf(tempPerson));
-                    }
-                });
-             
-            } 
-            else 
-            {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setHeaderText("Error!");
-                alert.setContentText("Error Occured");
-                alert.showAndWait();
-
-            }
+        if (saveClicked) 
+        {   
+            Customer.addCustomer(customer);
+            customerData.add(customer);
         }
-
         addCustomerButton.setDisable(false);
-
     }
     
     // When the Update Customer button is clicked on - opens the edit dialog customer
@@ -261,68 +200,16 @@ public class CustomerPaneController implements Initializable {
     public void updateCustomer() throws FileNotFoundException, IOException, SQLException
     {
         updateCustomerButton.setDisable(true);
-    	Customer selectedPerson = (Customer) customersTable.getSelectionModel().getSelectedItem();
+    	Customer customer = (Customer) customersTable.getSelectionModel().getSelectedItem();
  
-         if (selectedPerson != null)
+         if (customer != null)
          {
-            boolean savedClicked = showCustomerEditDialog(selectedPerson);
+            boolean saveClicked = showCustomerEditDialog(customer);
             
-            if (savedClicked) 
+            if (saveClicked) 
             {
-            	 
-            	int custId = selectedPerson.getCustomerID();
-            	String fName = selectedPerson.getFirstName();
-            	String lName = selectedPerson.getLastName();
-            	String street = selectedPerson.getStreet();
-            	String city = selectedPerson.getCity();
-            	String state = selectedPerson.getState();
-            	String zip = selectedPerson.getPostalCode();
-            	String phone = selectedPerson.getPhoneNumber();
-            	String email = selectedPerson.getEmailAddress();
-            	LocalDate dob = selectedPerson.getDateOfBirth();
-            	String certAgen = selectedPerson.getCertAgency();
-            	String certDiveNo = selectedPerson.getCertDiveNo();
-                 
-            	PreparedStatement preSt = 
-            			connection.prepareStatement("UPDATE CUSTOMER SET first_name=?, last_name=?, street=?,"+
-            			 "city=?, state_of_residence=?, zip=?, phone=?, email=?, dob=?, cert_agency=?, cert_no=?"+
-            			 "WHERE CUST_ID=?");
-          
-            	preSt.setString(1, fName);
-	    		preSt.setString(2, lName);
-	    		preSt.setString(3, street);
-	    		preSt.setString(4, city);
-	    		preSt.setString(5, state);
-	    		preSt.setString(6, zip);
-	    		preSt.setString(7, phone);
-	    		preSt.setString(8, email);
-	    		preSt.setDate(9, Date.valueOf(dob));
-	    		preSt.setString(10, certAgen);
-	    		preSt.setString(11, certDiveNo);
-	    		preSt.setInt(12, custId);
-            	 
-                if (preSt.executeUpdate() == 1)
-                {
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setHeaderText("Saved!");
-                    alert.setContentText("Customer has successfully been updated in the database.");
-                    alert.showAndWait();
-                    showCustomerDetails(selectedPerson);
-
-                } 
-                else 
-                {
-                    Alert alert = new Alert(Alert.AlertType.ERROR);
-                    alert.setHeaderText(null);
-                    alert.setContentText("Error Occured with update of customer.");
-                    alert.showAndWait();
-                }
-            	 
-              
-                showCustomerDetails(selectedPerson);
-              //  updateCustomerButton.setDisable(false);
-                
-
+                Customer.updateCustomer(customer);
+                showCustomerDetails(customer);
              }
          } 
          else 
@@ -344,7 +231,6 @@ public class CustomerPaneController implements Initializable {
     // Initializes the columns for the Customer Table
     public void initalizeCustomer()
     {
-    	//customerIdColumn.setCellValueFactory(cellData -> cellData.getValue().customerIdProperty());
         firstNameColumn.setCellValueFactory(cellData -> cellData.getValue().firstNameProperty());
         lastNameColumn.setCellValueFactory(cellData -> cellData.getValue().lastNameProperty());
         dobColumn.setCellValueFactory(cellData -> cellData.getValue().dateofBirthProperty());
@@ -363,60 +249,58 @@ public class CustomerPaneController implements Initializable {
     	
     	connection = DbConnection.accessDbConnection().getConnection();
 		
-		String query = "SELECT * FROM customer";
-			
-		Statement statement = null;
-		ResultSet result = null;
-	    
-		try
-		{
+        String query = "SELECT * FROM customer";
+
+        Statement statement = null;
+        ResultSet result = null;
+
+        try
+        {
             statement = connection.createStatement();
             result = statement.executeQuery(query);
             while(result.next())
             {
                 int customerID = result.getInt(1);
-				Customer customer = new Customer(customerID);
-				customer.setFirstName(result.getString(2));
-				customer.setLastName(result.getString(3));
-				customer.setStreet(result.getString(4));
-				customer.setCity(result.getString(5));
-				customer.setState(result.getString(6));
-				customer.setPostalCode(result.getString(7));
-				customer.setPhoneNumber(result.getString(8));
-				customer.setEmailAddress(result.getString(9));
-				customer.setDateOfBirth((result.getDate(10)).toLocalDate());
-				customer.setCertAgency(result.getString(11));
-				customer.setCertDiveNo(result.getString(12));
+                Customer customer = new Customer(customerID);
+                customer.setFirstName(result.getString(2));
+                customer.setLastName(result.getString(3));
+                customer.setStreet(result.getString(4));
+                customer.setCity(result.getString(5));
+                customer.setState(result.getString(6));
+                customer.setPostalCode(result.getString(7));
+                customer.setPhoneNumber(result.getString(8));
+                customer.setEmailAddress(result.getString(9));
+                customer.setDateOfBirth((result.getDate(10)).toLocalDate());
+                customer.setCertAgency(result.getString(11));
+                customer.setCertDiveNo(result.getString(12));
 						
-				customerData.add(customer);
+                customerData.add(customer);
             }
-		}
-		catch (SQLException e)
-		{
-	            e.printStackTrace();
-		}
-		finally
-		{
-			try
-	        {
-				if (statement != null)
-				{
-					statement.close();
-				}	
-				if (result != null)
-				{
-					result.close();
-				}
-			}
-			catch (SQLException e)
-			{
-				Logger.getLogger(CustomerPaneController.class.getName()).log(Level.SEVERE, null, e);
-			}
-		}
-	        customersTable.setItems(customerData);
-                
-                initalizeSearchField();
-                
+        }
+        catch (SQLException e)
+        {
+            AlertUtil.showErrorAlert("Error with loading customers to the table from the database", e);
+        }
+        finally
+        {
+            try
+            {
+                if (statement != null)
+                {
+                    statement.close();
+                }	
+                if (result != null)
+                {
+                    result.close();
+                }
+            }
+            catch (SQLException e)
+            {
+                AlertUtil.showErrorAlert("Error with Database", e);
+            }
+        }
+        
+        customersTable.setItems(customerData);  
     }
     
     /**
@@ -464,32 +348,42 @@ public class CustomerPaneController implements Initializable {
     	filteredData = new FilteredList<>(customerData, p -> true);
 
         // Sets the search filter Predicate whenever the search values change.
-        searchTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-            filteredData.setPredicate(customer -> {
+        searchTextField.textProperty().addListener((observable, oldValue, newValue) -> 
+        {
+            filteredData.setPredicate(customer -> 
+            {
                 // If the search field text is empty, display all customers in the table
-        if (newValue == null || newValue.isEmpty()) {
+                if (newValue == null || newValue.isEmpty()) 
+                {
                     return true;
-        }
+                }
 
-        // Compares the name, id, and date of birth of every customer with the search text
-        String lowerCaseFilter = newValue.toLowerCase();
-        String fullName = customer.getFirstName().toLowerCase() + " " + customer.getLastName().toLowerCase();
+                // Compares the name, id, and date of birth of every customer with the search text
+                String lowerCaseFilter = newValue.toLowerCase();
+                String fullName = customer.getFirstName().toLowerCase() + " " + 
+                        customer.getLastName().toLowerCase();
        
-        if (customer.getFirstName().toLowerCase().contains(lowerCaseFilter)) {
-            return true; // Search matches first name.
-        } else if (customer.getLastName().toLowerCase().contains(lowerCaseFilter)) {
-            return true; // Search matches last name.
-        } else if (fullName.contains(lowerCaseFilter)) {
-            return true;  // Search matches full name.
-      //  } else if (Integer.toString(customer.getCustomerID()).contains(lowerCaseFilter)){
-       //     return true; // Search matches customer id.
-        } else if (DateUtil.format(customer.getDateOfBirth()).contains(lowerCaseFilter)){
-            return true;   // Search matches date of birth.
-        }
-        return false; // Search does not match any data.
+                if (customer.getFirstName().toLowerCase().contains(lowerCaseFilter)) 
+                {
+                    return true; // Search matches first name.
+                } 
+                else if (customer.getLastName().toLowerCase().contains(lowerCaseFilter)) 
+                {
+                    return true; // Search matches last name.
+                } 
+                else if (fullName.contains(lowerCaseFilter)) 
+                {
+                    return true;  // Search matches full name.
+                } 
+                else if (DateUtil.format(customer.getDateOfBirth()).contains(lowerCaseFilter))
+                {
+                    return true;   // Search matches date of birth.
+                }
+                return false; // Search does not match any data.
             });
         });
-         SortedList<Customer> sortedData = new SortedList<>(filteredData);
+        
+        SortedList<Customer> sortedData = new SortedList<>(filteredData);
 
         //  Bind the SortedList comparator to the TableView comparator.
         sortedData.comparatorProperty().bind(customersTable.comparatorProperty());
@@ -500,15 +394,14 @@ public class CustomerPaneController implements Initializable {
         customersTable.setItems(sortedData);
     }
     
-    // Clears the search text field - displays all customer data in table
+    // Clears the search text field - displays all customer data in the table.
     @FXML
     public void clearSearch()
     {
     	searchTextField.clear();
-
     }
     
-    
+    // 
     public class DateComparator implements Comparator<String>
     {
         @Override
@@ -530,11 +423,10 @@ public class CustomerPaneController implements Initializable {
         loader.setLocation(getClass().getResource("/scuba/solutions/ui/dive_schedule/view/DiveSchedule.fxml"));
         Parent root = loader.load();
         stage.setScene(new Scene(root));
-        stage.show( );
-            
+        stage.show( );     
     }
     
-        @FXML
+    @FXML
     public void transitionToHome(ActionEvent event) throws IOException 
     {
         Stage stage = (Stage) rootPane.getScene().getWindow();
@@ -562,5 +454,4 @@ public class CustomerPaneController implements Initializable {
         Stage stage = (Stage) rootPane.getScene().getWindow();
         stage.close();
     }
-
 }

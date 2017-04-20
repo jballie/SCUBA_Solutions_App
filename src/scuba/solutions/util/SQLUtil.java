@@ -8,7 +8,7 @@ import java.time.format.DateTimeFormatter;
  *
  * <p/> Bugs: (List any known issues or unimplemented features here)
  * 
- * @author (Insert your first and last name)
+ * @author Jonathan Balliet, Samuel Brock
  *
  */
 public class SQLUtil

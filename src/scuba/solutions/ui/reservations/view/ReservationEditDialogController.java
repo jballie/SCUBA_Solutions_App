@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package scuba.solutions.ui.reservations.view;
 
 import com.jfoenix.controls.JFXButton;
@@ -10,25 +6,26 @@ import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXTextField;
 import java.net.URL;
 import java.time.LocalDate;
-import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 import scuba.solutions.ui.reservations.model.Payment;
 import scuba.solutions.ui.reservations.model.Waiver;
+import scuba.solutions.util.AlertUtil;
 
 /**
- * FXML Controller class
- *
+ * Controller class for updating a reservation. The payment and waiver information for
+ * a reservation can be updated, once these are both complete - the reservation's status
+ * is changed to Booked.
+ * @author Samuel Brock, Jonathan Balliet
  */
-public class ReservationEditDialogController implements Initializable {
+public class ReservationEditDialogController implements Initializable 
+{
 
     private Stage dialogStage;
-    private boolean okClicked = false;
+    private boolean saveClicked = false;
     private Waiver waiver;
     private Payment payment; 
     
@@ -65,8 +62,10 @@ public class ReservationEditDialogController implements Initializable {
     }
     
     @FXML
-    private void handleSave(ActionEvent event) {
-        if(isInputValid()) {
+    private void handleSave(ActionEvent event) 
+    {
+        if(isInputValid()) 
+        {
             waiver.setDateSigned(dateSignedDatePicker.getValue());
             waiver.setERFirst(erFirstTextField.getText());
             waiver.setERLast(erLastTextField.getText());
@@ -77,49 +76,27 @@ public class ReservationEditDialogController implements Initializable {
             payment.setAmount(Integer.parseInt(amountTextField.getText()));
             
             
-            boolean confirm = confirmation();
+            boolean confirm = AlertUtil.confirmChangesAlert();
             if(confirm)
             {
-            	okClicked = true;
+            	saveClicked = true;
             	dialogStage.close();
             }
             else
             {
-            	okClicked = false;
-            	//dialogStage.close();
+            	saveClicked = false;
             }
         }
     }
 
-    /**
-     * Allows user to confirm entry
-     * 
-     * @return 
-     */
-    private boolean confirmation()
-    {
-    	
-    	Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-    	alert.setTitle("Confirmation Dialog");
-    	alert.setHeaderText("Please confirm the update");
-    	alert.setContentText("Press OK to confirm the update!");
-
-    	Optional<ButtonType> result = alert.showAndWait();
-    	if (result.get() == ButtonType.OK){
-    	    // ... user chose OK
-    		return true;
-    	} else {
-    	    // ... user chose CANCEL or closed the dialog
-    		return false;
-    	}
-    }
     
     /**
      * Closes dialog stage if user cancels
      * @param event 
      */
     @FXML
-    private void handleCancel(ActionEvent event) {
+    private void handleCancel(ActionEvent event) 
+    {
         dialogStage.close();
     }
     
@@ -128,7 +105,8 @@ public class ReservationEditDialogController implements Initializable {
      * 
      * @param waiver 
      */
-    public void setWaiver(Waiver waiver) {
+    public void setWaiver(Waiver waiver) 
+    {
         this.waiver = waiver;
         dateSignedDatePicker.setValue(waiver.getDateSigned());
         erFirstTextField.setText(waiver.getERFirst());
@@ -137,13 +115,13 @@ public class ReservationEditDialogController implements Initializable {
     }
     
     /**
-     * Return true if okClicked
+     * Return true if saveClicked
      * 
      * @return 
      */
-    public boolean isOkClicked()
+    public boolean isSaveClicked()
     {
-        return okClicked;
+        return saveClicked;
     }
     
     /**
@@ -151,7 +129,8 @@ public class ReservationEditDialogController implements Initializable {
      * 
      * @param payment 
      */
-    public void setPayment(Payment payment) {
+    public void setPayment(Payment payment)
+    {
         this.payment = payment;
         amountTextField.setText(Integer.toString(payment.getAmount()));
         dateProcDatePicker.setValue(payment.getDateProcessed());
@@ -167,15 +146,21 @@ public class ReservationEditDialogController implements Initializable {
     {
         String errorMessage = " ";
         
-        try {
+        try 
+        {
             Integer.parseInt(amountTextField.getText());
-        } catch (NumberFormatException e) {
+        } 
+        catch (NumberFormatException e) 
+        {
             errorMessage += "The amount is not valid. Please enter a number value for the amount.\n"; 
         }
         
-        try {
+        try 
+        {
             Integer.parseInt(ccConfirmTextField.getText());
-        } catch (NumberFormatException e) {
+        } 
+        catch (NumberFormatException e) 
+        {
             errorMessage += "THe credit card confirmation number is not valid. Please enter"
                     + "number value.!\n"; 
         }
@@ -195,17 +180,13 @@ public class ReservationEditDialogController implements Initializable {
             }
         }
         
-        if(errorMessage.equals(" ")) {
+        if(errorMessage.equals(" ")) 
+        {
             return true;
-        } else {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.initOwner(dialogStage);
-            alert.setTitle("Invalid Fields");
-            alert.setHeaderText("Please correct invalid fields");
-            alert.setContentText(errorMessage);
-            
-            alert.showAndWait();
-            
+        } 
+        else 
+        {
+            AlertUtil.invalidInputAlert(errorMessage);
             return false;          
         }
           
