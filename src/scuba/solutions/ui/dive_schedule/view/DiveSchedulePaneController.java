@@ -19,11 +19,7 @@ import java.util.LinkedList;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -914,15 +910,15 @@ public class DiveSchedulePaneController implements Initializable
                     catch (IOException | IllegalStateException  e)
                     {
                         Platform.runLater(()-> AlertUtil.showErrorAlert("Email Error!", e));
-                           
+                        Thread.currentThread().interrupt();
+                       
                     }
-
                 };
      
                 ExecutorService executor = Executors.newSingleThreadExecutor();
                 executor.execute(emailTask);
                 executor.shutdown();
-       
+             
                 availSeats--;
             }
             
@@ -1151,24 +1147,30 @@ public class DiveSchedulePaneController implements Initializable
                                 reservationData.add(resev);
                                 //loadDiveTrips();
                                // loadTripReservations(selectedTrip);
-
-                                Runnable emailTask = () -> 
-                                { 
+                                
+                               Runnable emailTask = () -> 
+                               { 
                                     try 
                                     {
-                                        EmailAlert.sendRequestEmail(reservationId, selectedCustomer, selectedTrip);
-                                    }
-                                    catch (IOException | SQLException | InterruptedException | IllegalStateException e)
-                                    {
-                                         AlertUtil.showErrorAlert("Email Error!", e);
-                                    }
+                                       EmailAlert.sendRequestEmail(reservationId, selectedCustomer, selectedTrip);
 
+                                       Platform.runLater(()-> AlertUtil.showEmailSent("Reservation email request sent to " + customer.getFullName() + "."));
+    
+                                    }
+                                    catch (IOException | IllegalStateException | SQLException | InterruptedException  e)
+                                    {
+                                        Platform.runLater(()-> AlertUtil.showErrorAlert("Email Error!", e));
+                                        Thread.currentThread().interrupt();
+
+                                    }
                                 };
-                                Platform.runLater(emailTask);
+     
+                                ExecutorService executor = Executors.newSingleThreadExecutor();
+                                executor.execute(emailTask);
+                                executor.shutdown();
 
                             }
                         }
-
                     }
                 } 
                 else if(isProceedClicked && !isCustomerFound)
@@ -1198,37 +1200,36 @@ public class DiveSchedulePaneController implements Initializable
                             resev.setStatus("PENDING");
                             reservationData.add(resev);
                      
-                            
-                            
                             Runnable emailTask = () -> 
                             { 
-                               try 
-                               {
-                                   EmailAlert.sendRequestEmail(reservationId, customer, selectedTrip);
-                               }
-                               catch (IOException | SQLException | InterruptedException | IllegalStateException e)
-                               {
-                                    AlertUtil.showErrorAlert("Email Error!", e);
-                               }
+                                try 
+                                {
+                                    EmailAlert.sendRequestEmail(reservationId, customer, selectedTrip);
 
-                           };
-                           Platform.runLater(emailTask);
+                                    Platform.runLater(()-> AlertUtil.showEmailSent("Reservation email request sent to " + customer.getFullName() + "."));
+
+
+                                }
+                                catch (IOException | IllegalStateException | SQLException | InterruptedException  e)
+                                {
+                                     Platform.runLater(()-> AlertUtil.showErrorAlert("Email Error!", e));
+                                     Thread.currentThread().interrupt();
+                                }
+                            };
                         }
-
                     }
                    // newReservationButton.setDisable(true);
-
                 }
             }
             catch(SQLException e)
             {
                 AlertUtil.showDbErrorAlert("Error with adding new Reservation", e);
             }
-         }
-         else
-         {
-            AlertUtil.noSelectionAlert("No Dive Trip Selected", "Please select a dive trip in the dive trips table for the new reservation.");
-         }
+        }
+        else
+        {
+           AlertUtil.noSelectionAlert("No Dive Trip Selected", "Please select a dive trip in the dive trips table for the new reservation.");
+        }
         newReservationButton.setDisable(false);
          
     } 

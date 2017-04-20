@@ -13,6 +13,7 @@ import java.sql.Statement;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ToggleGroup;
@@ -132,21 +133,33 @@ public class DiveEditDialogController implements Initializable {
                else if(cancelledRadio.isSelected())
                {
                    
+                   
+                   
                 //ExecutorService executor = Executors.newSingleThreadExecutor();
                 
                 //executor.
-                 //   trip.setWeatherStatus("CANCELLED");
-                    Executors.newSingleThreadExecutor().execute(() -> 
-                    {
+                   trip.setWeatherStatus("CANCELLED");
+                    Runnable emailTask = () -> 
+                    { 
                         try 
                         {
-                            sendCancellationEmails();
-                        } 
-                        catch (SQLException | IOException e)
-                        {
+                           sendCancellationEmails();
+
+                           Platform.runLater(()-> AlertUtil.showEmailSent("Cancellation emails for the cancelled dive trip sent to all reserved customers."));
 
                         }
-                    });
+                        catch (IOException | IllegalStateException | SQLException e)
+                        {
+                            Platform.runLater(()-> AlertUtil.showErrorAlert("Email Error!", e));
+                            Thread.currentThread().interrupt();
+
+                        }
+                    };
+
+                    ExecutorService executor = Executors.newSingleThreadExecutor();
+                    executor.execute(emailTask);
+                    executor.shutdown();
+         
                 }
             	saveClicked = true;
             	dialogStage.close();

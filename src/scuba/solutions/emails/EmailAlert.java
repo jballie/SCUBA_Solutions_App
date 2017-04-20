@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.Properties;
+import javafx.application.Platform;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
@@ -92,7 +93,7 @@ public class EmailAlert
       
            
            Transport.send(message);
-           AlertUtil.showEmailSent("Reservation email request sent to " + customer.getFullName() + ".");
+           
         
           } 
           catch (MessagingException e) 
@@ -145,6 +146,7 @@ public class EmailAlert
            message.setText(msg.toString());
            
            Transport.send(message); 
+           
           // AlertUtil.showEmailSent("Customer has been booked for the dive trip. Email confirmation sent to " + selectedReservation.getCustomer().getFullName() + ".");
           } 
           catch (MessagingException e) 

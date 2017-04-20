@@ -12,7 +12,7 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" fx:id="rootPane" prefHeight="820.0" prefWidth="1300.0" stylesheets="@../../../resources/Material-Design-UI-Components.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="scuba.solutions.ui.home.view.HomePaneController">
+<AnchorPane id="AnchorPane" fx:id="rootPane" prefHeight="820.0" prefWidth="1300.0" stylesheets="@../../../resources/Material-Design-UI-Components.css" xmlns="http://javafx.com/javafx/8.0.102" xmlns:fx="http://javafx.com/fxml/1" fx:controller="scuba.solutions.ui.home.view.HomePaneController">
    <children>
       <BorderPane prefHeight="580.0" prefWidth="951.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <left>
@@ -108,7 +108,7 @@
                      <children>
                         <VBox alignment="CENTER" prefHeight="274.0" prefWidth="429.0">
                            <children>
-                              <JFXButton fx:id="helpButton" buttonType="RAISED" prefHeight="82.0" prefWidth="173.0" style="-fx-background-color: #4059a9;" text="Help" textFill="WHITE">
+                              <JFXButton fx:id="helpButton" buttonType="RAISED" onAction="#displayUserGuide" prefHeight="82.0" prefWidth="173.0" style="-fx-background-color: #4059a9;" text="Help" textFill="WHITE">
                                  <font>
                                     <Font name="Roboto" size="20.0" />
                                  </font>

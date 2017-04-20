@@ -85,7 +85,7 @@ public class HomePaneController implements Initializable
     }
 
 
-    // Sets the current time Home Pane display. The time displays the seconds amount
+    // Sets the current time on Home Pane display. The time displays the seconds amount
     // and constantly updates every second.
     private void setTimeDisplay()
     {
@@ -277,6 +277,12 @@ public class HomePaneController implements Initializable
         
    }
    
+   // Displays the user guide for the Scuba Solution application when Help Button clicked.
+   @FXML
+   public void displayUserGuide()
+   {
+       
+   }
    
     // Transitions to the Customer Pane when Customer button clicked.
     @FXML
