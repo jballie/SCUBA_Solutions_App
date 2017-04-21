@@ -2,6 +2,7 @@
 package scuba.solutions.ui.home.view;
 
 import com.jfoenix.controls.JFXButton;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.Connection;
@@ -279,9 +280,10 @@ public class HomePaneController implements Initializable
    
    // Displays the user guide for the Scuba Solution application when Help Button clicked.
    @FXML
-   public void displayUserGuide()
+   public void displayUserGuide() throws IOException
    {
-       
+        File file = new File("UserGuide.pdf");
+        Desktop.getDesktop().open(file);
    }
    
     // Transitions to the Customer Pane when Customer button clicked.
