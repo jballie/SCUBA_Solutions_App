@@ -19,7 +19,7 @@ public class DiveTrip implements Comparable<DiveTrip> {
     private final ObjectProperty<LocalDate> tripDate;
     private final IntegerProperty availSeats;
     private final ObjectProperty<LocalTime> departTime;
-    private final StringProperty weatherStatus;
+    private final StringProperty tripStatus;
     private final StringProperty dayOfWeek;
 
     public DiveTrip()
@@ -33,7 +33,7 @@ public class DiveTrip implements Comparable<DiveTrip> {
         this.tripDate = new SimpleObjectProperty();
         this.availSeats = new SimpleIntegerProperty(6);
         this.departTime = new SimpleObjectProperty();
-        this.weatherStatus = new SimpleStringProperty("OK");
+        this.tripStatus = new SimpleStringProperty("OK");
         this.dayOfWeek = new SimpleStringProperty("");
     }
     
@@ -43,7 +43,7 @@ public class DiveTrip implements Comparable<DiveTrip> {
         this.tripDate = new SimpleObjectProperty(tripDate);
         this.availSeats = new SimpleIntegerProperty(6);
         this.departTime = new SimpleObjectProperty(departTime);
-        this.weatherStatus = new SimpleStringProperty("OK");
+        this.tripStatus = new SimpleStringProperty("OK");
         String day = this.determineDayOfWeek();
         this.dayOfWeek = new SimpleStringProperty(day);
     }
@@ -100,19 +100,19 @@ public class DiveTrip implements Comparable<DiveTrip> {
     	return departTime;
     }
 
-    public String getWeatherStatus() 
+    public String getTripStatus() 
     {
-        return weatherStatus.get();
+        return tripStatus.get();
     }
     
-    public void setWeatherStatus(String weatherStatus)
+    public void setTripStatus(String tripStatus)
     {
-        this.weatherStatus.set(weatherStatus);
+        this.tripStatus.set(tripStatus);
     }
     
-    public StringProperty weatherStatusProperty() 
+    public StringProperty tripStatusProperty() 
     {
-        return weatherStatus; 
+        return tripStatus; 
     }
     
     // Determines the day of week that the dive trip takes place on.

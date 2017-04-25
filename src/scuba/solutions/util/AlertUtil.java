@@ -8,9 +8,15 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Alert.AlertType;
 import scuba.solutions.ui.dive_schedule.view.DiveSchedulePane;
 
+/**
+ * Alert Utility Class. Contains static method to call the various alert dialogs
+ * that pop-up for data validation, confirmation, invalid selection, and various
+ * errors.
+ * @author Jonathan Balliet, Samuel Brock
+ */
 public class AlertUtil 
 {
-
+    // Displays an alert for Database and SQL errors with the error message.
     public static void showDbErrorAlert(String content, SQLException e)
     {
         Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -20,15 +26,15 @@ public class AlertUtil
         alert.showAndWait(); 	
     }
     
+    // Displays an alerts that customer has already been reserved for a dive trip.
     public static void showCustomerAlreadyThere()
     {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setHeaderText("Customer already signed up for this event");
-        // alert.setContentText(content);
+        alert.setHeaderText("Customer has already signed up for this dive trip");
         alert.showAndWait();
     }
     
-    
+    // Displays an alert that the email successfully sent.
     public static void showEmailSent(String content)
     {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -36,7 +42,8 @@ public class AlertUtil
         alert.setContentText(content);
         alert.showAndWait();
     }
-
+    
+    // Displays an alert that the changes saves successfully in the database.
     public static void showDbSavedAlert(String content)
     {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -44,7 +51,8 @@ public class AlertUtil
         alert.setContentText(content);
         alert.showAndWait();
     }
-
+    
+    // Displays an alert that no selection has been made for the specific button function.
     public static void noSelectionAlert(String header, String content)
     {
         Alert alert = new Alert(AlertType.WARNING);
@@ -54,7 +62,7 @@ public class AlertUtil
         alert.showAndWait();
     }
     
-    
+    // Displays an alert that invalid data has been entered with the needed corrections.
     public static void invalidInputAlert(String errorMessage)
     {
         Alert alert = new Alert(AlertType.ERROR);
@@ -65,6 +73,7 @@ public class AlertUtil
         
     }
     
+    // Displays an error alert with the error message.
     public static void showErrorAlert(String content, Exception e)
     {
         Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -82,7 +91,7 @@ public class AlertUtil
     {
         Alert alert = new Alert(AlertType.CONFIRMATION);
         alert.setTitle("Confirmation!");
-        alert.setHeaderText("Please confirm the update or addition");
+        alert.setHeaderText("Please confirm the update");
         alert.setContentText("Press OK to confirm!");
 
         Optional<ButtonType> result = alert.showAndWait();
@@ -96,6 +105,7 @@ public class AlertUtil
         }
     }
     
+    // Confirms the cancellation of a dive trip.
     public static boolean confirmCancelAlert()
     {
         Alert alert = new Alert(AlertType.CONFIRMATION);

@@ -23,11 +23,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -38,13 +36,10 @@ import scuba.solutions.util.DateUtil;
 
 /**
  * Controller class for the Customer Pane Interface.
- *
  * @author Jonathan Balliet, Samuel Brock
- * Need to add titles for the Add and Update Customer dialogs to keep front-end consistent
  */
-public class CustomerPaneController implements Initializable {
-      
-    
+public class CustomerPaneController implements Initializable 
+{
     private final ObservableList<Customer>  customerData = FXCollections.observableArrayList();
     private FilteredList<Customer> filteredData; 
     private static Connection connection;
@@ -188,7 +183,7 @@ public class CustomerPaneController implements Initializable {
 
         if (saveClicked) 
         {   
-            Customer.addCustomer(customer);
+            Customer.addCustomer(customer);  // calls addCustomer method to add customer to the DB
             customerData.add(customer);
         }
         addCustomerButton.setDisable(false);
@@ -208,20 +203,14 @@ public class CustomerPaneController implements Initializable {
             
             if (saveClicked) 
             {
-                Customer.updateCustomer(customer);
+                Customer.updateCustomer(customer); // calls updateCustomer method to update customer in the DB
                 showCustomerDetails(customer);
              }
          } 
          else 
          {
-             // If nothing is selected a warning message will pop-up
-             Alert alert = new Alert(AlertType.WARNING);
-             alert.initOwner(CustomerPane.getPrimaryStage());
-             alert.setTitle("No Selection");
-             alert.setHeaderText("No Customer Selected");
-             alert.setContentText("Please select a customer in the table to update.");
-
-             alert.showAndWait();
+             AlertUtil.noSelectionAlert("No Customer Selected", 
+                     "Please select a customer in the table to update.");
          }
          
          updateCustomerButton.setDisable(false);
@@ -401,7 +390,7 @@ public class CustomerPaneController implements Initializable {
     	searchTextField.clear();
     }
     
-    // 
+    // Compares the stored string values by their actual date values
     public class DateComparator implements Comparator<String>
     {
         @Override

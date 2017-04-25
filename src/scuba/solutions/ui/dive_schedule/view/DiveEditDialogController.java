@@ -27,9 +27,10 @@ import scuba.solutions.ui.reservations.model.Reservation;
 import scuba.solutions.util.AlertUtil;
 
 /**
- * FXML Controller class
- *
- * @author Jon
+ * Controller class for the Update Dive dialog. The user can change the status
+ * of a dive trip. If a dive trip is changed to CANCELLED and confirmed by the user 
+ * - cancellation emails will be sent to all reserved customers.
+ * @author Jonathan Balliet, Samuel Brock
  */
 public class DiveEditDialogController implements Initializable {
 	
@@ -84,7 +85,7 @@ public class DiveEditDialogController implements Initializable {
         
         tripDateLabel.setText(trip.getTripDate().format(tripDate));
         departTimeLabel.setText(trip.getDepartTime().format(tripTime)); 
-        String status = trip.getWeatherStatus();
+        String status = trip.getTripStatus();
        
         if(status.equalsIgnoreCase("OK"))
         {
@@ -114,31 +115,27 @@ public class DiveEditDialogController implements Initializable {
         boolean confirm = false;
         if (isInputValid()) 
         {
-          if(cancelledRadio.isSelected() && !trip.getWeatherStatus().equalsIgnoreCase("Cancelled"))
-          {
-              confirm = AlertUtil.confirmCancelAlert();
-              isCancelled = true;
-          }
-          else
-          {
-               confirm = AlertUtil.confirmChangesAlert();
-          }
+            if(cancelledRadio.isSelected() && !trip.getTripStatus().equalsIgnoreCase("Cancelled"))
+            {
+                confirm = AlertUtil.confirmCancelAlert();
+                isCancelled = true;
+            }
+            else
+            {
+                confirm = AlertUtil.confirmChangesAlert();
+                isCancelled = false;
+            }
             // Confirms the save changes before putting them into effect.
             if(confirm)
             {
                if(okRadio.isSelected())
                {
-                   trip.setWeatherStatus("OK");
+                   trip.setTripStatus("OK");
                }
                else if(cancelledRadio.isSelected())
                {
-                   
-                   
-                   
-                //ExecutorService executor = Executors.newSingleThreadExecutor();
-                
-                //executor.
-                   trip.setWeatherStatus("CANCELLED");
+       
+                    trip.setTripStatus("CANCELLED");
                     Runnable emailTask = () -> 
                     { 
                         try 
@@ -205,11 +202,13 @@ public class DiveEditDialogController implements Initializable {
         }    
     }
     
+    // Returns whether the trip was cancelled or not
     public static boolean isCancelled()
     {
         return isCancelled;
     }
     
+    // Sends cancellation emails for all the reserved customers
     public void sendCancellationEmails() throws SQLException, IOException
     {
         Customer customer = new Customer();

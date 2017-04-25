@@ -154,7 +154,7 @@ public class RecordsPaneController implements Initializable {
                 LocalTime time = SQLUtil.intervalToLocalTime(strTime);
                 trip.setDepartTime(time);
                 trip.setAvailSeats(result.getInt(9));
-                trip.setWeatherStatus(result.getString(10));
+                trip.setTripStatus(result.getString(10));
                 
                 reserv.setDriveTrip(trip);
 				
@@ -199,7 +199,7 @@ public class RecordsPaneController implements Initializable {
   
         departTimeColumn.setCellValueFactory(cellData -> cellData.getValue().getDiveTrip().departTimeProperty());
         availabilityColumn.setCellValueFactory(cellData -> cellData.getValue().getDiveTrip().availSeatsProperty());
-        tripStatusColumn.setCellValueFactory(cellData -> cellData.getValue().getDiveTrip().weatherStatusProperty()); 
+        tripStatusColumn.setCellValueFactory(cellData -> cellData.getValue().getDiveTrip().tripStatusProperty()); 
        
         tripDateColumn.setComparator(new DateComparator());
         
@@ -259,7 +259,7 @@ public class RecordsPaneController implements Initializable {
                 {
                     return true; // Search matches depart time
                 } 
-                else if (reservation.getDiveTrip().getWeatherStatus().toLowerCase().contains(lowerCaseFilter))
+                else if (reservation.getDiveTrip().getTripStatus().toLowerCase().contains(lowerCaseFilter))
                 {
                     return true; // Search matches trip status
                 } 

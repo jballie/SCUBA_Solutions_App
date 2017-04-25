@@ -7,7 +7,8 @@ import java.time.format.DateTimeParseException;
 import java.util.Comparator;
 
 /**
- *
+ * Date Utility class. Contains various static methods for the dates used in
+ * this software.
  * @author Jonathan Balliet, Samuel Brock
  */
 public class DateUtil 
@@ -55,19 +56,6 @@ public class DateUtil
     {
         // Try to parse the String.
         return DateUtil.parse(dateString) != null;
-    }
-    
-    public class DateComparator implements Comparator<String>
-    {
-        @Override
-        public int compare(String str1, String str2)
-        {
-            LocalDate dateStr1 = DateUtil.parse(str1);
-            LocalDate dateStr2 = DateUtil.parse(str2);
-            
-          
-            return dateStr1.compareTo(dateStr2);
-        }
     }
     
 }

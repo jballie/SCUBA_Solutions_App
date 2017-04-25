@@ -7,14 +7,11 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.ResourceBundle;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
@@ -164,7 +161,6 @@ public class CustomerEditDialogController implements Initializable {
             else
             {
             	saveClicked = false;
-            	//dialogStage.close();
             }
         }
     }
@@ -286,15 +282,7 @@ public class CustomerEditDialogController implements Initializable {
         } 
         else 
         {
-            // Shows the error message.
-            Alert alert = new Alert(AlertType.ERROR);
-            alert.initOwner(dialogStage);
-            alert.setTitle("Invalid Fields");
-            alert.setHeaderText("Please correct invalid fields");
-            alert.setContentText(errorMessage);
-            
-            alert.showAndWait();
-            
+            AlertUtil.invalidInputAlert(errorMessage);
             return false;            
         }    
     }
@@ -349,6 +337,4 @@ public class CustomerEditDialogController implements Initializable {
         }
         return null;
     }
-
-    
 }

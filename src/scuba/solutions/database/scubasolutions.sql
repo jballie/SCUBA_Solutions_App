@@ -1,3 +1,5 @@
+-- SQL Statments for creating the tables for the database
+-- @author Carla Hales, Aisha Chavis
 
 DROP TABLE WAIVER;
 DROP TABLE PAYMENT;

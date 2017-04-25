@@ -225,6 +225,7 @@ public class DiveAddDialogController implements Initializable {
     	return trips;
     }
     
+    // Determines if the data entered for a single dive trip is valid.
     private boolean isSingleDiveInputValid()
     {
         String errorMessage = "";
@@ -252,13 +253,9 @@ public class DiveAddDialogController implements Initializable {
         
     }
     
-    
+    // Determines if the data entered for the recurring dive trips is valid.
     private boolean isRecurringDiveInputValid()
     {
-        LocalDate startDate = recurringStartDatePicker.getValue();
-    	LocalDate endDate = recurringEndDatePicker.getValue();
-    	LocalTime departTime = recurringDepartTimePicker.getTime();
-    	String dayOfWeek = dayOfWeekCombo.getValue();
         String errorMessage = "";
 
         if (recurringStartDatePicker.getValue() == null || recurringEndDatePicker.getValue() == null 

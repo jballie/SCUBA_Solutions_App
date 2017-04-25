@@ -9,78 +9,78 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Properties;
 
-import javax.swing.JOptionPane;
-
 /**
- *
- * @author Jon
+ * Database Connection for SCUBA Solutions. 
+ * Contains options for connection to the remote database
+ * or the facility's own local host.
+ * @author Jonathan Balliet, Samuel Brock
  */
+public final class DbConnection 
+{
 
+    private static final String DB_PROPERTIES_FILE = "src\\scuba\\solutions\\database\\database.properties";
 
-public final class DbConnection {
+    private static DbConnection me = null;
 
-		private static final String DB_PROPERTIES_FILE = "C:\\Users\\Jon\\Documents\\NetBeansProjects\\GitHub\\SCUBA_Solutions_App\\src\\database.properties";
+    private Connection dbConn = null;
 
-		private static DbConnection me = null;
+    private DbConnection(String dbPropertiesFile) throws FileNotFoundException, IOException,
+                    SQLException 
+    {
 
-		private Connection dbConn = null;
+        Properties p = new Properties();
+        p.load(new FileInputStream(dbPropertiesFile));
 
-		private DbConnection(String dbPropertiesFile) throws FileNotFoundException, IOException,
-				SQLException {
+        String username = "";
+        String password = "";
+        String url = "";
+        /*
+        // Local host connection
+        username = p.getProperty("localhost.username");
+        password = p.getProperty("localhost.password");
+        url = p.getProperty("localhost.url");
+        */
 
-		
-                        //Remote Server 
-                        
-			String username = "ScubaNow";
-			String password = "capstone";
-			String url = "jdbc:oracle:thin:@scubasolutionsdb.ctmcz5bqqxdt.us-west-2.rds.amazonaws.com:1521:ORCL";
-			String driver = "oracle.jdbc.driver.OracleDriver";
-                        
-                        
-                        //LocalHost normal connection - please use this most of the time!
-                        /*
-                        String username = "scott";
-                        String password = "tiger";
-                        String url = "jdbc:oracle:thin:@localhost:1521:xe";
-                        */
+        //Remote connection
+        username = p.getProperty("remote.username");
+        password = p.getProperty("remote.password");
+        url = p.getProperty("remote.url");
 
-			dbConn = DriverManager.getConnection(url, username, password);
-		}
+    dbConn = DriverManager.getConnection(url, username, password);
+    }
 
-		public Connection getConnection() {
-			return dbConn;
-		}
+    public Connection getConnection() {
+            return dbConn;
+    }
 
-		public static DbConnection accessDbConnection()
-				throws FileNotFoundException, IOException, SQLException {
-			return accessDbConnection(DB_PROPERTIES_FILE);
-		}
+    public static DbConnection accessDbConnection()
+                    throws FileNotFoundException, IOException, SQLException {
+            return accessDbConnection(DB_PROPERTIES_FILE);
+    }
 
-		public static DbConnection accessDbConnection(String propertiesFilename) throws FileNotFoundException, IOException, SQLException {
-			if (me == null) {
-				me = new DbConnection(propertiesFilename);
-			}
-			return me;
-		}
+    public static DbConnection accessDbConnection(String propertiesFilename) throws FileNotFoundException, IOException, SQLException {
+            if (me == null) {
+                    me = new DbConnection(propertiesFilename);
+            }
+            return me;
+    }
 
-		public void disconnect() {
-			me = null;
-			if (dbConn != null) {
-				try {
-					dbConn.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				} finally {
-					dbConn = null;
-				}
-			}
-		}
-    
+    public void disconnect() 
+    {
+            me = null;
+            if (dbConn != null) {
+                    try {
+                            dbConn.close();
+                    } catch (SQLException e) {
+                            e.printStackTrace();
+                    } finally {
+                            dbConn = null;
+                    }
+            }
+    }
+
 }

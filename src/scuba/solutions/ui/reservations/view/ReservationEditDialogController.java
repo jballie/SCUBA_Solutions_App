@@ -145,11 +145,31 @@ public class ReservationEditDialogController implements Initializable
     public boolean isInputValid()
     {
         String errorMessage = " ";
-        
+     
         try 
         {
             Integer.parseInt(amountTextField.getText());
         } 
+        catch (NumberFormatException e) 
+        {
+            errorMessage += "The amount is not valid. Please enter a number value for the amount.\n"; 
+        }
+        
+        try
+        {
+           if ( Integer.parseInt(amountTextField.getText()) > 0 && 
+                   Integer.parseInt(amountTextField.getText()) < 150 )
+            {
+                errorMessage += "The amount is not valid. All dive trips currently cost 150. Please enter atleast 150 for the amount.";
+            }
+           
+           if ( Integer.parseInt(amountTextField.getText()) < 0  )
+            {
+                errorMessage += "The amount is not valid. All dive trips currently cost 150. Please enter atleast 150 for the amount\n";
+            }
+           
+           
+        }
         catch (NumberFormatException e) 
         {
             errorMessage += "The amount is not valid. Please enter a number value for the amount.\n"; 
@@ -161,7 +181,7 @@ public class ReservationEditDialogController implements Initializable
         } 
         catch (NumberFormatException e) 
         {
-            errorMessage += "THe credit card confirmation number is not valid. Please enter"
+            errorMessage += "The credit card confirmation number is not valid. Please enter"
                     + "number value.!\n"; 
         }
         

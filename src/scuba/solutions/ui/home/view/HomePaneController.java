@@ -283,9 +283,10 @@ public class HomePaneController implements Initializable
    @FXML
    public void displayUserGuide() throws IOException
    {
-        File file = new File("resources/UserGuide.pdf");
+
+        File file = new File("src/scuba/solutions/resources/UserGuide.pdf");
         Desktop.getDesktop().open(file);
-       
+
    }
    
     // Transitions to the Customer Pane when Customer button clicked.

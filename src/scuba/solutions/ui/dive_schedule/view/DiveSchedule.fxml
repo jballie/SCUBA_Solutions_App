@@ -97,7 +97,7 @@
                                               <TableColumn fx:id="dayOfWeekColumn" minWidth="0.0" prefWidth="93.0" text="Day" />
                                                 <TableColumn fx:id="departTimeColumn" prefWidth="75.0" text="Start Time" />
                                                 <TableColumn fx:id="availSeatsColumn" prefWidth="75.0" text="Availability" />
-                                                <TableColumn fx:id="weatherStatusColumn" prefWidth="75.0" text="Status" />
+                                                <TableColumn fx:id="tripStatusColumn" prefWidth="75.0" text="Status" />
                                             </columns>
                                              <columnResizePolicy>
                                                 <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

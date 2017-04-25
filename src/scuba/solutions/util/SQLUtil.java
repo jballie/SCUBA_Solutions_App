@@ -4,15 +4,13 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 /**
- * (Insert a comment that briefly describes the purpose of this class definition.)
- *
- * <p/> Bugs: (List any known issues or unimplemented features here)
- * 
+ * SQL Utility class. Used to make conversions between SQL and Java data types.
  * @author Jonathan Balliet, Samuel Brock
  *
  */
 public class SQLUtil
 {
+    // Converts the SQL Interal to its Local Time
     public static LocalTime intervalToLocalTime(String str)
     {
         String strTime = str.substring(2, 7).trim();
@@ -40,7 +38,8 @@ public class SQLUtil
         LocalTime time = LocalTime.parse(strTime, dtf);
         return time;
     }
-	
+    
+   // Converts the Local Time to a SQL Interval
     public static String localTimeToInterval(LocalTime time)
     {
         String interval = "0 " + time.toString() + ":0.0";
