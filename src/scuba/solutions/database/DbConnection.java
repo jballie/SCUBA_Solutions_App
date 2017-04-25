@@ -37,19 +37,19 @@ public final class DbConnection {
 
 		
                         //Remote Server 
-                        /*
+                        
 			String username = "ScubaNow";
 			String password = "capstone";
 			String url = "jdbc:oracle:thin:@scubasolutionsdb.ctmcz5bqqxdt.us-west-2.rds.amazonaws.com:1521:ORCL";
 			String driver = "oracle.jdbc.driver.OracleDriver";
-                        */
+                        
                         
                         //LocalHost normal connection - please use this most of the time!
-                        
+                        /*
                         String username = "scott";
                         String password = "tiger";
                         String url = "jdbc:oracle:thin:@localhost:1521:xe";
-                        
+                        */
 
 			dbConn = DriverManager.getConnection(url, username, password);
 		}
