@@ -7,6 +7,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.scene.image.Image;
 
 /**
  * Starts the application from the Home Pane.
@@ -22,7 +23,7 @@ public class Main extends Application {
     {
         Parent root = FXMLLoader.load(getClass().getResource("/scuba/solutions/ui/home/view/HomePane.fxml"));
         Scene scene = new Scene(root);
-
+        primaryStage.getIcons().add(new Image("/logo.PNG"));
         primaryStage.setScene(scene);
         primaryStage.show();   
     }
