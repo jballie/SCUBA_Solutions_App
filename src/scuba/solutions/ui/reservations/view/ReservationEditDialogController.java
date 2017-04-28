@@ -71,7 +71,7 @@ public class ReservationEditDialogController implements Initializable
             waiver.setERLast(erLastTextField.getText());
             waiver.setERPhone(erPhoneTextField.getText());
             
-            payment.setCCConfirmNo(Integer.parseInt(ccConfirmTextField.getText()));
+            payment.setCCConfirmNo(Long.parseLong(ccConfirmTextField.getText()));
             payment.setDateProcessed(dateProcDatePicker.getValue());
             payment.setAmount(Integer.parseInt(amountTextField.getText()));
             
@@ -134,7 +134,7 @@ public class ReservationEditDialogController implements Initializable
         this.payment = payment;
         amountTextField.setText(Integer.toString(payment.getAmount()));
         dateProcDatePicker.setValue(payment.getDateProcessed());
-        ccConfirmTextField.setText(Integer.toString(payment.getCCConfirmNo()));
+        ccConfirmTextField.setText(Long.toString(payment.getCCConfirmNo()));
     }
     
     /**
@@ -177,11 +177,11 @@ public class ReservationEditDialogController implements Initializable
         
         try 
         {
-            Integer.parseInt(ccConfirmTextField.getText());
+            Long.parseLong(ccConfirmTextField.getText());
         } 
         catch (NumberFormatException e) 
         {
-            errorMessage += "The credit card confirmation number is not valid. Please enter"
+            errorMessage += "The credit card confirmation number is not valid. Please enter a "
                     + "number value.!\n"; 
         }
         
@@ -189,14 +189,14 @@ public class ReservationEditDialogController implements Initializable
         {
             if(dateProcDatePicker.getValue().isAfter(LocalDate.now()))
             {
-                errorMessage += "The date processed is not valid. Cannot be a future date. \n"; 
+                errorMessage += "The date processed is not valid. Please enter a current or past date. \n"; 
             }
         }
         if(dateSignedDatePicker.getValue() != null)
         {
             if(dateSignedDatePicker.getValue().isAfter(LocalDate.now()))
             {
-                errorMessage += "The date signed is not valid. Cannot be a future date. \n"; 
+                errorMessage += "The date signed is not valid. Please enter a current or past date. \n"; 
             }
         }
         

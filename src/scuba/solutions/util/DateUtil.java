@@ -4,7 +4,6 @@ package scuba.solutions.util;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.Comparator;
 
 /**
  * Date Utility class. Contains various static methods for the dates used in

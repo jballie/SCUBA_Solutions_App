@@ -22,9 +22,8 @@ public class Main extends Application {
     {
         Parent root = FXMLLoader.load(getClass().getResource("/scuba/solutions/ui/home/view/HomePane.fxml"));
         Scene scene = new Scene(root);
-
-        primaryStage.setScene(scene);
-        primaryStage.show();   
+        primaryStage.setScene(scene);		         
+        primaryStage.show();   		          
     }
 
     /**

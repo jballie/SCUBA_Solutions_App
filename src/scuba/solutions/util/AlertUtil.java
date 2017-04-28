@@ -26,11 +26,20 @@ public class AlertUtil
         alert.showAndWait(); 	
     }
     
-    // Displays an alerts that customer has already been reserved for a dive trip.
+    // Displays an alert that the customer has already been reserved for a dive trip.
     public static void showCustomerAlreadyThere()
     {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setHeaderText("Customer has already signed up for this dive trip");
+        alert.showAndWait();
+    }
+    
+    // Displays an alert when the user tries to update a trip that is fully booked.
+    public static void showMaxCapacity()
+    {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setHeaderText("The trip's availability is at max capacity. No more reservations"
+                + " can be booked for this dive.");
         alert.showAndWait();
     }
     

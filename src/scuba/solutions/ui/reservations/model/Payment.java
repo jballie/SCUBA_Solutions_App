@@ -8,8 +8,10 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.LongProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -24,7 +26,7 @@ public class Payment
 {
     private final IntegerProperty reservationId;
     private final StringProperty paymentStatus;
-    private final IntegerProperty ccConfirmNo;
+    private final LongProperty ccConfirmNo;
     private final ObjectProperty<LocalDate> dateProcessed;
     private final IntegerProperty amount;
     private static Connection connection;
@@ -37,7 +39,7 @@ public class Payment
     public Payment(int reservationId) 
     {
         this.reservationId = new SimpleIntegerProperty(reservationId);
-        this.ccConfirmNo = new SimpleIntegerProperty(0);
+        this.ccConfirmNo = new SimpleLongProperty(0);
         this.dateProcessed = new SimpleObjectProperty(null);
         this.amount = new SimpleIntegerProperty(0);
         this.paymentStatus = new SimpleStringProperty("UNPAID");
@@ -73,12 +75,12 @@ public class Payment
         this.paymentStatus.set(paymentStatus);
     }
     
-    public int getCCConfirmNo()
+    public long getCCConfirmNo()
     {
         return ccConfirmNo.get();
     }
     
-    public void setCCConfirmNo(int ccConfirmNo)
+    public void setCCConfirmNo(long ccConfirmNo)
     {
         this.ccConfirmNo.set(ccConfirmNo);
     }

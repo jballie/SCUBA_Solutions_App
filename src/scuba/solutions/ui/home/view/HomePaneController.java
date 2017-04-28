@@ -281,12 +281,18 @@ public class HomePaneController implements Initializable
    
    // Displays the user guide for the Scuba Solution application when Help Button clicked.
    @FXML
-   public void displayUserGuide() throws IOException
+   public void displayUserGuide() 
    {
-
-        File file = new File("src/scuba/solutions/resources/UserGuide.pdf");
-        Desktop.getDesktop().open(file);
-
+        try
+        {
+            File file = new File("resources/UserGuide.pdf");
+            Desktop.getDesktop().open(file);
+        }
+        catch (IOException e)
+        {
+            AlertUtil.showErrorAlert("Error with opening user guide.", e);
+        }
+    
    }
    
     // Transitions to the Customer Pane when Customer button clicked.

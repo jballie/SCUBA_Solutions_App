@@ -59,7 +59,8 @@ public class EmailAlert
             String customerEmail = customer.getEmailAddress().trim();
             
             MimeMessage message = new MimeMessage(session);    
-            message.addRecipient(Message.RecipientType.TO,new InternetAddress(customerEmail));   //change 
+            message.addRecipient(Message.RecipientType.TO,new InternetAddress(customerEmail));  
+           // message.addRecipient(Message.RecipientType.TO,new InternetAddress("scubascubanow@gmail.com")); 
             message.setSubject("Dive Reservation Request");
 
             StringBuilder msg = new StringBuilder();
@@ -75,7 +76,7 @@ public class EmailAlert
             msg.append(customer.getFirstName());
             msg.append(",\n");
 
-            Files.lines(Paths.get("res/resources/RequestLetter.txt"), 
+            Files.lines(Paths.get("resources/RequestLetter.txt"), 
                     StandardCharsets.UTF_8).forEach(s -> msg.append(s).append("\n"));
 
             BodyPart messageBodyPart1 = new MimeBodyPart();
@@ -83,7 +84,7 @@ public class EmailAlert
 
             MimeBodyPart messageBodyPart2 = new MimeBodyPart();  
 
-            String filename = "res/resources/waiver.docx";
+            String filename = "resources/waiver.docx";
             DataSource source = new FileDataSource(filename);  
             messageBodyPart2.setDataHandler(new DataHandler(source));  
             messageBodyPart2.setFileName(filename);  
@@ -129,7 +130,8 @@ public class EmailAlert
         {   
             String customerEmail = selectedReservation.getCustomer().getEmailAddress().trim();
             
-            MimeMessage message = new MimeMessage(session);    
+            MimeMessage message = new MimeMessage(session);
+            //message.addRecipient(Message.RecipientType.TO,new InternetAddress("scubascubanow@gmail.com"));
             message.addRecipient(Message.RecipientType.TO,new InternetAddress(customerEmail));    
             message.setSubject("Dive Confirmation Email");
 
@@ -146,7 +148,7 @@ public class EmailAlert
             msg.append(selectedReservation.getCustomer().getFirstName());
             msg.append(",\n\n");
 
-            Files.lines(Paths.get("res/resources/ConfirmationLetter.txt"), 
+            Files.lines(Paths.get("resources/ConfirmationLetter.txt"), 
                     StandardCharsets.UTF_8).forEach(s -> msg.append(s).append("\n"));
 
             message.setText(msg.toString());
@@ -187,7 +189,8 @@ public class EmailAlert
         {   
             String customerEmail = selectedReservation.getCustomer().getEmailAddress().trim();
             
-            MimeMessage message = new MimeMessage(session);    
+            MimeMessage message = new MimeMessage(session);
+            //message.addRecipient(Message.RecipientType.TO,new InternetAddress("scubascubanow@gmail.com"));
             message.addRecipient(Message.RecipientType.TO,new InternetAddress(customerEmail));    
             message.setSubject("Dive Cancellation Email");
 
@@ -204,7 +207,7 @@ public class EmailAlert
             msg.append(selectedReservation.getCustomer().getFirstName());
             msg.append(",\n\n");
 
-            Files.lines(Paths.get("res/resources/CancellationLetter.txt"), 
+            Files.lines(Paths.get("resources/CancellationLetter.txt"), 
                     StandardCharsets.UTF_8).forEach(s -> msg.append(s).append("\n"));
 
             message.setText(msg.toString());

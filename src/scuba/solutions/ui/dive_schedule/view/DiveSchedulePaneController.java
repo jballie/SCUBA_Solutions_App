@@ -165,7 +165,6 @@ public class DiveSchedulePaneController implements Initializable
             {
                 newReservationButton.setDisable(true);
                 updateReservationButton.setDisable(true);
-
             }
             else
             {
@@ -176,44 +175,13 @@ public class DiveSchedulePaneController implements Initializable
             if( newValue == null || (newValue.getAvailSeats() == 0 || newValue.getTripStatus().equalsIgnoreCase("Cancelled")) )
             {
                 newReservationButton.setDisable(true);
+                //updateReservationButton.setDisable(true);
             }
             else
             {
                 newReservationButton.setDisable(false);
             }
-        });
-        
-        reservationsTable.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends Reservation> observable, Reservation oldValue, Reservation newValue) ->
-        {
-            try
-            {
-                if(newValue.getDiveTrip().getAvailSeats() == 0 || newValue.getDiveTrip().getTripStatus().equalsIgnoreCase("Cancelled"))
-                {
-                    updateReservationButton.setDisable(true);
-              
-
-                }
-                else if((newValue.getDiveTrip().getAvailSeats() == 0 && newValue.getStatus().equalsIgnoreCase("Pending")))
-                {
-                    updateReservationButton.setDisable(true);
-               
-                }
-                else if((newValue.getDiveTrip().getTripStatus().equalsIgnoreCase("Cancelled") && newValue.getStatus().equalsIgnoreCase("Pending")))
-                {
-                    updateReservationButton.setDisable(true);
-                 
-                }
-                else
-                {
-                    updateReservationButton.setDisable(false);
-                }
-            }
-            catch(NullPointerException e)
-            {
-                
-            }
-            
-        });
+        });  
     }
     
     // Loads all of the dive trips in the DB to the Dive Trips Table
@@ -437,7 +405,7 @@ public class DiveSchedulePaneController implements Initializable
             {            
                 payment.setReservationId(reservationId);
                 payment.setPaymentStatus(results.getString(2));
-                payment.setCCConfirmNo(results.getInt(3));
+                payment.setCCConfirmNo(results.getInt(3));   // getLong
 
                 if(results.getDate(4) != null)
                     payment.setDateProcessed(results.getDate(4).toLocalDate());
@@ -811,10 +779,14 @@ public class DiveSchedulePaneController implements Initializable
         Reservation selectedReservation = (Reservation) reservationsTable.getSelectionModel().getSelectedItem();
         Waiver waiver = null;
         Payment payment = null;
-         
-         
-         if (selectedReservation != null)
-         {
+        DiveTrip selectedTrip = (DiveTrip) tripTable.getSelectionModel().getSelectedItem();
+        
+        
+        if (selectedReservation != null && (selectedTrip.getAvailSeats() > 0 || 
+                selectedReservation.getStatus().equalsIgnoreCase("Booked") ))
+        {
+            
+            
             if(selectedReservation.getWaiver() != null)           
                 waiver = selectedReservation.getWaiver();
          
@@ -856,14 +828,14 @@ public class DiveSchedulePaneController implements Initializable
 
                     if(payment != null && payment.isComplete()) 
                     {
-                        int ccConfirmNo = payment.getCCConfirmNo();
+                        long ccConfirmNo = payment.getCCConfirmNo();
                         LocalDate dateProc = payment.getDateProcessed();
                         int amount = payment.getAmount();
 
                         preSt2 = connection.prepareStatement("UPDATE PAYMENT SET cc_confirm_no=?,"
                                 + " date_processed=?, amount=? WHERE reservation_id=?");
 
-                        preSt2.setInt(1, ccConfirmNo);
+                        preSt2.setLong(1, ccConfirmNo);
                         preSt2.setDate(2, Date.valueOf(dateProc));
                         preSt2.setInt(3, amount);
                         preSt2.setInt(4, reservationId);
@@ -884,7 +856,7 @@ public class DiveSchedulePaneController implements Initializable
                     }
 
                     bookReservation(selectedReservation);
-
+                    
                     showReservationStatusDetails(selectedReservation);
                 }
             }
@@ -910,10 +882,19 @@ public class DiveSchedulePaneController implements Initializable
         } 
         else 
         {
-            AlertUtil.noSelectionAlert("No Reservation Selected", "Please select "
+            if(selectedReservation == null)
+            {
+                AlertUtil.noSelectionAlert("No Reservation Selected", "Please select "
                      + "a reservation in the reservations table to update.");
+            }
+            else
+            {
+                AlertUtil.showMaxCapacity();
+            }
+            
         }
-         
+        
+        
         updateReservationButton.setDisable(false);
     }
     
@@ -922,7 +903,8 @@ public class DiveSchedulePaneController implements Initializable
      * of data entries. Once complete, the Reservation's status is changed to booked
      * and the confirmation email is sent to the customer.
      */
-    public void bookReservation(Reservation selectedReservation) throws FileNotFoundException, IOException, SQLException {
+    public void bookReservation(Reservation selectedReservation) throws FileNotFoundException, IOException, SQLException 
+    {
         int reservationId = selectedReservation.getReservationId();
         Waiver waiver = selectedReservation.getWaiver();
         Payment payment = selectedReservation.getPayment();
@@ -988,18 +970,29 @@ public class DiveSchedulePaneController implements Initializable
                              + " Email confirmation sent to " + selectedReservation.getCustomer().getFullName() + "."));
 
                         }
-                        catch (IOException | IllegalStateException  e)
-                        {
-                            Platform.runLater(()-> AlertUtil.showErrorAlert("Email Error!", e));
-                            Thread.currentThread().interrupt();
-
+                       catch (IOException | IllegalStateException  e)
+                       {
+                            Platform.runLater(() -> 
+                            {
+                                try 
+                                {
+                                    EmailAlert.sendConfirmationEmail(selectedReservation);
+                                    Platform.runLater(()-> AlertUtil.showEmailSent("Customer has been booked for the dive trip."
+                                     + " Email confirmation sent to " + selectedReservation.getCustomer().getFullName() + "."));
+                                }
+                                catch (IOException | IllegalStateException  ex)
+                                {
+                                    Platform.runLater(()-> AlertUtil.showErrorAlert("Email Error!", ex));
+                                    Thread.currentThread().interrupt();
+                                }
+                            });
                         }
                     };
-
+                 
                     ExecutorService executor = Executors.newSingleThreadExecutor();
                     executor.execute(emailTask);
                     executor.shutdown();
-
+                   
                     availSeats--;
                 }
 
@@ -1012,10 +1005,13 @@ public class DiveSchedulePaneController implements Initializable
                 if(reservationStatus == null || reservationStatus.equalsIgnoreCase("Booked")) 
                 {
                     statement5 = connection.createStatement();
-                    statement5.executeUpdate("UPDATE RESERVATION SET reservation_status='Pending' WHERE reservation_id=" + reservationId);
-
+                    statement5.executeUpdate("UPDATE RESERVATION SET reservation_status='PENDING' WHERE reservation_id=" + reservationId);
+                    selectedReservation.setStatus("PENDING");
                     if(reservationStatus != null && reservationStatus.equalsIgnoreCase("Booked"))
+                    {
                         availSeats++;
+                    }
+                    
                 }
             }
 
@@ -1265,19 +1261,31 @@ public class DiveSchedulePaneController implements Initializable
                                 { 
                                     try 
                                     {
-                                       EmailAlert.sendRequestEmail(reservationId, selectedCustomer, selectedTrip);
+                                        EmailAlert.sendRequestEmail(reservationId, customer, selectedTrip);
 
-                                       Platform.runLater(()-> AlertUtil.showEmailSent("Reservation email request sent to " + customer.getFullName() + "."));
-    
+                                        Platform.runLater(()-> AlertUtil.showEmailSent("Reservation email request "
+                                                + "sent to " + customer.getFullName() + "."));
+
                                     }
                                     catch (IOException | IllegalStateException | SQLException | InterruptedException  e)
                                     {
-                                        Platform.runLater(()-> AlertUtil.showErrorAlert("Email Error!", e));
-                                        Thread.currentThread().interrupt();
-
+                                        Platform.runLater(() -> 
+                                        {
+                                            try 
+                                            {
+                                                EmailAlert.sendRequestEmail(reservationId, customer, selectedTrip);
+                                                Platform.runLater(()-> AlertUtil.showEmailSent("Reservation email request "
+                                                + "sent to " + customer.getFullName() + "."));
+                                            }
+                                            catch (IOException | IllegalStateException | SQLException | InterruptedException  ex)
+                                            {
+                                               Platform.runLater(()-> AlertUtil.showErrorAlert("Email Error!", ex));
+                                                 Thread.currentThread().interrupt();
+                                            }
+                                        });
                                     }
                                 };
-     
+                            
                                 ExecutorService executor = Executors.newSingleThreadExecutor();
                                 executor.execute(emailTask);
                                 executor.shutdown();
@@ -1319,20 +1327,32 @@ public class DiveSchedulePaneController implements Initializable
                                 {
                                     EmailAlert.sendRequestEmail(reservationId, customer, selectedTrip);
 
-                                    Platform.runLater(()-> AlertUtil.showEmailSent("Reservation email request sent to " + customer.getFullName() + "."));
-
+                                    Platform.runLater(()-> AlertUtil.showEmailSent("Reservation email "
+                                            + "request sent to " + customer.getFullName() + "."));
 
                                 }
                                 catch (IOException | IllegalStateException | SQLException | InterruptedException  e)
                                 {
-                                     Platform.runLater(()-> AlertUtil.showErrorAlert("Email Error!", e));
-                                     Thread.currentThread().interrupt();
+                                    Platform.runLater(() -> 
+                                    {
+                                        try 
+                                        {
+                                            EmailAlert.sendRequestEmail(reservationId, customer, selectedTrip);
+                                            Platform.runLater(()-> AlertUtil.showEmailSent("Reservation email "
+                                                    + "request sent to " + customer.getFullName() + "."));
+                                        }
+                                        catch (IOException | IllegalStateException | SQLException | InterruptedException  ex)
+                                        {
+                                           Platform.runLater(()-> AlertUtil.showErrorAlert("Email Error!", ex));
+                                             Thread.currentThread().interrupt();
+                                        }
+                                    });
                                 }
                             };
                             
                             ExecutorService executor = Executors.newSingleThreadExecutor();
                             executor.execute(emailTask);
-                            executor.shutdown();
+                            executor.shutdown();                           
                         }
                     }
                 }
