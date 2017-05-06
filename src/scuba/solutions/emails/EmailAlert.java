@@ -76,7 +76,7 @@ public class EmailAlert
             msg.append(customer.getFirstName());
             msg.append(",\n");
 
-            Files.lines(Paths.get("resources/RequestLetter.txt"), 
+            Files.lines(Paths.get("res/resources/RequestLetter.txt"), 
                     StandardCharsets.UTF_8).forEach(s -> msg.append(s).append("\n"));
 
             BodyPart messageBodyPart1 = new MimeBodyPart();
@@ -84,7 +84,7 @@ public class EmailAlert
 
             MimeBodyPart messageBodyPart2 = new MimeBodyPart();  
 
-            String filename = "resources/waiver.docx";
+            String filename = "res/resources/waiver.docx";
             DataSource source = new FileDataSource(filename);  
             messageBodyPart2.setDataHandler(new DataHandler(source));  
             messageBodyPart2.setFileName(filename);  
@@ -148,7 +148,7 @@ public class EmailAlert
             msg.append(selectedReservation.getCustomer().getFirstName());
             msg.append(",\n\n");
 
-            Files.lines(Paths.get("resources/ConfirmationLetter.txt"), 
+            Files.lines(Paths.get("res/resources/ConfirmationLetter.txt"), 
                     StandardCharsets.UTF_8).forEach(s -> msg.append(s).append("\n"));
 
             message.setText(msg.toString());
@@ -207,7 +207,7 @@ public class EmailAlert
             msg.append(selectedReservation.getCustomer().getFirstName());
             msg.append(",\n\n");
 
-            Files.lines(Paths.get("resources/CancellationLetter.txt"), 
+            Files.lines(Paths.get("res/resources/CancellationLetter.txt"), 
                     StandardCharsets.UTF_8).forEach(s -> msg.append(s).append("\n"));
 
             message.setText(msg.toString());
