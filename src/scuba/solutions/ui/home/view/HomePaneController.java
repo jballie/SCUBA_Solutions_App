@@ -108,7 +108,7 @@ public class HomePaneController implements Initializable
         
     }
     
-   // Sets the current dives schedules scheduled for the day.
+   // Sets the current dives scheduled for the day.
    // A maxmimum of three dives can be displayed.
    private void setTodaysDives()
    {
@@ -285,7 +285,7 @@ public class HomePaneController implements Initializable
    {
         try
         {
-            File file = new File("resources/UserGuide.pdf");
+            File file = new File("res/resources/UserGuide.pdf");
             Desktop.getDesktop().open(file);
         }
         catch (IOException e)

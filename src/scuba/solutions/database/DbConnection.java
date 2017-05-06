@@ -22,7 +22,7 @@ import java.util.Properties;
 public final class DbConnection 
 {
 
-    private static final String DB_PROPERTIES_FILE = "resources/database.properties";
+    private static final String DB_PROPERTIES_FILE = "res/resources/database.properties";
 
     private static DbConnection me = null;
 
