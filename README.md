@@ -5,7 +5,7 @@ SCUBA Solutions is an integrated system that provides an easy to use application
 
 
 Download for Windows available on our website: http://understoodinc.weebly.com/
-(Note: the remote AWS database has been disconnected)
+(Note: the remote AWS database has been disconnected, therefore this download no longer functions properly. Email me <jrballiet@hotmail.com> if interested on setting up on a local working version on your machine.)
 
 Check out our User Guide: 
 http://understoodinc.weebly.com/uploads/9/8/5/0/98503366/user_guide.pdf
